@@ -1,56 +1,47 @@
 import { Link } from '@tanstack/react-router'
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+  Text,
+  Title,
+  Stack,
+  Anchor,
+  Group,
+} from '@mantine/core'
+
 import { AuthLayout } from '../../auth-layout'
 import { SignUpForm } from '../components/sign-up-form'
 
 export function SignUp() {
   return (
     <AuthLayout>
-      <Card className='gap-4'>
-        <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>
-            Create an account
-          </CardTitle>
-          <CardDescription>
-            Enter your email and password to create an account. <br />
-            Already have an account?{' '}
-            <Link
-              to='/sign-in'
-              className='underline underline-offset-4 hover:text-primary'
-            >
-              Sign In
-            </Link>
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Card withBorder shadow="sm" radius="md" padding="lg">
+        <Stack gap="md">
+          {/* ===== Header ===== */}
+          <div>
+            <Title order={4}>
+              Create an account
+            </Title>
+
+            <Text size="sm" c="dimmed" mt={4}>
+              Enter your email and password to create an account. <br />
+              Already have an account?{' '}
+              <Anchor component={Link} to="/sign-in">
+                Sign In
+              </Anchor>
+            </Text>
+          </div>
+
+          {/* ===== Form ===== */}
           <SignUpForm />
-        </CardContent>
-        <CardFooter>
-          <p className='px-8 text-center text-sm text-muted-foreground'>
+
+          {/* ===== Footer ===== */}
+          <Text size="xs" c="dimmed" ta="center">
             By creating an account, you agree to our{' '}
-            <a
-              href='/terms'
-              className='underline underline-offset-4 hover:text-primary'
-            >
-              Terms of Service
-            </a>{' '}
+            <Anchor href="/terms">Terms of Service</Anchor>{' '}
             and{' '}
-            <a
-              href='/privacy'
-              className='underline underline-offset-4 hover:text-primary'
-            >
-              Privacy Policy
-            </a>
-            .
-          </p>
-        </CardFooter>
+            <Anchor href="/privacy">Privacy Policy</Anchor>.
+          </Text>
+        </Stack>
       </Card>
     </AuthLayout>
   )

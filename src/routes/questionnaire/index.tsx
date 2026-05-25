@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { toast } from 'sonner'
 
 import { Questionnaire, type QuestionnaireQuestion } from '@/features/conversation/components/questionnaire'
 import { useDebouncedValue, getArrayPayload } from '@/features/components/utils'
@@ -11,18 +10,22 @@ import type {
   ConversationSession,
   EntryMode,
   AnswerValue,
-} from './types'
+} from './-types'
 
 import {
   stringifyAnswer,
   resolveQuestions,
   decorateConversations,
-} from './utils'
+  buildSummaryMessage,
+} from './-utils'
 
-import { EntryModeTabs } from './components/EntryModeTabs'
-import { ParticipantSearch } from './components/ParticipantSearch'
-import { ConversationLoader } from './components/ConversationLoader'
-import { CreateConversationForm } from './components/CreateConversationForm'
+import { EntryModeTabs } from '../../features/questionnnaire/components/EntryModeTabs'
+import { ParticipantSearch } from '../../features/questionnnaire/components/ParticipantSearch'
+import { ConversationLoader } from '../../features/questionnnaire/components/ConversationLoader'
+import { CreateConversationForm } from '../../features/questionnnaire/components/CreateConversationForm'
+import { notifications } from '@mantine/notifications'
+import { set } from 'zod'
+import { Option } from '@/features/rxsoft/types'
 
 /* ================= PAGE ================= */
 
@@ -30,6 +33,9 @@ function PublicQuestionnairePage() {
   const [entryMode, setEntryMode] = useState<EntryMode>('participant-phone')
 
   const [phoneSearch, setPhoneSearch] = useState('')
+  const [questionnaire, setQuestionnaire] = useState<Option | null>()
+  const [channel, setChannel] = useState<Option | null>()
+
   const [selectedParticipantId, setSelectedParticipantId] = useState<string | null>('')
 
   const [conversationId, setConversationId] = useState('')
@@ -80,9 +86,9 @@ function PublicQuestionnairePage() {
     try {
       const res = await conversationApi.get(`/conversations/${id}`)
       await hydrateSession(res.data)
-      toast.success('Conversation loaded')
+      notifications.show({message: 'Conversation loaded', color: 'green'})
     } catch {
-      toast.error('Conversation not found')
+      notifications.show({message: 'Conversation not found', color: 'red'})
     } finally {
       setLoading(false)
     }
@@ -97,16 +103,15 @@ function PublicQuestionnairePage() {
     try {
       const res = await conversationApi.post('/conversations', payload)
       await hydrateSession(res.data)
-      toast.success('Conversation created')
+      notifications.show({message: 'Conversation created', color: 'green'})
     } catch {
-      toast.error('Failed to create conversation')
+      notifications.show({message: 'Failed to create conversation', color: 'red'})
     } finally {
       setLoading(false)
     }
   }
 
   /* ================= DERIVED ================= */
-
   const participants = getArrayPayload(participantQuery.data ?? [])
   const conversations = conversationsQuery.data ?? []
 
@@ -128,6 +133,107 @@ function PublicQuestionnairePage() {
     }
   }, [participants, phoneSearch, session])
 
+
+
+    async function processAnswer(payload: {
+      question: QuestionnaireQuestion
+      answer: AnswerValue
+      answers: Record<string, AnswerValue>
+      currentIndex: number
+      questions: QuestionnaireQuestion[]
+    }) {
+      if (!session?.id) {
+        return {
+          advance: true,
+        }
+      }
+  
+      try {
+        const response = await conversationApi.post(`/conversations/${session.id}/process-response`, {
+          message: stringifyAnswer(payload.answer),
+        })
+  
+        const latestConversationResponse = await conversationApi.get(`/conversations/${session.id}`)
+        const latestSession = latestConversationResponse.data as ConversationSession
+        await hydrateSession(latestSession)
+  
+        const reason = String(response.data?.reason ?? '')
+        const action = String(response.data?.action ?? '')
+  
+        if (reason === 'VALIDATION_ERROR') {
+          return {
+            advance: false,
+            errorMessage: String(response.data?.message || 'This answer could not be processed.'),
+          }
+        }
+  
+        if (action === 'COMPLETED_CONVERSATION' || latestSession.status === 'COMPLETED') {
+          return {
+            complete: true,
+          }
+        }
+  
+        return {
+          advance: true,
+          nextQuestionId: latestSession.currentQuestionId,
+          answers: payload.answers,
+        }
+      } catch (error: any) {
+        return {
+          advance: false,
+          errorMessage: error?.response?.data?.message || 'Unable to process this answer right now.',
+        }
+      }
+    }
+
+      async function saveProgress(payload: {
+        answers: Record<string, AnswerValue>
+        currentIndex: number
+        progress: number
+      }) {
+        if (!session?.id) return
+        const nextQuestion = questions[payload.currentIndex]
+        await conversationApi.patch(`/conversations/${session.id}`, {
+          currentQuestionId: nextQuestion?.id,
+          context: {
+            ...(session.context ?? {}),
+            answers: payload.answers,
+            progress: payload.progress,
+          },
+        })
+      }
+
+      async function completeQuestionnaire(payload: {
+          answers: Record<string, AnswerValue>
+          questions: QuestionnaireQuestion[]
+        }) {
+          if (!session?.id) return
+      
+          const summary = buildSummaryMessage(payload.answers, payload.questions)
+      
+          await conversationApi.patch(`/conversations/${session.id}`, {
+            status: 'COMPLETED',
+            state: 'COMPLETED',
+            endedAt: new Date().toISOString(),
+            context: {
+              ...(session.context ?? {}),
+              answers: payload.answers,
+              progress: 100,
+              summary,
+            },
+          })
+      
+          if (session.channelId && phoneSearch.trim()) {
+            await conversationApi.post('/channels/send-message', {
+              channelId: session.channelId,
+              phone: phoneSearch.trim(),
+              email: '',
+              title: 'Questionnaire complete',
+              previewLink: false,
+              message: summary,
+            })
+          }
+        }
   /* ================= UI ================= */
 
   return (
@@ -142,10 +248,10 @@ function PublicQuestionnairePage() {
           setPhone={setPhoneSearch}
           participants={participants}
           loading={participantQuery.isLoading}
-          selectedId={selectedParticipantId}
+          selectedId={selectedParticipantId || ''}
           onSelect={setSelectedParticipantId}
-          conversations={conversations}
-          onLoadConversation={loadConversationById}
+          // conversations={conversations}
+          // onLoadConversation={loadConversationById}
         />
       )}
 
@@ -162,6 +268,10 @@ function PublicQuestionnairePage() {
         <CreateConversationForm
           phone={phoneSearch}
           setPhone={setPhoneSearch}
+          setQuestionnaire={setQuestionnaire}
+          setChannel={setChannel}
+          questionnaire={questionnaire as any}
+          channel={channel as any}
           onSubmit={startConversation}
           loading={loading}
         />
@@ -175,12 +285,9 @@ function PublicQuestionnairePage() {
           questions={questions}
           initialAnswers={initialAnswers}
           initialCurrentQuestionId={session.currentQuestionId}
-          onProcessAnswer={async ({ answer }) => ({
-            advance: true,
-            answer: stringifyAnswer(answer),
-          })}
-          onSaveProgress={async () => {}}
-          onComplete={async () => {}}
+          onProcessAnswer={processAnswer}
+          onSaveProgress={saveProgress}
+          onComplete={completeQuestionnaire}
         />
       )}
     </div>

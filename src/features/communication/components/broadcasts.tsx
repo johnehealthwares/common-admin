@@ -11,9 +11,9 @@ import {
 } from '@mantine/core'
 
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { JsonEditorField } from '@/features/components/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/paginated-data-table'
-import { RxPage } from '@/features/components/rx-page'
+import { JsonEditorField } from '@/features/components/form/json-editor-field'
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
+import { RxPage } from '@/features/components/page/rx-page'
 import { SelectField } from '@/features/components/form/select'
 
 import { BROADCAST_STATUS_OPTIONS } from '../types/constants'
@@ -27,7 +27,9 @@ import {
   useCommunicationCrud,
   useCommunicationList,
   CommunicationRow,
+  getOption,
 } from './shared'
+import { Option } from '@/features/rxsoft/types'
 
 type BroadcastFormState = {
   id?: string
@@ -37,7 +39,7 @@ type BroadcastFormState = {
   channelIds: string[]
   recipientCriteria: Record<string, unknown>
   scheduledAt: string
-  status: string
+  status: Option
   totalRecipients: number
   sentCount: number
   failedCount: number
@@ -51,7 +53,7 @@ const defaultFormState: BroadcastFormState = {
   channelIds: [],
   recipientCriteria: {},
   scheduledAt: '',
-  status: 'draft',
+  status: {value:'draft', label:'Draft'},
   totalRecipients: 0,
   sentCount: 0,
   failedCount: 0,
@@ -104,7 +106,7 @@ export function BroadcastsPage() {
       channelIds: (row.channelIds as string[]) ?? [],
       recipientCriteria: (row.recipientCriteria as Record<string, unknown>) ?? {},
       scheduledAt: getString(row.scheduledAt),
-      status: getString(row.status) || 'draft',
+      status: getOption(row.status) || getOption('draft'),
       totalRecipients: Number(row.totalRecipients ?? 0),
       sentCount: Number(row.sentCount ?? 0),
       failedCount: Number(row.failedCount ?? 0),
@@ -165,20 +167,24 @@ export function BroadcastsPage() {
           render:
             col.key === 'status'
               ? (value: any) => (
-                  <Badge variant="light">
-                    {getString(value)}
-                  </Badge>
-                )
+                <Badge variant="light">
+                  {getString(value)}
+                </Badge>
+              )
               : undefined,
         }))}
         isLoading={isLoading}
         searchValue={search}
         onSearchChange={setSearch}
-        actions={[
-          { label: 'View JSON', onClick: openJson },
-          { label: 'Edit', onClick: openEdit },
-          { label: 'Delete', onClick: openDelete },
-        ]}
+        actionCellProps={{
+          actions: [
+            { label: 'View JSON', onClick: openJson },
+            { label: 'Edit', onClick: openEdit },
+            { label: 'Delete', onClick: openDelete },
+          ]
+        }
+        }
+
       />
 
       {/* FORM MODAL */}
@@ -226,7 +232,7 @@ export function BroadcastsPage() {
                 options={BROADCAST_STATUS_OPTIONS}
                 value={formState.status}
                 onChange={(value) =>
-                  setFormState((p) => ({ ...p, status: value }))
+                  setFormState((p: any) => ({ ...p, status: value }))
                 }
               />
             </Grid.Col>

@@ -12,9 +12,9 @@ import {
   Switch,
 } from '@mantine/core'
 
-import { JsonEditorField } from '@/features/components/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/paginated-data-table'
-import { RxPage } from '@/features/components/rx-page'
+import { JsonEditorField } from '@/features/components/form/json-editor-field'
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
+import { RxPage } from '@/features/components/page/rx-page'
 import { SelectField } from '@/features/components/form/select'
 
 import { NOTIFICATION_TYPE_OPTIONS } from '../types/constants'
@@ -23,17 +23,19 @@ import {
   JsonPreviewDialog,
   getDirtyPayload,
   getObject,
+  getOption,
   getString,
   normalizeRows,
   useCommunicationCrud,
   useCommunicationList,
 } from './shared'
+import { Option } from '@/features/rxsoft/types'
 
 type NotificationTemplateFormState = {
   id?: string
   name: string
   description: string
-  type: string
+  type: Option
   title: string
   message: string
   actionUrl: string
@@ -46,7 +48,7 @@ type NotificationTemplateFormState = {
 const defaultFormState: NotificationTemplateFormState = {
   name: '',
   description: '',
-  type: 'info',
+  type: getOption('info'),
   title: '',
   message: '',
   actionUrl: '',
@@ -93,7 +95,7 @@ export function NotificationTemplatesPage() {
       id: getString(row.id),
       name: getString(row.name),
       description: getString(row.description),
-      type: getString(row.type),
+      type: getOption(row.type),
       title: getString(row.title),
       message: getString(row.message),
       actionUrl: getString(row.actionUrl),
@@ -162,7 +164,7 @@ export function NotificationTemplatesPage() {
               label="Type"
               options={NOTIFICATION_TYPE_OPTIONS}
               value={form.type}
-              onChange={(value) => setForm((p) => ({ ...p, type: value }))}
+              onChange={(value) => setForm((p: any) => ({ ...p, type: value }))}
             />
           </Grid.Col>
         </Grid>
@@ -243,8 +245,7 @@ export function NotificationTemplatesPage() {
         isLoading={isLoading}
         searchValue={search}
         onSearchChange={setSearch}
-        actions={actions}
-        keyExtractor={(row) => row.id}
+        actionCellProps={{actions}}
       />
 
       {/* Create */}

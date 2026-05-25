@@ -1,21 +1,22 @@
 import { z } from 'zod'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link } from '@tanstack/react-router'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Switch } from '@/components/ui/switch'
+  Box,
+  Button,
+  Checkbox,
+  Group,
+  Paper,
+  Radio,
+  Stack,
+  Switch,
+  Text,
+  Title,
+} from '@mantine/core'
+
+import { showSubmittedData } from '@/lib/show-submitted-data'
 
 const notificationsFormSchema = z.object({
   type: z.enum(['all', 'mentions', 'none'], {
@@ -31,9 +32,10 @@ const notificationsFormSchema = z.object({
   security_emails: z.boolean(),
 })
 
-type NotificationsFormValues = z.infer<typeof notificationsFormSchema>
+type NotificationsFormValues = z.infer<
+  typeof notificationsFormSchema
+>
 
-// This can come from your database or API.
 const defaultValues: Partial<NotificationsFormValues> = {
   communication_emails: false,
   marketing_emails: false,
@@ -47,174 +49,217 @@ export function NotificationsForm() {
     defaultValues,
   })
 
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = form
+
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((data) => showSubmittedData(data))}
-        className='space-y-8'
-      >
-        <FormField
-          control={form.control}
-          name='type'
-          render={({ field }) => (
-            <FormItem className='relative space-y-3'>
-              <FormLabel>Notify me about...</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className='flex flex-col gap-2'
-                >
-                  <FormItem className='flex items-center'>
-                    <FormControl>
-                      <RadioGroupItem value='all' />
-                    </FormControl>
-                    <FormLabel className='font-normal'>
-                      All new messages
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className='flex items-center'>
-                    <FormControl>
-                      <RadioGroupItem value='mentions' />
-                    </FormControl>
-                    <FormLabel className='font-normal'>
-                      Direct messages and mentions
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className='flex items-center'>
-                    <FormControl>
-                      <RadioGroupItem value='none' />
-                    </FormControl>
-                    <FormLabel className='font-normal'>Nothing</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+    <Box
+      component="form"
+      onSubmit={handleSubmit((data) =>
+        showSubmittedData(data)
+      )}
+    >
+      <Stack gap="xl">
+        {/* Notification Type */}
+        <Box>
+          <Text fw={500} mb="sm">
+            Notify me about...
+          </Text>
+
+          <Controller
+            control={control}
+            name="type"
+            render={({ field }) => (
+              <Radio.Group
+                value={field.value}
+                onChange={field.onChange}
+              >
+                <Stack gap="xs">
+                  <Radio
+                    value="all"
+                    label="All new messages"
+                  />
+
+                  <Radio
+                    value="mentions"
+                    label="Direct messages and mentions"
+                  />
+
+                  <Radio
+                    value="none"
+                    label="Nothing"
+                  />
+                </Stack>
+              </Radio.Group>
+            )}
+          />
+
+          {errors.type && (
+            <Text c="red" size="sm" mt="xs">
+              {errors.type.message}
+            </Text>
           )}
-        />
-        <div className='relative'>
-          <h3 className='mb-4 text-lg font-medium'>Email Notifications</h3>
-          <div className='space-y-4'>
-            <FormField
-              control={form.control}
-              name='communication_emails'
+        </Box>
+
+        {/* Email Notifications */}
+        <Box>
+          <Title order={3} mb="md">
+            Email Notifications
+          </Title>
+
+          <Stack gap="md">
+            <Controller
+              control={control}
+              name="communication_emails"
               render={({ field }) => (
-                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-                  <div className='space-y-0.5'>
-                    <FormLabel className='text-base'>
-                      Communication emails
-                    </FormLabel>
-                    <FormDescription>
-                      Receive emails about your account activity.
-                    </FormDescription>
-                  </div>
-                  <FormControl>
+                <Paper withBorder p="md" radius="md">
+                  <Group justify="space-between" align="center">
+                    <Box>
+                      <Text fw={500}>
+                        Communication emails
+                      </Text>
+
+                      <Text size="sm" c="dimmed">
+                        Receive emails about your account
+                        activity.
+                      </Text>
+                    </Box>
+
                     <Switch
                       checked={field.value}
-                      onCheckedChange={field.onChange}
+                      onChange={(event) =>
+                        field.onChange(
+                          event.currentTarget.checked
+                        )
+                      }
                     />
-                  </FormControl>
-                </FormItem>
+                  </Group>
+                </Paper>
               )}
             />
-            <FormField
-              control={form.control}
-              name='marketing_emails'
+
+            <Controller
+              control={control}
+              name="marketing_emails"
               render={({ field }) => (
-                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-                  <div className='space-y-0.5'>
-                    <FormLabel className='text-base'>
-                      Marketing emails
-                    </FormLabel>
-                    <FormDescription>
-                      Receive emails about new products, features, and more.
-                    </FormDescription>
-                  </div>
-                  <FormControl>
+                <Paper withBorder p="md" radius="md">
+                  <Group justify="space-between" align="center">
+                    <Box>
+                      <Text fw={500}>
+                        Marketing emails
+                      </Text>
+
+                      <Text size="sm" c="dimmed">
+                        Receive emails about new products,
+                        features, and more.
+                      </Text>
+                    </Box>
+
                     <Switch
                       checked={field.value}
-                      onCheckedChange={field.onChange}
+                      onChange={(event) =>
+                        field.onChange(
+                          event.currentTarget.checked
+                        )
+                      }
                     />
-                  </FormControl>
-                </FormItem>
+                  </Group>
+                </Paper>
               )}
             />
-            <FormField
-              control={form.control}
-              name='social_emails'
+
+            <Controller
+              control={control}
+              name="social_emails"
               render={({ field }) => (
-                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-                  <div className='space-y-0.5'>
-                    <FormLabel className='text-base'>Social emails</FormLabel>
-                    <FormDescription>
-                      Receive emails for friend requests, follows, and more.
-                    </FormDescription>
-                  </div>
-                  <FormControl>
+                <Paper withBorder p="md" radius="md">
+                  <Group justify="space-between" align="center">
+                    <Box>
+                      <Text fw={500}>Social emails</Text>
+
+                      <Text size="sm" c="dimmed">
+                        Receive emails for friend requests,
+                        follows, and more.
+                      </Text>
+                    </Box>
+
                     <Switch
                       checked={field.value}
-                      onCheckedChange={field.onChange}
+                      onChange={(event) =>
+                        field.onChange(
+                          event.currentTarget.checked
+                        )
+                      }
                     />
-                  </FormControl>
-                </FormItem>
+                  </Group>
+                </Paper>
               )}
             />
-            <FormField
-              control={form.control}
-              name='security_emails'
+
+            <Controller
+              control={control}
+              name="security_emails"
               render={({ field }) => (
-                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-                  <div className='space-y-0.5'>
-                    <FormLabel className='text-base'>Security emails</FormLabel>
-                    <FormDescription>
-                      Receive emails about your account activity and security.
-                    </FormDescription>
-                  </div>
-                  <FormControl>
+                <Paper withBorder p="md" radius="md">
+                  <Group justify="space-between" align="center">
+                    <Box>
+                      <Text fw={500}>Security emails</Text>
+
+                      <Text size="sm" c="dimmed">
+                        Receive emails about your account
+                        activity and security.
+                      </Text>
+                    </Box>
+
                     <Switch
                       checked={field.value}
-                      onCheckedChange={field.onChange}
                       disabled
-                      aria-readonly
+                      readOnly
                     />
-                  </FormControl>
-                </FormItem>
+                  </Group>
+                </Paper>
               )}
             />
-          </div>
-        </div>
-        <FormField
-          control={form.control}
-          name='mobile'
-          render={({ field }) => (
-            <FormItem className='relative flex flex-row items-start'>
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className='space-y-1 leading-none'>
-                <FormLabel>
-                  Use different settings for my mobile devices
-                </FormLabel>
-                <FormDescription>
-                  You can manage your mobile notifications in the{' '}
+          </Stack>
+        </Box>
+
+        {/* Mobile Settings */}
+        <Box>
+          <Checkbox
+            label={
+              <Box>
+                <Text fw={500}>
+                  Use different settings for my mobile
+                  devices
+                </Text>
+
+                <Text size="sm" c="dimmed">
+                  You can manage your mobile notifications
+                  in the{' '}
                   <Link
-                    to='/settings'
-                    className='underline decoration-dashed underline-offset-4 hover:decoration-solid'
+                    to="/settings"
+                    style={{
+                      textDecoration: 'underline',
+                    }}
                   >
                     mobile settings
                   </Link>{' '}
                   page.
-                </FormDescription>
-              </div>
-            </FormItem>
-          )}
-        />
-        <Button type='submit'>Update notifications</Button>
-      </form>
-    </Form>
+                </Text>
+              </Box>
+            }
+            {...register('mobile')}
+          />
+        </Box>
+
+        <Button type="submit" w="fit-content">
+          Update notifications
+        </Button>
+      </Stack>
+    </Box>
   )
 }

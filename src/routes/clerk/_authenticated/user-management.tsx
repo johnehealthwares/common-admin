@@ -6,179 +6,269 @@ import {
   useNavigate,
   useRouter,
 } from '@tanstack/react-router'
-import { SignedIn, useAuth, UserButton } from '@clerk/clerk-react'
-import { ExternalLink, Loader2 } from 'lucide-react'
-import { ClerkLogo } from '@/assets/clerk-logo'
-import { Button } from '@/components/ui/button'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { LearnMore } from '@/components/learn-more'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { UsersDialogs } from '@/features/users/components/users-dialogs'
-import { UsersPrimaryButtons } from '@/features/users/components/users-primary-buttons'
-import { UsersProvider } from '@/features/users/components/users-provider'
-import { UsersTable } from '@/features/users/components/users-table'
-import { users } from '@/features/users/data/users'
+import {
+  ActionIcon,
+  Alert,
+  AppShell,
+  Button,
+  Container,
+  Flex,
+  Group,
+  Loader,
+  Paper,
+  Stack,
+  Table,
+  Text,
+  Title,
+} from '@mantine/core'
+import { ArrowLeft, ExternalLink, Moon, Sun, Users } from 'lucide-react'
 
 export const Route = createFileRoute('/clerk/_authenticated/user-management')({
   component: UserManagement,
 })
 
+type User = {
+  id: number
+  name: string
+  email: string
+  role: string
+}
+
+const users: User[] = [
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john@example.com',
+    role: 'Admin',
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    role: 'Editor',
+  },
+  {
+    id: 3,
+    name: 'Mike Johnson',
+    email: 'mike@example.com',
+    role: 'Viewer',
+  },
+]
+
 function UserManagement() {
   const search = Route.useSearch()
   const navigate = Route.useNavigate()
 
-  const [opened, setOpened] = useState(true)
-  const { isLoaded, isSignedIn } = useAuth()
+  const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [dark, setDark] = useState(false)
 
-  if (!isLoaded) {
+  // Replace with your own auth check
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+
+    setTimeout(() => {
+      setIsAuthenticated(!!token)
+      setLoading(false)
+    }, 800)
+  }, [])
+
+  if (loading) {
     return (
-      <div className='flex h-svh items-center justify-center'>
-        <Loader2 className='size-8 animate-spin' />
-      </div>
+      <Flex h='100vh' align='center' justify='center'>
+        <Loader size='lg' />
+      </Flex>
     )
   }
 
-  if (!isSignedIn) {
+  if (!isAuthenticated) {
     return <Unauthorized />
   }
 
   return (
-    <>
-      <SignedIn>
-        <UsersProvider>
-          <Header fixed>
-            <Search />
-            <div className='ms-auto flex items-center space-x-4'>
-              <ThemeSwitch />
-              <UserButton />
-            </div>
-          </Header>
+    <AppShell padding='md'>
+      <AppShell.Header>
+        <Flex
+          h='100%'
+          px='md'
+          align='center'
+          justify='space-between'
+        >
+          <Group>
+            <Users size={22} />
+            <Title order={4}>User Management</Title>
+          </Group>
 
-          <Main>
-            <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
+          <Group>
+            <ActionIcon
+              variant='default'
+              size='lg'
+              onClick={() => setDark((v) => !v)}
+            >
+              {dark ? <Sun size={18} /> : <Moon size={18} />}
+            </ActionIcon>
+
+            <Button
+              variant='light'
+              color='red'
+              onClick={() => {
+                localStorage.removeItem('token')
+                navigate({ to: '/sign-in' })
+              }}
+            >
+              Sign Out
+            </Button>
+          </Group>
+        </Flex>
+      </AppShell.Header>
+
+      <AppShell.Main>
+        <Container size='xl'>
+          <Stack gap='lg'>
+            <Flex justify='space-between' align='center' wrap='wrap'>
               <div>
-                <h2 className='text-2xl font-bold tracking-tight'>User List</h2>
-                <div className='flex gap-1'>
-                  <p className='text-muted-foreground'>
+                <Title order={2}>User List</Title>
+
+                <Group gap={6} mt={4}>
+                  <Text c='dimmed'>
                     Manage your users and their roles here.
-                  </p>
-                  <LearnMore
-                    open={opened}
-                    onOpenChange={setOpened}
-                    contentProps={{ side: 'right' }}
+                  </Text>
+
+                  <Link
+                    to='/users'
+                    style={{
+                      color: '#228be6',
+                      textDecoration: 'underline',
+                    }}
                   >
-                    <p>
-                      This is the same as{' '}
-                      <Link
-                        to='/users'
-                        className='text-blue-500 underline decoration-dashed underline-offset-2'
-                      >
-                        '/users'
-                      </Link>
-                    </p>
+                    Learn More
+                  </Link>
 
-                    <p className='mt-4'>
-                      You can sign out or manage/delete your account via the
-                      User Profile menu in the top-right corner of the page.
-                      <ExternalLink className='inline-block size-4' />
-                    </p>
-                  </LearnMore>
-                </div>
+                  <ExternalLink size={16} />
+                </Group>
               </div>
-              <UsersPrimaryButtons />
-            </div>
-            <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-              <UsersTable data={users} navigate={navigate} search={search} />
-            </div>
-          </Main>
 
-          <UsersDialogs />
-        </UsersProvider>
-      </SignedIn>
-    </>
+              <Button>Add User</Button>
+            </Flex>
+
+            <Paper withBorder radius='md' p='md'>
+              <Table striped highlightOnHover>
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th>ID</Table.Th>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Th>Email</Table.Th>
+                    <Table.Th>Role</Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+
+                <Table.Tbody>
+                  {users.map((user) => (
+                    <Table.Tr key={user.id}>
+                      <Table.Td>{user.id}</Table.Td>
+                      <Table.Td>{user.name}</Table.Td>
+                      <Table.Td>{user.email}</Table.Td>
+                      <Table.Td>{user.role}</Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
+            </Paper>
+          </Stack>
+        </Container>
+      </AppShell.Main>
+    </AppShell>
   )
 }
 
-const COUNTDOWN = 5 // Countdown second
+const COUNTDOWN = 5
 
 function Unauthorized() {
   const navigate = useNavigate()
   const { history } = useRouter()
 
-  const [opened, setOpened] = useState(true)
   const [cancelled, setCancelled] = useState(false)
   const [countdown, setCountdown] = useState(COUNTDOWN)
 
-  // Set and run the countdown conditionally
   useEffect(() => {
-    if (cancelled || opened) return
+    if (cancelled) return
+
     const interval = setInterval(() => {
       setCountdown((prev) => (prev > 0 ? prev - 1 : 0))
     }, 1000)
-    return () => clearInterval(interval)
-  }, [cancelled, opened])
 
-  // Navigate to sign-in page when countdown hits 0
+    return () => clearInterval(interval)
+  }, [cancelled])
+
   useEffect(() => {
-    if (countdown > 0) return
-    navigate({ to: '/clerk/sign-in' })
+    if (countdown === 0) {
+      navigate({ to: '/sign-in' })
+    }
   }, [countdown, navigate])
 
   return (
-    <div className='h-svh'>
-      <div className='m-auto flex h-full w-full flex-col items-center justify-center gap-2'>
-        <h1 className='text-[7rem] leading-tight font-bold'>401</h1>
-        <span className='font-medium'>Unauthorized Access</span>
-        <p className='text-center text-muted-foreground'>
-          You must be authenticated via Clerk{' '}
-          <sup>
-            <LearnMore open={opened} onOpenChange={setOpened}>
-              <p>
-                This is the same as{' '}
-                <Link
-                  to='/users'
-                  className='text-blue-500 underline decoration-dashed underline-offset-2'
-                >
-                  '/users'
-                </Link>
-                .{' '}
-              </p>
-              <p>You must first sign in using Clerk to access this route. </p>
+    <Flex h='100vh' align='center' justify='center' p='md'>
+      <Paper
+        shadow='md'
+        radius='lg'
+        p='xl'
+        withBorder
+        maw={500}
+        w='100%'
+      >
+        <Stack align='center'>
+          <Title order={1} fz='7rem'>
+            401
+          </Title>
 
-              <p className='mt-4'>
-                After signing in, you'll be able to sign out or delete your
-                account via the User Profile dropdown on this page.
-              </p>
-            </LearnMore>
-          </sup>
-          <br />
-          to access this resource.
-        </p>
-        <div className='mt-6 flex gap-4'>
-          <Button variant='outline' onClick={() => history.go(-1)}>
-            Go Back
-          </Button>
-          <Button onClick={() => navigate({ to: '/clerk/sign-in' })}>
-            <ClerkLogo className='invert' /> Sign in
-          </Button>
-        </div>
-        <div className='mt-4 h-8 text-center'>
-          {!cancelled && !opened && (
-            <>
-              <p>
+          <Title order={3}>Unauthorized Access</Title>
+
+          <Text ta='center' c='dimmed'>
+            You must sign in to access this resource.
+          </Text>
+
+          <Alert
+            variant='light'
+            color='yellow'
+            title='Authentication Required'
+            w='100%'
+          >
+            Sign in to continue to the protected route.
+          </Alert>
+
+          <Group mt='md'>
+            <Button
+              variant='default'
+              leftSection={<ArrowLeft size={16} />}
+              onClick={() => history.go(-1)}
+            >
+              Go Back
+            </Button>
+
+            <Button onClick={() => navigate({ to: '/sign-in' })}>
+              Sign In
+            </Button>
+          </Group>
+
+          {!cancelled && (
+            <Stack gap={4} align='center' mt='md'>
+              <Text size='sm'>
                 {countdown > 0
-                  ? `Redirecting to Sign In page in ${countdown}s`
-                  : `Redirecting...`}
-              </p>
-              <Button variant='link' onClick={() => setCancelled(true)}>
+                  ? `Redirecting in ${countdown}s`
+                  : 'Redirecting...'}
+              </Text>
+
+              <Button
+                variant='subtle'
+                size='xs'
+                onClick={() => setCancelled(true)}
+              >
                 Cancel Redirect
               </Button>
-            </>
+            </Stack>
           )}
-        </div>
-      </div>
-    </div>
+        </Stack>
+      </Paper>
+    </Flex>
   )
 }

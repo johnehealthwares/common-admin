@@ -1,6 +1,17 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxJournalsPage() {
+   const [formState, setFormState] = useState<Record<string, unknown>>({});
+        const updateField = (name: string, value: unknown) => {
+          setFormState((current: any) => ({
+            ...current,
+            [name]: value,
+          }))
+          console.log({ formState })
+        }
+          
+  
   return (
     <DataPageShell
       title='Journals'
@@ -20,11 +31,10 @@ export function RxJournalsPage() {
         { name: 'defaultCreditAccountId', label: 'Default Credit Account ID' },
         { name: 'isActive', label: 'Active', type: 'switch', defaultValue: true },
       ]}
-      sortOptions={[
-        { value: 'updatedAt', label: 'Updated' },
-        { value: 'code', label: 'Code' },
-      ]}
       canDelete
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
     />
   )
 }

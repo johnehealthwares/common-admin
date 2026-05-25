@@ -15,9 +15,9 @@ import {
 } from '@mantine/core'
 
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { JsonEditorField } from '@/features/components/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/paginated-data-table'
-import { RxPage } from '@/features/components/rx-page'
+import { JsonEditorField } from '@/features/components/form/json-editor-field'
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
+import { RxPage } from '@/features/components/page/rx-page'
 import { SelectField } from '@/features/components/form/select'
 import {
   MESSAGE_TYPE_OPTIONS,
@@ -33,7 +33,9 @@ import {
   useCommunicationCrud,
   useCommunicationList,
   CommunicationRow,
+  getOption,
 } from './shared'
+import { Option } from '@/features/rxsoft/types'
 
 type MessageFormState = {
   id?: string
@@ -42,10 +44,10 @@ type MessageFormState = {
   recipientPhone: string
   channelId: string
   templateId: string
-  messageType: string
+  messageType: Option
   subject: string
   content: string
-  priority: string
+  priority: Option
   status: string
   scheduledAt: string
   metadata: Record<string, unknown>
@@ -57,10 +59,10 @@ const defaultFormState: MessageFormState = {
   recipientPhone: '',
   channelId: '',
   templateId: '',
-  messageType: 'text',
+  messageType: getOption('text'),
   subject: '',
   content: '',
-  priority: 'normal',
+  priority: getOption('normal'),
   status: 'draft',
   scheduledAt: '',
   metadata: {},
@@ -185,7 +187,7 @@ export function MessagesPage() {
                 options={MESSAGE_TYPE_OPTIONS}
                 value={formState.messageType}
                 onChange={(v) =>
-                  setFormState((p) => ({ ...p, messageType: v }))
+                  setFormState((p: any) => ({ ...p, messageType: v }))
                 }
               />
             </Grid.Col>
@@ -196,7 +198,7 @@ export function MessagesPage() {
                 options={MESSAGE_PRIORITY_OPTIONS}
                 value={formState.priority}
                 onChange={(v) =>
-                  setFormState((p) => ({ ...p, priority: v }))
+                  setFormState((p: any) => ({ ...p, priority: v }))
                 }
               />
             </Grid.Col>

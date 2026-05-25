@@ -3,9 +3,9 @@ import { Plus } from 'lucide-react'
 import { Button, Modal, TextInput, Textarea, Stack, Grid, Checkbox, Group } from '@mantine/core'
 
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { JsonEditorField } from '@/features/components/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/paginated-data-table'
-import { RxPage } from '@/features/components/rx-page'
+import { JsonEditorField } from '@/features/components/form/json-editor-field'
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
+import { RxPage } from '@/features/components/page/rx-page'
 import { SelectField } from '@/features/components/form/select'
 import { CHANNEL_TYPE_OPTIONS } from '../types/constants'
 import {
@@ -17,13 +17,15 @@ import {
   useCommunicationCrud,
   useCommunicationList,
   CommunicationRow,
+  getOption,
 } from './shared'
+import { Option } from '@/features/rxsoft/types'
 
 type CommunicationChannelFormState = {
   id?: string
   name: string
   description: string
-  type: string
+  type: Option
   provider: string
   config: Record<string, unknown>
   isActive: boolean
@@ -35,7 +37,7 @@ type CommunicationChannelFormState = {
 const defaultFormState: CommunicationChannelFormState = {
   name: '',
   description: '',
-  type: 'email',
+  type: getOption('email'),
   provider: '',
   config: {},
   isActive: true,
@@ -86,7 +88,7 @@ export function CommunicationChannelsPage() {
       id: String(row.id),
       name: String(row.name ?? ''),
       description: String(row.description ?? ''),
-      type: String(row.type ?? 'email'),
+      type: getOption(row.type ?? 'email'),
       provider: String(row.provider ?? ''),
       config: (row.config as Record<string, unknown>) ?? {},
       isActive: Boolean(row.isActive),
@@ -166,7 +168,7 @@ export function CommunicationChannelsPage() {
                 label="Type"
                 options={CHANNEL_TYPE_OPTIONS}
                 value={formState.type}
-                onChange={(value) =>
+                onChange={(value: any) =>
                   setFormState(p => ({ ...p, type: value }))
                 }
               />

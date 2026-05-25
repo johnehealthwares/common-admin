@@ -14,7 +14,7 @@ import {
   Grid,
 } from '@mantine/core'
 
-import { RxPage } from '@/features/components/rx-page'
+import { RxPage } from '@/features/components/page/rx-page'
 import { codingConceptApi } from '@/lib/coding-concept-api'
 import {
   ConceptSummaryCard,

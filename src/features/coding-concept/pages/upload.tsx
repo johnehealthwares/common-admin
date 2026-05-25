@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { FileUp, Upload } from 'lucide-react'
-import { RxPage } from '@/features/components/rx-page'
+import { RxPage } from '@/features/components/page/rx-page'
 import { codingConceptApi } from '@/lib/coding-concept-api'
 import { notifications } from '@mantine/notifications'
 import {

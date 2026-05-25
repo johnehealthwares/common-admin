@@ -1,22 +1,51 @@
-import { Separator } from '@/components/ui/separator'
+import { ReactNode } from 'react'
+import { Box, Divider, Stack, Text, Title } from '@mantine/core'
 
 type ContentSectionProps = {
   title: string
   desc: string
-  children: React.JSX.Element
+  children: ReactNode
 }
 
-export function ContentSection({ title, desc, children }: ContentSectionProps) {
+export function ContentSection({
+  title,
+  desc,
+  children,
+}: ContentSectionProps) {
   return (
-    <div className='flex flex-1 flex-col'>
-      <div className='flex-none'>
-        <h3 className='text-lg font-medium'>{title}</h3>
-        <p className='text-sm text-muted-foreground'>{desc}</p>
-      </div>
-      <Separator className='my-4 flex-none' />
-      <div className='faded-bottom h-full w-full overflow-y-auto scroll-smooth pe-4 pb-12'>
-        <div className='-mx-1 px-1.5 lg:max-w-xl'>{children}</div>
-      </div>
-    </div>
+    <Stack h="100%" flex={1} gap={0}>
+      <Box>
+        <Title order={3} size="lg">
+          {title}
+        </Title>
+
+        <Text size="sm" c="dimmed">
+          {desc}
+        </Text>
+      </Box>
+
+      <Divider my="md" />
+
+      <Box
+        style={{
+          height: '100%',
+          width: '100%',
+          overflowY: 'auto',
+          scrollBehavior: 'smooth',
+          paddingRight: '1rem',
+          paddingBottom: '3rem',
+        }}
+      >
+        <Box
+          style={{
+            marginInline: '-0.25rem',
+            paddingInline: '0.375rem',
+            maxWidth: '36rem',
+          }}
+        >
+          {children}
+        </Box>
+      </Box>
+    </Stack>
   )
 }

@@ -1,6 +1,17 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxPriceListsPage() {
+   const [formState, setFormState] = useState<Record<string, unknown>>({});
+        const updateField = (name: string, value: unknown) => {
+          setFormState((current: any) => ({
+            ...current,
+            [name]: value,
+          }))
+          console.log({ formState })
+        }
+          
+  
   return (
     <DataPageShell
       title='Price Lists'
@@ -18,12 +29,11 @@ export function RxPriceListsPage() {
         { name: 'isDefault', label: 'Default', type: 'switch', defaultValue: false },
         { name: 'isActive', label: 'Active', type: 'switch', defaultValue: true },
       ]}
-      sortOptions={[
-        { value: 'updatedAt', label: 'Updated' },
-        { value: 'createdAt', label: 'Created' },
-        { value: 'code', label: 'Code' },
-      ]}
       canDelete
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
+      buildUpdatePayload={({id, createdAt, updatedAt, organizationId, ...rest}) => ({...rest})}
     />
   )
 }

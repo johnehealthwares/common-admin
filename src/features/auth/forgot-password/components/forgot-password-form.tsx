@@ -4,22 +4,15 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowRight, Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep, cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { sleep } from '@/lib/utils'
+
+import { Button, TextInput, Stack } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 
 const formSchema = z.object({
   email: z.email({
-    error: (iss) => (iss.input === '' ? 'Please enter your email' : undefined),
+    error: (iss) =>
+      iss.input === '' ? 'Please enter your email' : undefined,
   }),
 })
 
@@ -35,48 +28,68 @@ export function ForgotPasswordForm({
     defaultValues: { email: '' },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    // eslint-disable-next-line no-console
-    console.log(data)
 
-    toast.promise(sleep(2000), {
-      loading: 'Sending email...',
-      success: () => {
-        setIsLoading(false)
-        form.reset()
-        navigate({ to: '/otp' })
-        return `Email sent to ${data.email}`
-      },
-      error: 'Error',
+    notifications.show({
+      id: 'forgot-password',
+      loading: true,
+      title: 'Sending email...',
+      message: 'Please wait while we send your reset link',
+      autoClose: false,
+      withCloseButton: false,
     })
+
+    try {
+      await sleep(2000)
+
+      form.reset()
+      navigate({ to: '/otp' })
+
+      notifications.update({
+        id: 'forgot-password',
+        color: 'teal',
+        title: 'Email sent',
+        message: `Email sent to ${data.email}`,
+        loading: false,
+        autoClose: 3000,
+      })
+    } catch (err) {
+      notifications.update({
+        id: 'forgot-password',
+        color: 'red',
+        title: 'Error',
+        message: 'Something went wrong',
+        loading: false,
+        autoClose: 3000,
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className={cn('grid gap-2', className)}
-        {...props}
-      >
-        <FormField
-          control={form.control}
-          name='email'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder='name@example.com' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className={className}
+      {...props}
+    >
+      <Stack gap="sm">
+        <TextInput
+          label="Email"
+          placeholder="name@example.com"
+          {...form.register('email')}
+          error={form.formState.errors.email?.message}
         />
-        <Button className='mt-2' disabled={isLoading}>
+
+        <Button
+          type="submit"
+          loading={isLoading}
+          rightSection={!isLoading ? <ArrowRight size={16} /> : <Loader2 size={16} className="animate-spin" />}
+        >
           Continue
-          {isLoading ? <Loader2 className='animate-spin' /> : <ArrowRight />}
         </Button>
-      </form>
-    </Form>
+      </Stack>
+    </form>
   )
 }

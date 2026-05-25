@@ -1,14 +1,17 @@
 import { Option } from '@/features/rxsoft/types'
-import { Select, Text } from '@mantine/core'
+import { Select } from '@mantine/core'
 
 type SelectFieldProps = {
-  value: string
+  value: Option | null
   options: Option[]
-  onChange: (value: string) => void
+  onChange: (option: Option | null) => void
   placeholder?: string
   label?: string
   className?: string
   disabled?: boolean
+  error?: string
+  onBlur?: () => void
+  onFocus?: () => void
 }
 
 export function SelectField({
@@ -19,22 +22,20 @@ export function SelectField({
   label,
   className,
   disabled,
+  error,
 }: SelectFieldProps) {
+
   return (
-    <div className={className ?? 'w-full'}>
       <Select
         label={label}
-        value={value}
-        onChange={(val) => onChange(val ?? '')}
-        data={options.map((option) => ({
-          value: option.value,
-          label: option.label,
-        }))}
+        value={(value)?.value as string}
+        onChange={(value, option) => {onChange(option)}}
+        data={options}
         placeholder={placeholder}
         disabled={disabled}
-        clearable
-        searchable
+        clearable={true}
+        searchable={false}
+        error={error}
       />
-    </div>
   )
 }

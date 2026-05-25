@@ -5,11 +5,13 @@ import { ChevronsUpDown } from 'lucide-react'
 import { Option } from '../../rxsoft/types'
 
 type MultiSelectFieldProps = {
-  value: string[]
+  value: Option[]
   options: Option[]
-  onChange: (value: string[]) => void
+  onChange: (value: Option[]) => void
   placeholder: string
   triggerClassName?: string
+  disabled?: boolean
+  error?: string
 }
 
 export function MultiSelectField({
@@ -17,19 +19,21 @@ export function MultiSelectField({
   options,
   onChange,
   placeholder,
+  error
 }: MultiSelectFieldProps) {
   const [opened, setOpened] = useState(false)
 
-  const toggleValue = (val: string) => {
-    if (value.includes(val)) {
-      onChange(value.filter((v) => v !== val))
+  const toggleValue = (val: Option) => {
+    const index = value.findIndex((v) => v.value === val.value)
+    if (index >= 0) {
+      onChange(value.splice(index, 1)) //remove
     } else {
-      onChange([...value, val])
+      onChange([...value, val]) //add
     }
   }
 
   const selectedLabels = options
-    .filter((o) => value.includes(o.value))
+    .filter((o) => value.filter(v => o.value === v.value))
     .map((o) => o.label)
 
   return (
@@ -45,7 +49,7 @@ export function MultiSelectField({
             },
           }}
         >
-          <Text size="sm" c={selectedLabels.length ? 'black' : 'dimmed'}>
+          <Text size="sm" c={selectedLabels.length ? 'black' : 'dimmed'} >
             {selectedLabels.length > 0
               ? selectedLabels.join(', ')
               : placeholder}
@@ -59,8 +63,8 @@ export function MultiSelectField({
             <Checkbox
               key={option.value}
               label={option.label}
-              checked={value.includes(option.value)}
-              onChange={() => toggleValue(option.value)}
+              checked={Boolean(value.find(v => v.value === option.value))}
+              onChange={() => toggleValue(option)}
             />
           ))}
         </Group>

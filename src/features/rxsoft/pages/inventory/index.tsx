@@ -13,13 +13,22 @@ import {
 
 import { notifications } from '@mantine/notifications'
 import { rxsoftApi } from '@/lib/rxsoft-api'
-import { RxPage } from '../../../components/rx-page'
-import { DataPageShell } from '../../../components/data-page-shell'
+import { RxPage } from '../../../components/page/rx-page'
+import { DataPageShell } from '../../../components/page/data-page-shell'
 
 export function RxInventoryPage() {
   const [stockBalanceId, setStockBalanceId] = useState('')
   const [deltaQuantity, setDeltaQuantity] = useState('')
   const [reason, setReason] = useState('')
+  const [formState1, setFormState1] = useState<Record<string, unknown>>({})
+  const [formState2, setFormState2] = useState<Record<string, unknown>>({})
+
+  const updateField1 = (code: string, value: unknown) => {
+  }
+
+  const updateField2 = (code: string, value: unknown) => {
+
+  }
 
   const adjustmentMutation = useMutation({
     mutationFn: async () => {
@@ -64,8 +73,10 @@ export function RxInventoryPage() {
             { key: 'locationId', label: 'Location' },
             { key: 'quantityOnHand', label: 'On Hand' },
           ]}
-          embedded
-        />
+          formState={formState1}
+          setFormState={setFormState1}
+          updateField={updateField1}
+      />
 
         {/* STOCK MOVEMENTS */}
         <DataPageShell
@@ -79,7 +90,9 @@ export function RxInventoryPage() {
             { key: 'quantity', label: 'Quantity' },
             { key: 'createdAt', label: 'Created' },
           ]}
-          embedded
+          formState={formState2}
+          setFormState={setFormState2}
+          updateField={updateField2}
         />
 
         {/* ADJUSTMENT FORM */}

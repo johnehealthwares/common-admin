@@ -1,18 +1,17 @@
 import { z } from 'zod'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+  Box,
+  Button,
+  Checkbox,
+  Group,
+  Stack,
+  Text,
+} from '@mantine/core'
+
+import { showSubmittedData } from '@/lib/show-submitted-data'
 
 const items = [
   {
@@ -42,14 +41,17 @@ const items = [
 ] as const
 
 const displayFormSchema = z.object({
-  items: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'You have to select at least one item.',
-  }),
+  items: z
+    .array(z.string())
+    .refine((value) => value.some((item) => item), {
+      message: 'You have to select at least one item.',
+    }),
 })
 
-type DisplayFormValues = z.infer<typeof displayFormSchema>
+type DisplayFormValues = z.infer<
+  typeof displayFormSchema
+>
 
-// This can come from your database or API.
 const defaultValues: Partial<DisplayFormValues> = {
   items: ['recents', 'home'],
 }
@@ -60,62 +62,79 @@ export function DisplayForm() {
     defaultValues,
   })
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = form
+
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((data) => showSubmittedData(data))}
-        className='space-y-8'
-      >
-        <FormField
-          control={form.control}
-          name='items'
-          render={() => (
-            <FormItem>
-              <div className='mb-4'>
-                <FormLabel className='text-base'>Sidebar</FormLabel>
-                <FormDescription>
-                  Select the items you want to display in the sidebar.
-                </FormDescription>
-              </div>
-              {items.map((item) => (
-                <FormField
-                  key={item.id}
-                  control={form.control}
-                  name='items'
-                  render={({ field }) => {
-                    return (
-                      <FormItem
-                        key={item.id}
-                        className='flex flex-row items-start'
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(item.id)}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...field.value, item.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      (value) => value !== item.id
-                                    )
-                                  )
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className='font-normal'>
-                          {item.label}
-                        </FormLabel>
-                      </FormItem>
-                    )
-                  }}
-                />
-              ))}
-              <FormMessage />
-            </FormItem>
+    <Box
+      component="form"
+      onSubmit={handleSubmit((data) =>
+        showSubmittedData(data)
+      )}
+    >
+      <Stack gap="xl">
+        <Box>
+          <Text fw={500} size="md">
+            Sidebar
+          </Text>
+
+          <Text size="sm" c="dimmed" mb="md">
+            Select the items you want to display in the
+            sidebar.
+          </Text>
+
+          <Controller
+            control={control}
+            name="items"
+            render={({ field }) => (
+              <Stack gap="sm">
+                {items.map((item) => (
+                  <Checkbox
+                    key={item.id}
+                    label={item.label}
+                    checked={field.value?.includes(
+                      item.id
+                    )}
+                    onChange={(event) => {
+                      const checked =
+                        event.currentTarget.checked
+
+                      if (checked) {
+                        field.onChange([
+                          ...(field.value || []),
+                          item.id,
+                        ])
+                      } else {
+                        field.onChange(
+                          field.value?.filter(
+                            (value) =>
+                              value !== item.id
+                          )
+                        )
+                      }
+                    }}
+                  />
+                ))}
+              </Stack>
+            )}
+          />
+
+          {errors.items && (
+            <Text c="red" size="sm" mt="sm">
+              {errors.items.message}
+            </Text>
           )}
-        />
-        <Button type='submit'>Update display</Button>
-      </form>
-    </Form>
+        </Box>
+
+        <Group>
+          <Button type="submit">
+            Update display
+          </Button>
+        </Group>
+      </Stack>
+    </Box>
   )
 }

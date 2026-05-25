@@ -7,6 +7,7 @@ import {
   NumberInput,
   Stack,
   Button,
+  Select,
 } from '@mantine/core'
 
 import { DatePickerInput, DateTimePicker } from '@mantine/dates'
@@ -21,13 +22,13 @@ export const TableHeader = ({
   onFilterValueChange,
 }: {
   column: Column
-  filterValue: FilterValue | null
-  onFilterValueChange: (filterValue: FilterValue | null) => void
+  filterValue?: FilterValue | null
+  onFilterValueChange?: (filterValue: FilterValue | null) => void
 }) => {
 
   const [open, setOpen] = useState(false)
   const [menuOpened, setMenuOpened] = useState(false)
-  const [tempFilter, setTempFilter] = useState<FilterValue | null>(filterValue)
+  const [tempFilter, setTempFilter] = useState<FilterValue | null>(filterValue || null)
 
 
 
@@ -40,8 +41,9 @@ export const TableHeader = ({
     const auto = resolveAutoFilterValue(filter)
 
     // ✅ AUTO FILTER → apply instantly
-    if (auto) {
+    if (onFilterValueChange && auto) {
       onFilterValueChange(auto)
+      setTempFilter(auto)
       return
     }
 
@@ -56,7 +58,7 @@ export const TableHeader = ({
   // APPLY BUTTON
   // ------------------------
   const handleApply = () => {
-    onFilterValueChange(tempFilter)
+    onFilterValueChange &&onFilterValueChange(tempFilter)
     // setTempFilter(null)
     setOpen(false)
   }
@@ -69,7 +71,7 @@ export const TableHeader = ({
       <Group gap="xs">
         {label}
 
-        {filters && filters?.length > 0 && (
+        {filters && onFilterValueChange && filters?.length > 0 && (
           <Menu shadow="md" width={220}
             opened={menuOpened}
             onChange={setMenuOpened}
@@ -81,13 +83,15 @@ export const TableHeader = ({
             </Menu.Target>
 
             <Menu.Dropdown>
-              {filters?.map((filter) => (
-                <Menu.Item
+
+              {filters?.map((filter: ColumnFilter) => (
+                 
+               filter.options ? <Select value={tempFilter?.value} data={filter.options} onChange={(value) => handleFiltering({...filter, filterValue: {filter, value}})} /> : ( <Menu.Item
                   key={filter.type}
                   onClick={() => handleFiltering(filter)}
                 >
                   {filter.name}
-                </Menu.Item>
+                </Menu.Item>)
               ))}
 
               <Menu.Item

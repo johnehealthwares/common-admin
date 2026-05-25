@@ -1,49 +1,37 @@
-import { DataPageShell } from "../../../components/data-page-shell";
-
+import { DataPageShell } from "../../../components/page/data-page-shell";
+import { FormProvider } from "@/features/components/form/form-context";
+import { UOM_COLUMNS, UOM_CREATE_FIELDS, buildCreatePayload, buildFormState, type UomListState } from './schema';
+import { useState } from "react";
 
 export function RxUomsPage() {
+   const [formState, setFormState] = useState<Record<string, unknown>>({});
+  
+    // const updateField = (name: string, value: unknown, i?: number) => {
+    //   setFormState((current) => ({
+    //     ...current,
+    //     [name]: value,
+    //   }))
+    // }
+  
+  
   return (
-    <DataPageShell
-      title='UOMs'
-      description='Manage units of measure.'
-      endpoint='/uoms'
-      columns={[
-        { key: 'code', label: 'Code' },
-        { key: 'name', label: 'Name' },
-        { key: 'uomType', label: 'Type' },
-        { key: 'factor', label: 'Factor' },
-        { key: 'isActive', label: 'Active' },
-      ]}
-      createFields={[
-        { name: 'code', label: 'Code' },
-        { name: 'name', label: 'Name', required: true },
-        { name: 'categoryId', 
-          label: 'Category', 
-          type: 'async-select',
-          endpoint: '/uom-categories', 
-          searchParam: 'search', 
-          minChars: 2, 
-          required: true 
-        },
-        { name: 'uomType', label: 'Type', placeholder: 'reference|bigger|smaller' },
-        { name: 'factor', label: 'Factor', type: 'number' },
-        { name: 'rounding', label: 'Rounding', type: 'number' },
-      ]}
-      sortOptions={[
-        { value: 'name', label: 'Name' },
-        { value: 'code', label: 'Code' },
-      ]}
-      buildCreatePayload={(values) => ({
-        code: values.code || undefined,
-        name: values.name,
-        categoryId: values.categoryId || undefined,
-        uomType: values.uomType || undefined,
-        factor: values.factor ? Number(values.factor) : undefined,
-        rounding: values.rounding ? Number(values.rounding) : undefined,
-      })}
-      canDelete
-      detailPathBuilder={(row) => `/uoms/${String(row.id)}`}
-    />
+    <FormProvider<UomListState>
+      initialState={{}}
+    >
+      <DataPageShell
+        title='UOMs'
+        description='Manage units of measure.'
+        endpoint='/uoms'
+        columns={UOM_COLUMNS}
+        createFields={UOM_CREATE_FIELDS.fields}
+        buildCreatePayload={(values) => buildCreatePayload(values as UomListState)}
+        buildUpdatePayload={(values) => buildCreatePayload(values as UomListState)}
+        buildFormState={buildFormState}
+        canDelete
+        detailPathBuilder={(row) => `/uoms/${String(row.id)}`}
+        // updateField={updateField}
+      />
+    </FormProvider>
   )
 }
 

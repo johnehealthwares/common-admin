@@ -13,6 +13,7 @@ import {
   HandCoins,
   LayoutDashboard,
   Layers3,
+  Microscope,
   NotebookPen,
   Package,
   Pill,
@@ -27,23 +28,28 @@ import {
   Users,
   Waypoints,
   Workflow,
+  Store,
+  BookOpen,
+  Receipt,
+  ShieldCheck,
+  MessagesSquare,
+  Braces,
 } from 'lucide-react'
-import { type SidebarData, type NavGroup } from '../types'
+import { NavItem, type SidebarData } from '../types'
 import type { ModuleId } from '@/features/shared/module-data'
+import { lisResources } from '@/features/rxsoft/pages/lis/resources'
 
 export function filterNavGroupsByModule(
-  navGroups: NavGroup[],
+  navGroups: NavItem[],
   selectedModule: ModuleId
-) {
+): NavItem[] {
   return navGroups
-    .map((group) => ({
+    .map((group: NavItem) => ({
       ...group,
-      items: group.items.filter(
-        (item) =>
-          selectedModule === 'admin' ||
-          !item.modules ||
-          item.modules.includes(selectedModule)
+      items: (group.items || []).filter(
+        (item) => selectedModule === 'admin' || !item.modules || item.modules.includes(selectedModule)
       ),
+      url: undefined
     }))
     .filter((group) => group.items.length > 0)
 }
@@ -79,10 +85,17 @@ export const sidebarData: SidebarData = {
       plan: 'Terminology',
       moduleId: 'coding-concept',
     },
+    {
+      name: 'LIS',
+      logo: Microscope,
+      plan: 'Laboratory',
+      moduleId: 'lis',
+    },
   ],
   navGroups: [
     {
       title: 'Overview',
+      icon: LayoutDashboard,
       items: [
         {
           title: 'Dashboard',
@@ -106,6 +119,7 @@ export const sidebarData: SidebarData = {
     },
     {
       title: 'Catalog',
+      icon: BookOpen,
       items: [
         {
           title: 'Products',
@@ -159,6 +173,7 @@ export const sidebarData: SidebarData = {
     },
     {
       title: 'People',
+      icon: Users,
       items: [
         {
           title: 'Users',
@@ -188,6 +203,7 @@ export const sidebarData: SidebarData = {
     },
     {
       title: 'Operations',
+      icon: Workflow,
       items: [
         {
           title: 'Sales',
@@ -234,7 +250,8 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: 'Accounting',
+      title: 'Finance',
+      icon: Receipt,
       items: [
         {
           title: 'Journals',
@@ -258,6 +275,7 @@ export const sidebarData: SidebarData = {
     },
     {
       title: 'Administration',
+      icon: ShieldCheck,
       items: [
         {
           title: 'Organizations',
@@ -265,10 +283,17 @@ export const sidebarData: SidebarData = {
           icon: Shield,
           modules: ['rxsoft', 'admin'],
         },
+        {
+          title: 'Locations',
+          url: '/stock-locations',
+          icon: Store,
+          modules: ['rxsoft', 'admin'],
+        },
       ],
     },
     {
       title: 'Conversation',
+      icon: MessagesSquare,
       items: [
         {
           title: 'Questionnaires',
@@ -336,10 +361,54 @@ export const sidebarData: SidebarData = {
           icon: FileText,
           modules: ['conversation', 'admin'],
         },
+
+        {
+          title: 'Messages',
+          url: '/messages',
+          icon: MessageSquare,
+          modules: ['conversation', 'admin'],
+        },
+        {
+          title: 'Notifications',
+          url: '/notifications',
+          icon: MessageSquare,
+          modules: ['conversation', 'admin'],
+        },
+        {
+          title: 'Broadcasts',
+          url: '/broadcasts',
+          icon: Radio,
+          modules: ['conversation', 'admin'],
+        },
+        {
+          title: 'Message Templates',
+          url: '/message-templates',
+          icon: FileText,
+          modules: ['conversation', 'admin'],
+        },
+        {
+          title: 'Notification Templates',
+          url: '/notification-templates',
+          icon: FileText,
+          modules: ['conversation', 'admin'],
+        },
+        {
+          title: 'Communication Channels',
+          url: '/communication-channels',
+          icon: Radio,
+          modules: ['conversation', 'admin'],
+        },
+        {
+          title: 'Message Logs',
+          url: '/message-logs',
+          icon: FileText,
+          modules: ['conversation', 'admin'],
+        }
       ],
     },
     {
-      title: 'Communication',
+      title: 'Switch',
+      icon: Waypoints,
       items: [
         {
           title: 'Application Entities',
@@ -348,47 +417,24 @@ export const sidebarData: SidebarData = {
           modules: ['communication', 'admin'],
         },
         {
-          title: 'Messages',
-          url: '/messages',
+          title: 'Routes',
+          url: '/routing',
           icon: MessageSquare,
           modules: ['communication', 'admin'],
         },
         {
-          title: 'Notifications',
-          url: '/notifications',
+          title: 'Mapping',
+          url: '/mapping',
           icon: MessageSquare,
           modules: ['communication', 'admin'],
         },
         {
-          title: 'Broadcasts',
-          url: '/broadcasts',
-          icon: Radio,
-          modules: ['communication', 'admin'],
-        },
-        {
-          title: 'Message Templates',
-          url: '/message-templates',
+          title: 'Event Traces',
+          url: '/communication/audit-center',
           icon: FileText,
           modules: ['communication', 'admin'],
         },
-        {
-          title: 'Notification Templates',
-          url: '/notification-templates',
-          icon: FileText,
-          modules: ['communication', 'admin'],
-        },
-        {
-          title: 'Communication Channels',
-          url: '/communication-channels',
-          icon: Radio,
-          modules: ['communication', 'admin'],
-        },
-        {
-          title: 'Message Logs',
-          url: '/message-logs',
-          icon: FileText,
-          modules: ['communication', 'admin'],
-        },
+
         {
           title: 'Flow Graph',
           url: '/communication/flow-graph',
@@ -407,16 +453,11 @@ export const sidebarData: SidebarData = {
           icon: MessageSquare,
           modules: ['communication', 'admin'],
         },
-        {
-          title: 'Audit Center',
-          url: '/communication/audit-center',
-          icon: FileText,
-          modules: ['communication', 'admin'],
-        },
       ],
     },
     {
       title: 'Coding Concept',
+      icon: Braces,
       items: [
         {
           title: 'Concept Registry',
@@ -444,5 +485,15 @@ export const sidebarData: SidebarData = {
         },
       ],
     },
+    {
+      title: "LIS",
+      icon: Microscope,
+      items: lisResources.map((lisResource) => ({
+           title: lisResource.title,
+          url: '/lis/' + lisResource.key,
+          icon: Microscope,
+          modules: ['lis', 'admin'],
+        })),
+    }
   ],
 }

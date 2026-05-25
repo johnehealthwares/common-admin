@@ -1,134 +1,274 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { AxiosInstance } from 'axios'
 import {
   Combobox,
   InputBase,
-  useCombobox,
-  Loader,
   Text,
+  useCombobox,
 } from '@mantine/core'
-import { Field } from '@/features/rxsoft/types'
-import { getArrayPayload, mapOption, useDebouncedValue } from '../utils'
 
+import { Field, Option } from '@/features/rxsoft/types'
+import { useDebouncedValue, getArrayPayload, mapOption } from '../utils'
+import { SelectField } from './select'
+import { Loader } from 'lucide-react'
+import { useApiProvider } from '@/context/module-context'
+
+type Props = {
+  value: Option | null
+  field: Field
+  onChange: (option: Option | null) => void
+  disabled?: boolean
+  error?: string
+  onBlur?: () => void
+  onFocus?: () => void
+}
+
+const STATIC_SELECT_THRESHOLD = 50
 
 export function AsyncSelectField({
   value,
   field,
   onChange,
-  apiClient,
   disabled = false,
-}: {
-  value: string
-  field: Field
-  onChange: (value: string) => void
-  apiClient: AxiosInstance
-  disabled?: boolean
-}) {
+  error,
+  ...props
+}: Props) {
+  const apiProvider = useApiProvider();
   const combobox = useCombobox()
-  const [inputValue, setInputValue] = useState('')
-  const [debouncedInput] = useDebouncedValue(inputValue, 300)
 
-  const canSearch =
-    debouncedInput.trim().length >= (field.minChars ?? 2)
+  const [inputValue, setInputValue] = useState(value?.label || '')
+  const [isStaticSelect, setIsStaticSelect] = useState(false)
 
-  // Fetch selected item (label for current value)
-  const { data: selectedItem } = useQuery({
-    queryKey: ['async-selected', field.endpoint, value],
+  const debouncedInput = useDebouncedValue(inputValue, 300)
+
+
+  const shouldSearch =
+    debouncedInput === '' ||
+    debouncedInput.trim().length >= (field.searchParam?.minChars || 2)
+
+
+
+  const mapToOption = (
+    item: unknown,
+  ): Option | null =>
+    mapOption(
+      item,
+      field.searchParam?.valueKey,
+      field.searchParam?.labelKey,
+    )
+  const selectQuery = useQuery({
+    queryKey: [
+      'async-select',
+      field.searchParam?.endpoint,
+      debouncedInput,
+      value?.value,
+    ],
+
     queryFn: async () => {
-      if (!field.endpoint || !value) return null
+      if (!field.searchParam?.endpoint) {
+        return {
+          options: [] as Option[],
+          total: 0,
+          selected: null as Option | null,
+        }
+      }
 
-      const res = await apiClient.get(`${field.endpoint}/${value}`)
+      /**
+       * Main list/search request
+       */
+      let params: any = {}
+      if (field.searchParam?.filter?.field && !field.searchParam?.filter?.type) {
+        params[field.searchParam?.filter?.field] = debouncedInput //{name:text}
+      } else if (field.searchParam?.filter?.field && field.searchParam?.filter?.type) {
+        params[field.searchParam?.filter?.field] = `${field.searchParam?.filter.type}|${debouncedInput}`//{field:type|value}
+      }
+      if (field.searchParam.queryParam && !field.searchParam?.filter) {
+        params[field.searchParam.queryParam] = debouncedInput
+      }
+      if (field.searchParam?.staticFilters && field.searchParam?.staticFilters) {
+        field.searchParam.staticFilters.forEach((staticFilter) => {
+          if (staticFilter.filter.type) {  //{field:EQUALS|value,name:EQUALS|value}
+            params[staticFilter.filter.name] = `${staticFilter.filter.type}|${staticFilter.value}|${staticFilter.valueTo}`
+          } else {//{field:value,name:value}
+            params[staticFilter.filter.name] = staticFilter.value
+          }
+        })
+      }
+      params = field.searchParam.queryParam && field.searchParam?.filter ? { [field.searchParam.queryParam]: JSON.stringify(params) } : params
+      const listResponse = await apiProvider.get(field.searchParam.endpoint, { params })
+      const payload = getArrayPayload(listResponse.data)
 
-      const payload =
-        res.data && typeof res.data === 'object' && 'data' in res.data
-          ? res.data.data
-          : res.data
+      const options = payload
+        .map(mapToOption)
+        .filter(
+          (item): item is Option => item !== null,
+        )
 
-      const item = getArrayPayload([payload])[0] ?? payload
+      const total =
+        listResponse.data?.meta?.total ??
+        listResponse.data?.total ??
+        options.length
 
-      return mapOption(item, field.valueKey, field.labelKey)
+      /**
+       * Load selected item only if needed
+       */
+      let selected: Option | null = null
+
+      if (value?.value) {
+        const existing = options.find(
+          (o) => o.value === value.value,
+        )
+
+        if (existing) {
+          selected = existing
+        } else {
+          const selectedResponse = await apiProvider.get(
+            `${field.searchParam.endpoint}/${value.value}`,
+          )
+
+          const selectedPayload =
+            selectedResponse.data &&
+              typeof selectedResponse.data === 'object' &&
+              'data' in selectedResponse.data
+              ? selectedResponse.data.data
+              : selectedResponse.data
+
+          selected = mapToOption(selectedPayload)
+        }
+      }
+
+      return {
+        options,
+        total,
+        selected,
+      }
     },
-    enabled: Boolean(field.endpoint) && Boolean(value),
-    staleTime: 30_000,
+
+    enabled:
+      Boolean(field?.searchParam?.endpoint) &&
+      combobox.dropdownOpened &&
+      (debouncedInput === '' ||
+        debouncedInput.trim().length >= (field?.searchParam?.minChars || 2)),
+
+    staleTime: 60_000,
   })
 
-  // sync input with selected value
   useEffect(() => {
-    if (selectedItem?.label) {
-      setInputValue(selectedItem.label)
+    setInputValue(value?.label || '')
+    if (!value) {
+      combobox.resetSelectedOption()
     }
-  }, [selectedItem])
+  }, [value])
+  /**
+   * Static Select Mode
+   */
+  // if (isStaticSelect) {
+  //   return (
+  //     <Select
+  //       searchable
+  //       clearable
+  //       disabled={disabled}
+  //       value={value?.value}
+  //       placeholder={
+  //         field.placeholder ?? `Select ${field.label}`
+  //       }
+  //       data={
+  //         selectQuery.data?.options.map((option) => ({
+  //           value: option.value,
+  //           label: option.label,
+  //         })) ?? []
+  //       }
+  //       onChange={(_, option) => onChange(option) }
+  //       error={error}
+  //     />
+  //   )
+  // }
 
-  // search query
-  const query = useQuery({
-    queryKey: ['async-search', field.endpoint, debouncedInput],
-    queryFn: async () => {
-      if (!field.endpoint) return []
 
-      const res = await apiClient.get(field.endpoint, {
-        params: {
-          [field.searchParam ?? 'q']: debouncedInput,
-        },
-      })
+  // console.log(selectQuery.data)
+  // if ( isStaticSelect 
+  //   //&&
+  //   // inputValue === '' &&
+  //   // selectQuery.data?.total > 0 &&
+  //   // (selectQuery.data?.options?.length || 0) == selectQuery.data?.total
+  // ) {
 
-      return getArrayPayload(res.data)
-        .map((item) => mapOption(item, field.valueKey, field.labelKey))
-        .filter(Boolean)
-    },
-    enabled: Boolean(field.endpoint) && canSearch,
-    staleTime: 30_000,
-  })
+  //   return (
+  //     <SelectField
+  //       value={value}
+  //       disabled={disabled}
+  //       onChange={(option) =>{ 
+  //         onChange(option);
+  //         setInputValue(option?.label || '')
+  //       }}
+  //       placeholder={field.placeholder}
+  //       options={selectQuery.data?.options ?? []}
+  //       error={error}
+  //     />
+  //   )
+  // }
 
-  const options = query.data ?? []
-
+  /**
+   * Async Autocomplete Mode
+   */
   return (
     <Combobox
       store={combobox}
-      onOptionSubmit={(val) => {
-        const selected = options.find((o) => o.value === val)
-        if (selected) {
-          onChange(selected.value)
-          setInputValue(selected.label)
-        }
+      onOptionSubmit={(selectedValue, optionProps) => {
+        const selected = (selectQuery.data?.options ?? []).find((option) => option.value === selectedValue)
+        onChange(selected || null)
+        setInputValue(selected?.label || '')
         combobox.closeDropdown()
       }}
+      position="bottom"
+      middlewares={{ flip: false }}
     >
       <Combobox.Target>
         <InputBase
-          value={inputValue}
           disabled={disabled}
+          value={inputValue}
           placeholder={
             field.placeholder ??
             `Search ${field.label.toLowerCase()}...`
           }
+          onFocus={() => combobox.openDropdown()}
           onChange={(event) => {
             setInputValue(event.currentTarget.value)
             combobox.openDropdown()
             combobox.updateSelectedOptionIndex()
+            if (!event.currentTarget.value) {
+              onChange(null)
+            }
           }}
-          onFocus={() => combobox.openDropdown()}
+          error={error}
         />
       </Combobox.Target>
 
       <Combobox.Dropdown>
-        <Combobox.Options>
-          {query.isLoading && (
+        <Combobox.Options style={{
+          maxHeight: 200,
+          overflowY: 'auto',
+        }}>
+          {selectQuery.isLoading ? (
             <Combobox.Empty>
-              <Loader size="xs" /> Loading...
+              <Loader size='16' />
             </Combobox.Empty>
-          )}
+          ) : null}
 
-          {!query.isLoading && options.length === 0 && (
+          {!selectQuery.isLoading &&
+            selectQuery.data?.total === 0 ? (
             <Combobox.Empty>
-              <Text size="sm" c="dimmed">
-                No results
+              <Text size='sm' c='dimmed'>
+                No results found
               </Text>
             </Combobox.Empty>
-          )}
+          ) : null}
 
-          {options.map((option) => (
-            <Combobox.Option key={option.value} value={option.value}>
+          {(selectQuery.data?.options ?? []).map((option) => (
+            <Combobox.Option
+              key={option.value}
+              value={option.value}
+            >
               {option.label}
             </Combobox.Option>
           ))}

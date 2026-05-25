@@ -12,8 +12,9 @@ export function GeneralError({
   const navigate = useNavigate()
   const { history } = useRouter()
 
+  console.log({props})
   return (
-    <Center style={{ height: '100vh', width: '100%' }} {...props}>
+    <Center style={{ height: '100vh', width: '100%' }} >
       <Stack align="center" gap="xs">
 
         {!minimal && (
@@ -23,12 +24,19 @@ export function GeneralError({
         )}
 
         <Text fw={500}>
-          Oops! Something went wrong :')
+          Oops! Something went wrong :'
         </Text>
 
         <Text size="sm" c="dimmed" ta="center">
           We apologize for the inconvenience. <br />
           Please try again later.
+        </Text>
+        <Text size="sm" c="dimmed" ta="center">
+        {(props as any).error?.message}
+        </Text>
+
+         <Text size="sm" c="dimmed" ta="center">
+        {(props as any).error?.stack}
         </Text>
 
         {!minimal && (

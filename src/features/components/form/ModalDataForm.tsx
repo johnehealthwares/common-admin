@@ -1,10 +1,8 @@
-import { Button, Group, Input, Modal, Stack, Switch, Tabs, Text } from "@mantine/core";
-import { useState } from "react";
+import { Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { FieldGroup as FieldGroupType, TabGroup } from "../../rxsoft/types";
 import { Loader } from "lucide-react";
-import { RenderField } from "./RenderField";
 import { FieldGroup } from "./FieldGroup";
-import { getColSpanClass } from "./util";
+import { TabGroups } from "./tab-groups";
 
 type FormProps = {
   editingRow: Record<string, unknown> | null
@@ -27,12 +25,10 @@ type FormProps = {
 
 export const ModalDataForm = ({
   modalTitle,
-  editingRow,
   formState,
   showModal,
   setShowModal,
   title,
-  mode,
   tabGroups,
   fieldGroups,
   mutation,
@@ -40,13 +36,6 @@ export const ModalDataForm = ({
   renderCreateExtras
 }
   : FormProps) => {
-
-
-  const [activeTab, setActiveTab] = useState<string>(
-    tabGroups?.[0]?.value ?? "default"
-  )
-
-
 
   return <Modal
     opened={showModal}
@@ -63,65 +52,20 @@ export const ModalDataForm = ({
         Add a new record to the {title.toLowerCase()} module.
       </Text>
 
-      <Tabs value={activeTab} onChange={(v) => setActiveTab(v!)}>
-        <Tabs.List>
-          {(tabGroups || []).map((tab, index) => (
-            <Tabs.Tab
-              key={tab.value}
-              value={tab.value}
-              disabled={mode === 'create-then-update' && index !== 0}
-            >
-              {tab.title}
-            </Tabs.Tab>
-          ))}
-        </Tabs.List>
 
-        {(tabGroups || []).map((tab) => (
-          <Tabs.Panel key={tab.value} value={tab.value} pt="md">
-            {tab.render
-              ? tab.render({ formState, updateField })
-              : (<Stack gap="xl">
-                {tab.fieldGroups?.map(({ fields, title }, index) => (<FieldGroup index={index} fields={fields} title={title} formState={formState} updateField={updateField} editingRow={editingRow} />))}
-              </Stack>)
-            }
 
-            {renderCreateExtras?.({
-              formState,
-              updateField,
-            })}
-          </Tabs.Panel>
-        ))}
-      </Tabs>
+
       <Stack gap="xl">
-        {fieldGroups.map((group, groupIndex) => (
-          <Stack key={`${group.title ?? 'group'}-${groupIndex}`} gap="sm">
-            {group.title && (
-              <Text size="sm" fw={500}>
-                {group.title}
-              </Text>
-            )}
-
-
-            <div className="grid gap-4 md:grid-cols-12">
-              {group.fields.map((field) => (
-                <div
-                  key={field.name}
-                  className={getColSpanClass(field.col ?? 12)}
-                >
-                  <Text size="sm" fw={500}>
-                    {field.label}
-                  </Text>
-                  <RenderField
-                    field={field}
-                    value={String(formState[field.name] ?? field.defaultValue ?? '')}
-                    updateField={updateField}
-                    enabled={Boolean(editingRow) && field.editable === false}
-                  />
-
-                </div>
-              ))}
-            </div>
-          </Stack>
+        {tabGroups && (
+          <TabGroups tabGroups={tabGroups} formState={formState} updateField={updateField} />
+        )}
+        {fieldGroups.map((fieldGroup, index) => (
+          <FieldGroup
+            index={index}
+            fieldGroup={fieldGroup}
+            formState={formState}
+            updateField={updateField}
+          />
         ))}
 
         {renderCreateExtras?.({
@@ -142,11 +86,10 @@ export const ModalDataForm = ({
             mutation.isPending ? <Loader size={16} /> : null
           }
         >
-          Create
+          {formState?.id ? 'Update' : 'Create'}
         </Button>
       </Group>
     </Stack>
   </Modal>
-
 
 }

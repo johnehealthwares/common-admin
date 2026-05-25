@@ -11,7 +11,7 @@ import {
 } from '@mantine/core'
 
 import { downloadBlob, rxsoftApi } from '@/lib/rxsoft-api'
-import { RxPage } from '../../../components/rx-page'
+import { RxPage } from '../../../components/page/rx-page'
 import { ReportsTable } from './components/table'
 
 import type {
@@ -22,6 +22,15 @@ import type {
 
 export function RxReportsPage() {
   const [error, setError] = useState<string | null>(null)
+    const [formState, setFormState] = useState<Record<string, unknown>>({});
+
+  const updateField = (name: string, value: unknown) => {
+    setFormState((current) => ({
+      ...current,
+      [name]: value,
+    }))
+    console.log({ formState })
+  }
 
   const reportsQuery = useQuery({
     queryKey: ['rxsoft-reports'],

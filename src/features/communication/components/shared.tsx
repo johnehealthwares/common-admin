@@ -9,6 +9,7 @@ import { Button, Modal, Text, Group, Stack } from '@mantine/core'
 import { communicationApi } from '@/lib/communication-api'
 import { getArrayPayload } from '@/features/components/utils'
 import { notifications } from '@mantine/notifications'
+import { Option } from '@/features/rxsoft/types'
 
 export type CommunicationRow = Record<string, unknown>
 
@@ -163,6 +164,10 @@ export function JsonPreviewDialog({
 
 export function getString(value: unknown): string {
   return typeof value === 'string' ? value : String(value ?? '')
+}
+
+export function getOption(value: unknown): Option {
+  return typeof value === 'string' ? {label:value, value} : {label:String(value ?? ''), value:String(value ?? '')}
 }
 
 export function getObject(value: unknown): Record<string, unknown> {

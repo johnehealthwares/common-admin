@@ -1,9 +1,19 @@
 import { Outlet } from '@tanstack/react-router'
-import { Monitor, Bell, Palette, Wrench, UserCog } from 'lucide-react'
-import { Separator } from '@/components/ui/separator'
-import { SidebarNav } from '../components/sidebar-nav'
-import { Search } from '@/components/search'
+
+
+import {
+  ActionIcon,
+  Box,
+  Divider,
+  Group,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core'
+
 import { Main } from '@/layout/main'
+import { Bell, Palette, Settings2, UserCog, Monitor } from 'lucide-react'
+import { SidebarNavItem } from '../components/sidebar-nav'
 
 const sidebarNavItems = [
   {
@@ -14,7 +24,7 @@ const sidebarNavItems = [
   {
     title: 'Account',
     href: '/settings/account',
-    icon: <Wrench size={18} />,
+    icon: <Settings2 size={18} />,
   },
   {
     title: 'Appearance',
@@ -35,36 +45,69 @@ const sidebarNavItems = [
 
 export function Settings() {
   return (
-    <>
+    <Main>
       {/* ===== Top Heading ===== */}
-      {/* <Header>
-        <Search />
-        <div className='ms-auto flex items-center space-x-4'>
-          <ThemeSwitch />
-          <ConfigDrawer />
-          <ProfileDropdown />
-        </div>
-      </Header> */}
+      <Stack gap="xs">
+        <Title order={1}>Settings</Title>
 
-      <Main fixed>
-        <div className='space-y-0.5'>
-          <h1 className='text-2xl font-bold tracking-tight md:text-3xl'>
-            Settings
-          </h1>
-          <p className='text-muted-foreground'>
-            Manage your account settings and set e-mail preferences.
-          </p>
-        </div>
-        <Separator className='my-4 lg:my-6' />
-        <div className='flex flex-1 flex-col space-y-2 overflow-hidden md:space-y-2 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <aside className='top-0 lg:sticky lg:w-1/5'>
-            <SidebarNav items={sidebarNavItems} />
-          </aside>
-          <div className='flex w-full overflow-y-hidden p-1'>
+        <Text c="dimmed">
+          Manage your account settings and set e-mail preferences.
+        </Text>
+      </Stack>
+
+      <Divider my="md" />
+
+      <Box
+        style={{
+          display: 'flex',
+          flex: 1,
+          overflow: 'hidden',
+          gap: '2rem',
+          flexDirection: 'column',
+        }}
+      >
+        {/* Mobile / Tablet */}
+        <Box hiddenFrom="lg">
+          {/* {sidebarNavItems.map((item) => (<SidebarNavItem key={item.title} item={sidebarNavItems} />)} */}
+        </Box>
+
+        {/* Desktop */}
+        <Group
+          align="flex-start"
+          gap="xl"
+          wrap="nowrap"
+          visibleFrom="lg"
+          style={{
+            flex: 1,
+            overflow: 'hidden',
+          }}
+        >
+          <Box
+            style={{
+              width: '20%',
+              position: 'sticky',
+              top: 0,
+            }}
+          >
+            {/* <SidebarNav items={sidebarNavItems} /> */}
+          </Box>
+
+          <Box
+            style={{
+              flex: 1,
+              overflow: 'hidden',
+              padding: '0.25rem',
+            }}
+          >
             <Outlet />
-          </div>
-        </div>
-      </Main>
-    </>
+          </Box>
+        </Group>
+
+        {/* Mobile Outlet */}
+        <Box hiddenFrom="lg">
+          <Outlet />
+        </Box>
+      </Box>
+    </Main>
   )
 }

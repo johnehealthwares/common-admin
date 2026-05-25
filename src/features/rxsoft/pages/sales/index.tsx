@@ -1,6 +1,16 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxSalesPage() {
+    const [formState, setFormState] = useState<Record<string, unknown>>({});
+  
+    const updateField = (name: string, value: unknown) => {
+      setFormState((current) => ({
+        ...current,
+        [name]: value,
+      }))
+      console.log({ formState })
+    }
   return (
     <DataPageShell
       title='Sales'
@@ -39,10 +49,6 @@ export function RxSalesPage() {
           placeholder: '[{"paymentMethodId":"...","amount":10}]',
         },
       ]}
-      sortOptions={[
-        { value: 'saleDate', label: 'Sale Date' },
-        { value: 'status', label: 'Status' },
-      ]}
       buildCreatePayload={(values) => ({
         saleNumber: values.saleNumber,
         saleChannel: values.saleChannel,
@@ -51,6 +57,10 @@ export function RxSalesPage() {
         lines: JSON.parse(String(values.linesJson ?? '[]')),
         payments: JSON.parse(String(values.paymentsJson ?? '[]')),
       })}
+      canDelete
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
     />
   )
 }

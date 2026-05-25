@@ -11,8 +11,8 @@ import {
 import { ChevronsUpDown, Plus } from 'lucide-react'
 
 import { getModuleDashboard } from '@/lib/module-routing'
-import { useModuleStore } from '@/stores/module-store'
 import type { ModuleId } from '@/features/shared/module-data'
+import { useModuleId, useSetSelectedModule } from '@/context/module-context'
 
 type TeamSwitcherProps = {
   teams: {
@@ -25,11 +25,10 @@ type TeamSwitcherProps = {
 
 export function TeamSwitcher({ teams }: TeamSwitcherProps) {
   const navigate = useNavigate()
-  const selectedModule = useModuleStore((s) => s.selectedModule)
-  const setSelectedModule = useModuleStore((s) => s.setSelectedModule)
-
+  const moduleId = useModuleId()
+  const setSelectedModuleId = useSetSelectedModule()
   const activeTeam =
-    teams.find((t) => t.moduleId === selectedModule) ?? teams[0]
+    teams.find((t) => t.moduleId === moduleId) ?? teams[0]
 
   return (
     <Menu
@@ -86,7 +85,7 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
           <Menu.Item
             key={team.name}
             onClick={() => {
-              setSelectedModule(team.moduleId as any)
+              setSelectedModuleId(team.moduleId)
               navigate({ to: getModuleDashboard(team.moduleId) })
             }}
             leftSection={<team.logo size={14} />}

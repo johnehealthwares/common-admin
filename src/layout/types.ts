@@ -33,15 +33,17 @@ type NavCollapsible = BaseNavItem & {
 
 type NavItem = NavCollapsible | NavLink
 
-type NavGroup = {
-  title: string
-  items: NavItem[]
-}
 
 type SidebarData = {
   user: User
   teams: Team[]
-  navGroups: NavGroup[]
+  navGroups: NavItem[]
 }
 
-export type { SidebarData, NavGroup, NavItem, NavCollapsible, NavLink }
+type SidebarNavProps = {
+  navGroups: NavItem[]
+  title: string
+  icon?: React.ElementType
+  collapsed?: boolean
+}
+export type { SidebarData, SidebarNavProps,  NavItem, NavCollapsible, NavLink }

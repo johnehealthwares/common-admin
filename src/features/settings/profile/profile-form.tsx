@@ -1,54 +1,29 @@
-import { z } from 'zod'
-import { useFieldArray, useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from '@mantine/form'
+import {
+  TextInput,
+  Textarea,
+  Button,
+  Select,
+  Stack,
+  Group,
+  Text,
+  Anchor,
+  Divider,
+} from '@mantine/core'
+
 import { Link } from '@tanstack/react-router'
 import { showSubmittedData } from '@/lib/show-submitted-data'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 
-const profileFormSchema = z.object({
-  username: z
-    .string('Please enter your username.')
-    .min(2, 'Username must be at least 2 characters.')
-    .max(30, 'Username must not be longer than 30 characters.'),
-  email: z.email({
-    error: (iss) =>
-      iss.input === undefined
-        ? 'Please select an email to display.'
-        : undefined,
-  }),
-  bio: z.string().max(160).min(4),
-  urls: z
-    .array(
-      z.object({
-        value: z.url('Please enter a valid URL.'),
-      })
-    )
-    .optional(),
-})
+type ProfileFormValues = {
+  username: string
+  email: string
+  bio: string
+  urls: { value: string }[]
+}
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>
-
-// This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {
+const defaultValues: ProfileFormValues = {
+  username: '',
+  email: '',
   bio: 'I own a computer.',
   urls: [
     { value: 'https://shadcn.com' },
@@ -58,120 +33,124 @@ const defaultValues: Partial<ProfileFormValues> = {
 
 export function ProfileForm() {
   const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
-    defaultValues,
-    mode: 'onChange',
-  })
+    initialValues: defaultValues,
 
-  const { fields, append } = useFieldArray({
-    name: 'urls',
-    control: form.control,
+    validate: {
+      username: (value) => {
+        if (!value) return 'Please enter your username.'
+        if (value.length < 2)
+          return 'Username must be at least 2 characters.'
+        if (value.length > 30)
+          return 'Username must not be longer than 30 characters.'
+        return null
+      },
+
+      email: (value) => {
+        if (!value) return 'Please select an email to display.'
+        const ok = /^\S+@\S+\.\S+$/.test(value)
+        if (!ok) return 'Invalid email'
+        return null
+      },
+
+      bio: (value) => {
+        if (!value) return 'Bio is required'
+        if (value.length < 4) return 'Bio must be at least 4 characters'
+        if (value.length > 160) return 'Bio must be under 160 characters'
+        return null
+      },
+
+      urls: {
+        value: (value) => {
+          if (!value) return 'URL is required'
+          try {
+            new URL(value)
+            return null
+          } catch {
+            return 'Please enter a valid URL.'
+          }
+        },
+      },
+    },
   })
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((data) => showSubmittedData(data))}
-        className='space-y-8'
-      >
-        <FormField
-          control={form.control}
-          name='username'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder='shadcn' {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name. It can be your real name or a
-                pseudonym. You can only change this once every 30 days.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+    <form
+      onSubmit={form.onSubmit((data) => showSubmittedData(data))}
+    >
+      <Stack gap="md">
+        {/* ===== Username ===== */}
+        <TextInput
+          label="Username"
+          placeholder="shadcn"
+          description="This is your public display name. It can be your real name or a pseudonym. You can only change this once every 30 days."
+          {...form.getInputProps('username')}
         />
-        <FormField
-          control={form.control}
-          name='email'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select a verified email to display' />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                  <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                  <SelectItem value='m@support.com'>m@support.com</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                You can manage verified email addresses in your{' '}
-                <Link to='/'>email settings</Link>.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+
+        {/* ===== Email ===== */}
+        <Select
+          label="Email"
+          placeholder="Select a verified email to display"
+          data={[
+            { value: 'm@example.com', label: 'm@example.com' },
+            { value: 'm@google.com', label: 'm@google.com' },
+            { value: 'm@support.com', label: 'm@support.com' },
+          ]}
+          {...form.getInputProps('email')}
         />
-        <FormField
-          control={form.control}
-          name='bio'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder='Tell us a little bit about yourself'
-                  className='resize-none'
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                You can <span>@mention</span> other users and organizations to
-                link to them.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+
+        <Text size="sm" c="dimmed">
+          You can manage verified email addresses in your{' '}
+          <Anchor component={Link} to="/">
+            email settings
+          </Anchor>
+          .
+        </Text>
+
+        {/* ===== Bio ===== */}
+        <Textarea
+          label="Bio"
+          placeholder="Tell us a little bit about yourself"
+          description="You can @mention other users and organizations to link to them."
+          autosize
+          minRows={3}
+          {...form.getInputProps('bio')}
         />
-        <div>
-          {fields.map((field, index) => (
-            <FormField
-              control={form.control}
-              key={field.id}
-              name={`urls.${index}.value`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={cn(index !== 0 && 'sr-only')}>
-                    URLs
-                  </FormLabel>
-                  <FormDescription className={cn(index !== 0 && 'sr-only')}>
-                    Add links to your website, blog, or social media profiles.
-                  </FormDescription>
-                  <FormControl className={cn(index !== 0 && 'mt-1.5')}>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+
+        {/* ===== Dynamic URLs ===== */}
+        <Stack gap="xs">
+          <Text fw={500}>URLs</Text>
+          <Text size="sm" c="dimmed">
+            Add links to your website, blog, or social media profiles.
+          </Text>
+
+          {form.values.urls.map((_, index) => (
+            <TextInput
+              key={index}
+              placeholder="https://example.com"
+              {...form.getInputProps(`urls.${index}.value`)}
             />
           ))}
+
           <Button
-            type='button'
-            variant='outline'
-            size='sm'
-            className='mt-2'
-            onClick={() => append({ value: '' })}
+            variant="outline"
+            size="xs"
+            onClick={() =>
+              form.insertListItem('urls', { value: '' })
+            }
           >
             Add URL
           </Button>
-        </div>
-        <Button type='submit'>Update profile</Button>
-      </form>
-    </Form>
+        </Stack>
+
+        <Divider />
+
+        {/* ===== Submit ===== */}
+        <Group justify="flex-end">
+          <Button type="submit">
+            Update profile
+          </Button>
+        </Group>
+      </Stack>
+    </form>
   )
 }

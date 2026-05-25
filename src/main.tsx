@@ -22,6 +22,7 @@ import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 import '@mantine/dates/styles.css'
 import { FontProvider } from './context/font-provider'
+import { ModuleProvider } from './context/module-provider'
 // import './styles/tailwind-fallback.css'
 
 
@@ -106,7 +107,9 @@ if (!rootElement.innerHTML) {
       <QueryClientProvider client={queryClient}>
         <MantineProvider>
           <FontProvider>
-            <RouterProvider router={router} />
+            <ModuleProvider>
+              <RouterProvider router={router} />
+            </ModuleProvider>
           </FontProvider>
         </MantineProvider>
       </QueryClientProvider>

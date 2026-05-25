@@ -13,6 +13,7 @@ import {
 } from '@mantine/core'
 
 import { rxsoftApi } from '@/lib/rxsoft-api'
+import { Option } from '@/features/rxsoft/types'
 
 type ProductLookup = {
   id: string
@@ -29,7 +30,7 @@ type SimpleLookup = {
 export type PendingPriceListEntry = {
   productId?: string
   locationId?: string
-  priceListId: string
+  priceList: Option
   currencyCode: string
   unitPrice: number
   modified: '' | 'created' | 'edited' | 'deleted'
@@ -119,8 +120,8 @@ function ProductLookupInput({
 
       <Select
         value={value ?? '__created__'}
-        onChange={(val) =>
-          onChange(val === '__created__' ? undefined : val)
+        onChange={(val: any) =>
+          onChange(val === '__created__' ? null : val)
         }
         data={[
           { value: '__created__', label: 'Use created product' },
@@ -144,13 +145,13 @@ function usePriceListUpdater(
     priceListId: string,
     patch: Partial<PendingPriceListEntry>
   ) => {
-    const exists = priceListItems.find((p) => p.priceListId === priceListId)
+    const exists = priceListItems.find((p) => p.priceList.value === priceListId)
 
     let updated: PendingPriceListEntry[]
 
     if (exists) {
       updated = priceListItems.map((item) =>
-        item.priceListId === priceListId
+        item.priceList.value === priceListId
           ? {
               ...item,
               ...patch,
@@ -162,7 +163,10 @@ function usePriceListUpdater(
       updated = [
         ...priceListItems,
         {
-          priceListId,
+          priceList: {
+            value: priceListId,
+            label: priceListId,
+          },
           currencyCode: 'NGN',
           unitPrice: 0,
           modified: 'created',
@@ -177,7 +181,7 @@ function usePriceListUpdater(
   const removeEntry = (priceListId: string) => {
     const updated = priceListItems
       .map((item) =>
-        item.priceListId === priceListId
+        item.priceList.value === priceListId
           ? {
               ...item,
               modified: item.modified === 'created' ? '' : 'deleted',
@@ -212,7 +216,7 @@ export function ProductPriceListSetup({
   const [selected, setSelected] = useState('')
 
   const missing = priceLists.filter(
-    (pl) => !resolved.some((x) => x.priceListId === pl.id)
+    (pl) => !resolved.some((x) => x.priceList.value === pl.id)
   )
 
   const handleAdd = () => {
@@ -240,11 +244,11 @@ export function ProductPriceListSetup({
         {showAll &&
           priceLists
             .filter((pl) =>
-              resolved.some((x) => x.priceListId === pl.id)
+              resolved.some((x) => x.priceList.value === pl.id)
             )
             .map((pl) => {
               const item = resolved.find(
-                (x) => x.priceListId === pl.id
+                (x) => x.priceList.value === pl.id
               )
 
               if (!item || item.modified === 'deleted') return null

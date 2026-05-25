@@ -13,22 +13,27 @@ import {
   CalendarRange,
 } from 'lucide-react'
 import { ComponentType, SVGProps } from 'react'
-import { FormState } from 'react-hook-form'
+import type { AxiosInstance } from 'axios'
+import { ActionCellProps } from '../components/table/action-cell'
 
 export type SearchControlType = 'autocomplete' | 'select'
 
 export type SearchConfig = {
-  type: SearchControlType
   param?: string
   placeholder?: string
   debounceMs?: number
   endpoint?: string
-  searchParam?: string
+  queryParam?: string
+  filter?: {
+    type?:string,
+    field?: string
+  }
   minChars?: number
   valueKey?: string
   labelKey?: string
   staticParams?: Record<string, string | number | boolean>
-  filters: Option[]
+  operator?: FilterType,
+  staticFilters?: FilterValue[]
 }
 type IconType = ComponentType<SVGProps<SVGSVGElement>>
 export enum FilterType {
@@ -54,10 +59,10 @@ export enum FilterType {
 
 export type ColumnFilter = {
   name: string,
-  icon: IconType,
+  icon?: IconType,
   type: FilterType,
   filterValue?: FilterValue
-  option?: Option[]
+  options?: Option[]
 }
 
 export const FILTERS: Record<string, ColumnFilter> = {
@@ -205,9 +210,20 @@ export enum ColumnDataType {
 export type Column = {
   key: string
   label: string
-  render?: (row: Record<string, unknown>) => React.ReactNode
+  render?: (row: Record<string, unknown>, actionCellProps?: ActionCellProps) => React.ReactNode
   dataType?: ColumnDataType
   filters?: ColumnFilter[]
+  field?: Field
+  editable?: boolean
+  error?: (row: Record<string, unknown>) => string | undefined
+}
+
+export type RendererType = 'default' | 'table' | 'matrix'
+
+export type RowAction = {
+  label: string
+  action: string
+  validate?: (row: Record<string, unknown>) => boolean
 }
 
 
@@ -226,27 +242,55 @@ export type Field = {
   | 'password'
   | 'switch'
   | 'async-select'
+  | 'multi-async-select'
   | 'select'
   | 'number'
   | 'email'
   | 'hidden'
+  | 'checkbox'
+  | 'date'
+  | 'datetime'
+  | 'daterange'
   | 'json'
-  editable?: boolean
+  | 'multi-check'
+  | 'multi-pick'
+  | 'remote-select'
+  | 'textarea'
+  disabled?: boolean
   placeholder?: string
-  endpoint?: string
-  searchParam?: string
-  minChars?: number
+  searchParam?: SearchConfig
   required?: boolean
+  min?: number
+  max?: number
+  step?: number
   col?: number
   defaultValue?: unknown
-  valueKey?: string
-  labelKey?: string
+  value?: string | { formKey: string, paramKey: string } // value to be passed back during submission
   options?: Option[]
+  validate?: (value: unknown) => boolean | string
+  updateField?: (row: Record<string, unknown>, name: string, value: unknown) => void
 }
 
 export type FieldGroup = {
   title?: string
+  endpoint?: {
+    url: string
+    method: 'get' | 'post'
+    query: {formKey: string, paramKey: string}[]
+  }
+  formStateField?: string
+  mergeRowToSaved?: (saved: any, row: any) => any
+  parentId?: string
+  description?: string
+  mutationMode?:  'row' | 'cell' | 'collection' | 'field'
+  renderer?: RendererType
+  rowsField?: string
+  defaultState?: Record<string, unknown>
+  rowActions?: RowAction[]
   fields: Field[]
+  columns?: Column[]
+  matrix?: any;
+  buildPayload?: (values: Record<string, unknown>) => Record<string, unknown>
 }
 
 export type Option = {
@@ -254,8 +298,12 @@ export type Option = {
   label: string
 }
 
+export type SearchOption = Option
+
 export type TabGroup = {
   value: string
+  description?: string,
+  disabledToolTip?: string,
   title: string
   fields?: Field[]
   fieldGroups?: FieldGroup[]
@@ -263,6 +311,12 @@ export type TabGroup = {
     formState: any
     updateField: (name: string, value: unknown) => void
   }) => React.ReactNode
+  rootField?: string
+  maxRows?: number
+  fetchRows?: () => { id: string | number } & Record<string, unknown>[]
+  addRow?: () => { id: string | number } & Record<string, unknown>
+  removeRow?: (row: { id: string | number } & Record<string, unknown>) => void
+  waitFor?: string
 }
 
 export type Pagination = {
@@ -280,10 +334,11 @@ export type DataPageShellProps = {
   createFields?: Field[]
   createFieldGroups?: FieldGroup[]
   tabGroups?: TabGroup[]
-  sortOptions?: Option[]
   formState?: Record<string, unknown>
+  defaultState?: Record<string, unknown>
+  buildFormState?: (values: Record<string, unknown>) => Record<string, unknown>
   updateField?: (name: string, value: unknown) => void
-  searchConfig?: SearchConfig
+  setFormState?: (state: Record<string, unknown>) => void
   buildCreatePayload?: (values: Record<string, unknown>) => unknown
   buildUpdatePayload?: (
     values: Record<string, unknown>,
@@ -297,21 +352,24 @@ export type DataPageShellProps = {
   editPathBuilder?: (row: Record<string, unknown>) => string
   deletePathBuilder?: (row: Record<string, unknown>) => string
   embedded?: boolean
+  apiProvider?: AxiosInstance
   renderCreateExtras?: (args: {
     formState: Record<string, unknown>
     updateField: (name: string, value: unknown) => void
   }) => React.ReactNode
+  renderHeaderActions?: (args: {
+    rows: Record<string, unknown>[]
+    refresh: () => void
+  }) => React.ReactNode
+  onViewJson?: (row: Record<string, unknown>) => void
+  viewJson?: boolean
+  transformRows?: (rows: Record<string, unknown>[]) => Record<string, unknown>[]
   onCreateSuccess?: (
     created: Record<string, unknown>,
     values: Record<string, unknown>
   ) => Promise<void> | void
+  allowDelete?: boolean
 }
-
-export type SearchOption = {
-  label: string
-  value: string
-}
-
 
 export type DailySale = {
   day: string

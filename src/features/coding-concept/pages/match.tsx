@@ -16,7 +16,7 @@ import {
   Switch,
 } from '@mantine/core'
 
-import { RxPage } from '@/features/components/rx-page'
+import { RxPage } from '@/features/components/page/rx-page'
 import { SelectField } from '@/features/components/form/select'
 import { codingConceptApi } from '@/lib/coding-concept-api'
 import {
@@ -24,9 +24,10 @@ import {
   MetadataPreview,
   codingModuleOptions,
 } from './shared'
+import { Option } from '@/features/rxsoft/types'
 
 export function CodingConceptMatchPage() {
-  const [module, setModule] = useState('DICOM')
+  const [module, setModule] = useState<Option | null>({value:'DICOM', label:'DICOM'})
   const [term, setTerm] = useState('')
   const [metadata, setMetadata] = useState(false)
   const [submitted, setSubmitted] = useState<{
@@ -62,7 +63,7 @@ export function CodingConceptMatchPage() {
           leftSection={<ListFilter size={16} />}
           onClick={() =>
             setSubmitted({
-              module,
+              module: module?.value || '',
               term: term.trim(),
               metadata,
             })
@@ -80,7 +81,7 @@ export function CodingConceptMatchPage() {
             <SelectField
               label="Module"
               value={module}
-              onChange={setModule}
+              onChange={(option) => setModule(option)}
               options={codingModuleOptions}
               placeholder="Select module"
             />

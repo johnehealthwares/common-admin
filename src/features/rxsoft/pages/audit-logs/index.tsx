@@ -1,6 +1,17 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxAuditLogsPage() {
+  const [formState, setFormState] = useState<Record<string, unknown>>({});
+
+  const updateField = (name: string, value: unknown) => {
+    setFormState((current) => ({
+      ...current,
+      [name]: value,
+    }))
+    console.log({ formState })
+  }
+
   return (
     <DataPageShell
       title='Audit Logs'
@@ -14,6 +25,12 @@ export function RxAuditLogsPage() {
         { key: 'action', label: 'Action' },
         { key: 'createdAt', label: 'Created' },
       ]}
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
+      tabGroups={[]}
+      buildCreatePayload={(data) => data}
+      buildUpdatePayload={(data) => data}
     />
   )
 }

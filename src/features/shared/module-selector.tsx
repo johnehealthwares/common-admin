@@ -1,10 +1,10 @@
 import { Select, Text, Paper, Group, Stack } from '@mantine/core'
 import { modules, moduleMap, type ModuleId } from './module-data'
-import { useModuleStore } from '@/stores/module-store'
+import { useModuleId, useSetSelectedModule } from '@/context/module-context'
 
 export function ModuleSelector() {
-  const selectedModule = useModuleStore((state) => state.selectedModule)
-  const setSelectedModule = useModuleStore((state) => state.setSelectedModule)
+  const selectedModule = useModuleId()
+  const setSelectedModule = useSetSelectedModule()
 
   return (
     <Paper withBorder radius="md" p="sm">

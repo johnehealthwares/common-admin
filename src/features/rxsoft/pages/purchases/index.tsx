@@ -1,6 +1,16 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxPurchasesPage() {
+    const [formState, setFormState] = useState<Record<string, unknown>>({});
+  
+    const updateField = (name: string, value: unknown) => {
+      setFormState((current) => ({
+        ...current,
+        [name]: value,
+      }))
+      console.log({ formState })
+    }
   return (
     <DataPageShell
       title='Purchases'
@@ -30,12 +40,6 @@ export function RxPurchasesPage() {
         { name: 'status', label: 'Status', placeholder: 'draft' },
         { name: 'note', label: 'Note' },
       ]}
-      sortOptions={[
-        { value: 'createdAt', label: 'Created' },
-        { value: 'updatedAt', label: 'Updated' },
-        { value: 'status', label: 'Status' },
-        { value: 'totalCost', label: 'Total Cost' },
-      ]}
       buildCreatePayload={(values) => ({
         supplierId: values.supplierId,
         warehouseId: values.warehouseId,
@@ -48,6 +52,9 @@ export function RxPurchasesPage() {
         note: values.note || undefined,
       })}
       canDelete
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
     />
   )
 }

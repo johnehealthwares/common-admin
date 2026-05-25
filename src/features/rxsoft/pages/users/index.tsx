@@ -1,6 +1,17 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxUsersPage() {
+  const [formState, setFormState] = useState<Record<string, unknown>>({});
+  
+    const updateField = (name: string, value: unknown) => {
+      setFormState((current) => ({
+        ...current,
+        [name]: value,
+      }))
+      console.log({ formState })
+    }
+  
   return (
     <DataPageShell
       title='Users'
@@ -25,11 +36,6 @@ export function RxUsersPage() {
           placeholder: 'admin,manager',
         },
       ]}
-      sortOptions={[
-        { value: 'createdAt', label: 'Created' },
-        { value: 'updatedAt', label: 'Updated' },
-        { value: 'username', label: 'Username' },
-      ]}
       buildCreatePayload={(values) => ({
         username: values.username,
         password: values.password,
@@ -38,6 +44,10 @@ export function RxUsersPage() {
           .map((item) => item.trim())
           .filter(Boolean),
       })}
+      canDelete
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
     />
   )
 }

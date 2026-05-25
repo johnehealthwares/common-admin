@@ -1,14 +1,24 @@
-import { DataPageShell } from "@/features/components/data-page-shell"
+import { DataPageShell } from "@/features/components/page/data-page-shell"
 import { codingConceptEndpoint } from "@/lib/coding-concept-api"
 import { codingModuleOptions } from "../shared"
 import { ColumnTypeFilters } from "@/features/rxsoft/types"
+import { useState } from "react"
 
 const conceptsEndpoint = codingConceptEndpoint('/concepts')
 const valuesEndpoint = codingConceptEndpoint('/concepts/values')
 
 
 
+
 export const Values = () => {
+    const [formState, setFormState] = useState<any>({});
+      const updateField = (name: string, value: unknown) => {
+          setFormState((prev: any) => ({
+              ...prev,
+              [name]: value,
+          }))
+      }
+      
     return (<DataPageShell
         embedded
         title='Concept Values'
@@ -30,10 +40,10 @@ export const Values = () => {
                 label: 'Concept',
                 type: 'async-select',
                 required: true,
-                endpoint: conceptsEndpoint,
-                searchParam: 'search',
+                searchParam: {endpoint: conceptsEndpoint,
+                queryParam: 'search',
                 valueKey: 'id',
-                labelKey: 'shortName',
+                labelKey: 'shortName',},
                 placeholder: 'Search concept by code or name',
             },
             {
@@ -83,5 +93,8 @@ export const Values = () => {
             valueFormat: values.valueFormat,
         })}
         canDelete
+        formState={formState}
+        setFormState={setFormState}
+        updateField={updateField}
     />)
 }

@@ -1,20 +1,30 @@
-import { DataPageShell } from "@/features/components/data-page-shell"
+import { DataPageShell } from "@/features/components/page/data-page-shell"
 import { codingConceptEndpoint } from "@/lib/coding-concept-api"
 import { codingModuleOptions } from "../shared"
 import { ColumnTypeFilters } from "@/features/rxsoft/types"
+import { useState } from "react"
 
 const conceptsEndpoint = codingConceptEndpoint('/concepts')
 const mappingsEndpoint = codingConceptEndpoint('/concepts/mappings')
 
 const columns = [
-    { key: 'externalModule', label: 'External module', filters: ColumnTypeFilters.STRING  },
-    { key: 'externalCode', label: 'External code', filters: ColumnTypeFilters.STRING  },
+    { key: 'externalModule', label: 'External module', filters: ColumnTypeFilters.STRING },
+    { key: 'externalCode', label: 'External code', filters: ColumnTypeFilters.STRING },
     { key: 'internalModule', label: 'Internal module' },
-    { key: 'internalCode', label: 'Internal code', filters: ColumnTypeFilters.STRING  },
+    { key: 'internalCode', label: 'Internal code', filters: ColumnTypeFilters.STRING },
     { key: 'moduleCodeId', label: 'Concept ID' },
 ]
 
 export const Mapping = () => {
+    const [formState, setFormState] = useState<any>({});
+    const updateField = (name: string, value: unknown) => {
+        setFormState((prev: any) => ({
+            ...prev,
+            [name]: value,
+        }))
+    }
+
+
     return (<DataPageShell
         embedded
         title='External Mappings'
@@ -50,10 +60,12 @@ export const Mapping = () => {
                 name: 'moduleCodeId',
                 label: 'Linked concept',
                 type: 'async-select',
-                endpoint: conceptsEndpoint,
-                searchParam: 'search',
-                valueKey: 'id',
-                labelKey: 'shortName',
+                searchParam: {
+                    endpoint: conceptsEndpoint,
+                    queryParam: 'search',
+                    valueKey: 'id',
+                    labelKey: 'shortName',
+                },
                 placeholder: 'Search concept by code or name',
             },
         ]}
@@ -71,6 +83,9 @@ export const Mapping = () => {
             internalCode: values.internalCode,
             moduleCodeId: values.moduleCodeId,
         })}
+        setFormState={setFormState}
+        formState={formState}
         canDelete
+        updateField={updateField}
     />)
 }

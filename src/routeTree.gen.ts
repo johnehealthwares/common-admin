@@ -11,9 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ClerkRouteRouteImport } from './routes/clerk/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuestionnaireIndexRouteImport } from './routes/questionnaire/index'
-import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as QuestionnaireOld_questionnaireRouteImport } from './routes/questionnaire/old_questionnaire'
+import { Route as DamorexIndexRouteImport } from './routes/damorex/index'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
@@ -27,11 +27,13 @@ import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-p
 import { Route as ClerkAuthenticatedRouteRouteImport } from './routes/clerk/_authenticated/route'
 import { Route as ClerkauthRouteRouteImport } from './routes/clerk/(auth)/route'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
+import { Route as AuthenticatedRoutingRouteRouteImport } from './routes/_authenticated/routing/route'
 import { Route as AuthenticatedNotificationsRouteRouteImport } from './routes/_authenticated/notifications/route'
 import { Route as AuthenticatedNotificationTemplatesRouteRouteImport } from './routes/_authenticated/notification-templates/route'
 import { Route as AuthenticatedMessagesRouteRouteImport } from './routes/_authenticated/messages/route'
 import { Route as AuthenticatedMessageTemplatesRouteRouteImport } from './routes/_authenticated/message-templates/route'
 import { Route as AuthenticatedMessageLogsRouteRouteImport } from './routes/_authenticated/message-logs/route'
+import { Route as AuthenticatedMappingRouteRouteImport } from './routes/_authenticated/mapping/route'
 import { Route as AuthenticatedCommunicationChannelsRouteRouteImport } from './routes/_authenticated/communication-channels/route'
 import { Route as AuthenticatedBroadcastsRouteRouteImport } from './routes/_authenticated/broadcasts/route'
 import { Route as AuthenticatedAesRouteRouteImport } from './routes/_authenticated/aes/route'
@@ -41,8 +43,8 @@ import { Route as AuthenticatedWorkflowEventsIndexRouteImport } from './routes/_
 import { Route as AuthenticatedWorkflowConfigurationIndexRouteImport } from './routes/_authenticated/workflow-configuration/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedUomsIndexRouteImport } from './routes/_authenticated/uoms/index'
-import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSuppliersIndexRouteImport } from './routes/_authenticated/suppliers/index'
+import { Route as AuthenticatedStockLocationsIndexRouteImport } from './routes/_authenticated/stock-locations/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedSalesIndexRouteImport } from './routes/_authenticated/sales/index'
 import { Route as AuthenticatedRolesIndexRouteImport } from './routes/_authenticated/roles/index'
@@ -59,13 +61,14 @@ import { Route as AuthenticatedPaymentMethodsIndexRouteImport } from './routes/_
 import { Route as AuthenticatedParticipantsIndexRouteImport } from './routes/_authenticated/participants/index'
 import { Route as AuthenticatedOrganizationsIndexRouteImport } from './routes/_authenticated/organizations/index'
 import { Route as AuthenticatedManufacturersIndexRouteImport } from './routes/_authenticated/manufacturers/index'
+import { Route as AuthenticatedLisIndexRouteImport } from './routes/_authenticated/lis/index'
 import { Route as AuthenticatedJournalsIndexRouteImport } from './routes/_authenticated/journals/index'
 import { Route as AuthenticatedJournalEntryLinesIndexRouteImport } from './routes/_authenticated/journal-entry-lines/index'
 import { Route as AuthenticatedJournalEntriesIndexRouteImport } from './routes/_authenticated/journal-entries/index'
 import { Route as AuthenticatedInventoryIndexRouteImport } from './routes/_authenticated/inventory/index'
-import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedExchangesIndexRouteImport } from './routes/_authenticated/exchanges/index'
 import { Route as AuthenticatedDrugComponentsIndexRouteImport } from './routes/_authenticated/drug-components/index'
+import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers/index'
 import { Route as AuthenticatedConversationsIndexRouteImport } from './routes/_authenticated/conversations/index'
 import { Route as AuthenticatedCodingConceptsIndexRouteImport } from './routes/_authenticated/coding-concepts/index'
@@ -74,17 +77,14 @@ import { Route as AuthenticatedChannelsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as AuthenticatedBranchesIndexRouteImport } from './routes/_authenticated/branches/index'
 import { Route as AuthenticatedAuditLogsIndexRouteImport } from './routes/_authenticated/audit-logs/index'
-import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
 import { Route as ClerkAuthenticatedUserManagementRouteImport } from './routes/clerk/_authenticated/user-management'
-import { Route as ClerkauthSignUpRouteImport } from './routes/clerk/(auth)/sign-up'
-import { Route as ClerkauthSignInRouteImport } from './routes/clerk/(auth)/sign-in'
 import { Route as AuthenticatedUomsUomIdRouteImport } from './routes/_authenticated/uoms/$uomId'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedProductsProductIdRouteImport } from './routes/_authenticated/products/$productId'
-import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedLisResourceKeyRouteImport } from './routes/_authenticated/lis/$resourceKey'
 import { Route as AuthenticatedCommunicationTraceExplorerRouteImport } from './routes/_authenticated/communication/trace-explorer'
 import { Route as AuthenticatedCommunicationMessageTesterRouteImport } from './routes/_authenticated/communication/message-tester'
 import { Route as AuthenticatedCommunicationFlowGraphRouteImport } from './routes/_authenticated/communication/flow-graph'
@@ -103,22 +103,21 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuestionnaireIndexRoute = QuestionnaireIndexRouteImport.update({
   id: '/questionnaire/',
   path: '/questionnaire/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const DamorexIndexRoute = DamorexIndexRouteImport.update({
+  id: '/damorex/',
+  path: '/damorex/',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const QuestionnaireOld_questionnaireRoute =
-  QuestionnaireOld_questionnaireRouteImport.update({
-    id: '/questionnaire/old_questionnaire',
-    path: '/questionnaire/old_questionnaire',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const errors503Route = errors503RouteImport.update({
   id: '/(errors)/503',
   path: '/503',
@@ -183,6 +182,12 @@ const AuthenticatedSettingsRouteRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedRoutingRouteRoute =
+  AuthenticatedRoutingRouteRouteImport.update({
+    id: '/routing',
+    path: '/routing',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedNotificationsRouteRoute =
   AuthenticatedNotificationsRouteRouteImport.update({
     id: '/notifications',
@@ -211,6 +216,12 @@ const AuthenticatedMessageLogsRouteRoute =
   AuthenticatedMessageLogsRouteRouteImport.update({
     id: '/message-logs',
     path: '/message-logs',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMappingRouteRoute =
+  AuthenticatedMappingRouteRouteImport.update({
+    id: '/mapping',
+    path: '/mapping',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCommunicationChannelsRouteRoute =
@@ -264,15 +275,16 @@ const AuthenticatedUomsIndexRoute = AuthenticatedUomsIndexRouteImport.update({
   path: '/uoms/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
-  id: '/tasks/',
-  path: '/tasks/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedSuppliersIndexRoute =
   AuthenticatedSuppliersIndexRouteImport.update({
     id: '/suppliers/',
     path: '/suppliers/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStockLocationsIndexRoute =
+  AuthenticatedStockLocationsIndexRouteImport.update({
+    id: '/stock-locations/',
+    path: '/stock-locations/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSettingsIndexRoute =
@@ -369,6 +381,11 @@ const AuthenticatedManufacturersIndexRoute =
     path: '/manufacturers/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedLisIndexRoute = AuthenticatedLisIndexRouteImport.update({
+  id: '/lis/',
+  path: '/lis/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedJournalsIndexRoute =
   AuthenticatedJournalsIndexRouteImport.update({
     id: '/journals/',
@@ -393,12 +410,6 @@ const AuthenticatedInventoryIndexRoute =
     path: '/inventory/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedHelpCenterIndexRoute =
-  AuthenticatedHelpCenterIndexRouteImport.update({
-    id: '/help-center/',
-    path: '/help-center/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedExchangesIndexRoute =
   AuthenticatedExchangesIndexRouteImport.update({
     id: '/exchanges/',
@@ -409,6 +420,12 @@ const AuthenticatedDrugComponentsIndexRoute =
   AuthenticatedDrugComponentsIndexRouteImport.update({
     id: '/drug-components/',
     path: '/drug-components/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexRouteImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCustomersIndexRoute =
@@ -458,27 +475,12 @@ const AuthenticatedAuditLogsIndexRoute =
     path: '/audit-logs/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexRouteImport.update({
-  id: '/apps/',
-  path: '/apps/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const ClerkAuthenticatedUserManagementRoute =
   ClerkAuthenticatedUserManagementRouteImport.update({
     id: '/user-management',
     path: '/user-management',
     getParentRoute: () => ClerkAuthenticatedRouteRoute,
   } as any)
-const ClerkauthSignUpRoute = ClerkauthSignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => ClerkauthRouteRoute,
-} as any)
-const ClerkauthSignInRoute = ClerkauthSignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
-  getParentRoute: () => ClerkauthRouteRoute,
-} as any)
 const AuthenticatedUomsUomIdRoute = AuthenticatedUomsUomIdRouteImport.update({
   id: '/uoms/$uomId',
   path: '/uoms/$uomId',
@@ -514,10 +516,10 @@ const AuthenticatedProductsProductIdRoute =
     path: '/products/$productId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedErrorsErrorRoute =
-  AuthenticatedErrorsErrorRouteImport.update({
-    id: '/errors/$error',
-    path: '/errors/$error',
+const AuthenticatedLisResourceKeyRoute =
+  AuthenticatedLisResourceKeyRouteImport.update({
+    id: '/lis/$resourceKey',
+    path: '/lis/$resourceKey',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCommunicationTraceExplorerRoute =
@@ -570,16 +572,18 @@ const AuthenticatedUomsUomIdEditRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute
+  '/': typeof IndexRoute
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
   '/aes': typeof AuthenticatedAesRouteRoute
   '/broadcasts': typeof AuthenticatedBroadcastsRouteRoute
   '/communication-channels': typeof AuthenticatedCommunicationChannelsRouteRoute
+  '/mapping': typeof AuthenticatedMappingRouteRoute
   '/message-logs': typeof AuthenticatedMessageLogsRouteRoute
   '/message-templates': typeof AuthenticatedMessageTemplatesRouteRoute
   '/messages': typeof AuthenticatedMessagesRouteRoute
   '/notification-templates': typeof AuthenticatedNotificationTemplatesRouteRoute
   '/notifications': typeof AuthenticatedNotificationsRouteRoute
+  '/routing': typeof AuthenticatedRoutingRouteRoute
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
@@ -591,7 +595,7 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
-  '/questionnaire/old_questionnaire': typeof QuestionnaireOld_questionnaireRoute
+  '/damorex/': typeof DamorexIndexRoute
   '/questionnaire/': typeof QuestionnaireIndexRoute
   '/coding-concepts/match': typeof AuthenticatedCodingConceptsMatchRoute
   '/coding-concepts/search': typeof AuthenticatedCodingConceptsSearchRoute
@@ -600,17 +604,14 @@ export interface FileRoutesByFullPath {
   '/communication/flow-graph': typeof AuthenticatedCommunicationFlowGraphRoute
   '/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
-  '/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/uoms/$uomId': typeof AuthenticatedUomsUomIdRouteWithChildren
-  '/clerk/sign-in': typeof ClerkauthSignInRoute
-  '/clerk/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
-  '/apps/': typeof AuthenticatedAppsIndexRoute
   '/audit-logs/': typeof AuthenticatedAuditLogsIndexRoute
   '/branches/': typeof AuthenticatedBranchesIndexRoute
   '/categories/': typeof AuthenticatedCategoriesIndexRoute
@@ -619,13 +620,14 @@ export interface FileRoutesByFullPath {
   '/coding-concepts/': typeof AuthenticatedCodingConceptsIndexRoute
   '/conversations/': typeof AuthenticatedConversationsIndexRoute
   '/customers/': typeof AuthenticatedCustomersIndexRoute
+  '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/drug-components/': typeof AuthenticatedDrugComponentsIndexRoute
   '/exchanges/': typeof AuthenticatedExchangesIndexRoute
-  '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/inventory/': typeof AuthenticatedInventoryIndexRoute
   '/journal-entries/': typeof AuthenticatedJournalEntriesIndexRoute
   '/journal-entry-lines/': typeof AuthenticatedJournalEntryLinesIndexRoute
   '/journals/': typeof AuthenticatedJournalsIndexRoute
+  '/lis/': typeof AuthenticatedLisIndexRoute
   '/manufacturers/': typeof AuthenticatedManufacturersIndexRoute
   '/organizations/': typeof AuthenticatedOrganizationsIndexRoute
   '/participants/': typeof AuthenticatedParticipantsIndexRoute
@@ -642,8 +644,8 @@ export interface FileRoutesByFullPath {
   '/roles/': typeof AuthenticatedRolesIndexRoute
   '/sales/': typeof AuthenticatedSalesIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/stock-locations/': typeof AuthenticatedStockLocationsIndexRoute
   '/suppliers/': typeof AuthenticatedSuppliersIndexRoute
-  '/tasks/': typeof AuthenticatedTasksIndexRoute
   '/uoms/': typeof AuthenticatedUomsIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
   '/workflow-configuration/': typeof AuthenticatedWorkflowConfigurationIndexRoute
@@ -653,15 +655,18 @@ export interface FileRoutesByFullPath {
   '/uoms/$uomId/edit': typeof AuthenticatedUomsUomIdEditRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
   '/aes': typeof AuthenticatedAesRouteRoute
   '/broadcasts': typeof AuthenticatedBroadcastsRouteRoute
   '/communication-channels': typeof AuthenticatedCommunicationChannelsRouteRoute
+  '/mapping': typeof AuthenticatedMappingRouteRoute
   '/message-logs': typeof AuthenticatedMessageLogsRouteRoute
   '/message-templates': typeof AuthenticatedMessageTemplatesRouteRoute
   '/messages': typeof AuthenticatedMessagesRouteRoute
   '/notification-templates': typeof AuthenticatedNotificationTemplatesRouteRoute
   '/notifications': typeof AuthenticatedNotificationsRouteRoute
+  '/routing': typeof AuthenticatedRoutingRouteRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
@@ -672,8 +677,7 @@ export interface FileRoutesByTo {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
-  '/questionnaire/old_questionnaire': typeof QuestionnaireOld_questionnaireRoute
-  '/': typeof AuthenticatedIndexRoute
+  '/damorex': typeof DamorexIndexRoute
   '/questionnaire': typeof QuestionnaireIndexRoute
   '/coding-concepts/match': typeof AuthenticatedCodingConceptsMatchRoute
   '/coding-concepts/search': typeof AuthenticatedCodingConceptsSearchRoute
@@ -682,17 +686,14 @@ export interface FileRoutesByTo {
   '/communication/flow-graph': typeof AuthenticatedCommunicationFlowGraphRoute
   '/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
-  '/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/uoms/$uomId': typeof AuthenticatedUomsUomIdRouteWithChildren
-  '/clerk/sign-in': typeof ClerkauthSignInRoute
-  '/clerk/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
-  '/apps': typeof AuthenticatedAppsIndexRoute
   '/audit-logs': typeof AuthenticatedAuditLogsIndexRoute
   '/branches': typeof AuthenticatedBranchesIndexRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
@@ -701,13 +702,14 @@ export interface FileRoutesByTo {
   '/coding-concepts': typeof AuthenticatedCodingConceptsIndexRoute
   '/conversations': typeof AuthenticatedConversationsIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/drug-components': typeof AuthenticatedDrugComponentsIndexRoute
   '/exchanges': typeof AuthenticatedExchangesIndexRoute
-  '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/inventory': typeof AuthenticatedInventoryIndexRoute
   '/journal-entries': typeof AuthenticatedJournalEntriesIndexRoute
   '/journal-entry-lines': typeof AuthenticatedJournalEntryLinesIndexRoute
   '/journals': typeof AuthenticatedJournalsIndexRoute
+  '/lis': typeof AuthenticatedLisIndexRoute
   '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
   '/organizations': typeof AuthenticatedOrganizationsIndexRoute
   '/participants': typeof AuthenticatedParticipantsIndexRoute
@@ -724,8 +726,8 @@ export interface FileRoutesByTo {
   '/roles': typeof AuthenticatedRolesIndexRoute
   '/sales': typeof AuthenticatedSalesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/stock-locations': typeof AuthenticatedStockLocationsIndexRoute
   '/suppliers': typeof AuthenticatedSuppliersIndexRoute
-  '/tasks': typeof AuthenticatedTasksIndexRoute
   '/uoms': typeof AuthenticatedUomsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/workflow-configuration': typeof AuthenticatedWorkflowConfigurationIndexRoute
@@ -736,18 +738,21 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/clerk': typeof ClerkRouteRouteWithChildren
   '/_authenticated/aes': typeof AuthenticatedAesRouteRoute
   '/_authenticated/broadcasts': typeof AuthenticatedBroadcastsRouteRoute
   '/_authenticated/communication-channels': typeof AuthenticatedCommunicationChannelsRouteRoute
+  '/_authenticated/mapping': typeof AuthenticatedMappingRouteRoute
   '/_authenticated/message-logs': typeof AuthenticatedMessageLogsRouteRoute
   '/_authenticated/message-templates': typeof AuthenticatedMessageTemplatesRouteRoute
   '/_authenticated/messages': typeof AuthenticatedMessagesRouteRoute
   '/_authenticated/notification-templates': typeof AuthenticatedNotificationTemplatesRouteRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRouteRoute
+  '/_authenticated/routing': typeof AuthenticatedRoutingRouteRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
-  '/clerk/(auth)': typeof ClerkauthRouteRouteWithChildren
+  '/clerk/(auth)': typeof ClerkauthRouteRoute
   '/clerk/_authenticated': typeof ClerkAuthenticatedRouteRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/otp': typeof authOtpRoute
@@ -759,8 +764,7 @@ export interface FileRoutesById {
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
-  '/questionnaire/old_questionnaire': typeof QuestionnaireOld_questionnaireRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/damorex/': typeof DamorexIndexRoute
   '/questionnaire/': typeof QuestionnaireIndexRoute
   '/_authenticated/coding-concepts/match': typeof AuthenticatedCodingConceptsMatchRoute
   '/_authenticated/coding-concepts/search': typeof AuthenticatedCodingConceptsSearchRoute
@@ -769,17 +773,14 @@ export interface FileRoutesById {
   '/_authenticated/communication/flow-graph': typeof AuthenticatedCommunicationFlowGraphRoute
   '/_authenticated/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/_authenticated/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
-  '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/_authenticated/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
   '/_authenticated/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/uoms/$uomId': typeof AuthenticatedUomsUomIdRouteWithChildren
-  '/clerk/(auth)/sign-in': typeof ClerkauthSignInRoute
-  '/clerk/(auth)/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/_authenticated/user-management': typeof ClerkAuthenticatedUserManagementRoute
-  '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/audit-logs/': typeof AuthenticatedAuditLogsIndexRoute
   '/_authenticated/branches/': typeof AuthenticatedBranchesIndexRoute
   '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
@@ -788,13 +789,14 @@ export interface FileRoutesById {
   '/_authenticated/coding-concepts/': typeof AuthenticatedCodingConceptsIndexRoute
   '/_authenticated/conversations/': typeof AuthenticatedConversationsIndexRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
+  '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/drug-components/': typeof AuthenticatedDrugComponentsIndexRoute
   '/_authenticated/exchanges/': typeof AuthenticatedExchangesIndexRoute
-  '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/inventory/': typeof AuthenticatedInventoryIndexRoute
   '/_authenticated/journal-entries/': typeof AuthenticatedJournalEntriesIndexRoute
   '/_authenticated/journal-entry-lines/': typeof AuthenticatedJournalEntryLinesIndexRoute
   '/_authenticated/journals/': typeof AuthenticatedJournalsIndexRoute
+  '/_authenticated/lis/': typeof AuthenticatedLisIndexRoute
   '/_authenticated/manufacturers/': typeof AuthenticatedManufacturersIndexRoute
   '/_authenticated/organizations/': typeof AuthenticatedOrganizationsIndexRoute
   '/_authenticated/participants/': typeof AuthenticatedParticipantsIndexRoute
@@ -811,8 +813,8 @@ export interface FileRoutesById {
   '/_authenticated/roles/': typeof AuthenticatedRolesIndexRoute
   '/_authenticated/sales/': typeof AuthenticatedSalesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/_authenticated/stock-locations/': typeof AuthenticatedStockLocationsIndexRoute
   '/_authenticated/suppliers/': typeof AuthenticatedSuppliersIndexRoute
-  '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/uoms/': typeof AuthenticatedUomsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/workflow-configuration/': typeof AuthenticatedWorkflowConfigurationIndexRoute
@@ -829,11 +831,13 @@ export interface FileRouteTypes {
     | '/aes'
     | '/broadcasts'
     | '/communication-channels'
+    | '/mapping'
     | '/message-logs'
     | '/message-templates'
     | '/messages'
     | '/notification-templates'
     | '/notifications'
+    | '/routing'
     | '/settings'
     | '/forgot-password'
     | '/otp'
@@ -845,7 +849,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
-    | '/questionnaire/old_questionnaire'
+    | '/damorex/'
     | '/questionnaire/'
     | '/coding-concepts/match'
     | '/coding-concepts/search'
@@ -854,17 +858,14 @@ export interface FileRouteTypes {
     | '/communication/flow-graph'
     | '/communication/message-tester'
     | '/communication/trace-explorer'
-    | '/errors/$error'
+    | '/lis/$resourceKey'
     | '/products/$productId'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
     | '/uoms/$uomId'
-    | '/clerk/sign-in'
-    | '/clerk/sign-up'
     | '/clerk/user-management'
-    | '/apps/'
     | '/audit-logs/'
     | '/branches/'
     | '/categories/'
@@ -873,13 +874,14 @@ export interface FileRouteTypes {
     | '/coding-concepts/'
     | '/conversations/'
     | '/customers/'
+    | '/dashboard/'
     | '/drug-components/'
     | '/exchanges/'
-    | '/help-center/'
     | '/inventory/'
     | '/journal-entries/'
     | '/journal-entry-lines/'
     | '/journals/'
+    | '/lis/'
     | '/manufacturers/'
     | '/organizations/'
     | '/participants/'
@@ -896,8 +898,8 @@ export interface FileRouteTypes {
     | '/roles/'
     | '/sales/'
     | '/settings/'
+    | '/stock-locations/'
     | '/suppliers/'
-    | '/tasks/'
     | '/uoms/'
     | '/users/'
     | '/workflow-configuration/'
@@ -907,15 +909,18 @@ export interface FileRouteTypes {
     | '/uoms/$uomId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/clerk'
     | '/aes'
     | '/broadcasts'
     | '/communication-channels'
+    | '/mapping'
     | '/message-logs'
     | '/message-templates'
     | '/messages'
     | '/notification-templates'
     | '/notifications'
+    | '/routing'
     | '/forgot-password'
     | '/otp'
     | '/sign-in'
@@ -926,8 +931,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
-    | '/questionnaire/old_questionnaire'
-    | '/'
+    | '/damorex'
     | '/questionnaire'
     | '/coding-concepts/match'
     | '/coding-concepts/search'
@@ -936,17 +940,14 @@ export interface FileRouteTypes {
     | '/communication/flow-graph'
     | '/communication/message-tester'
     | '/communication/trace-explorer'
-    | '/errors/$error'
+    | '/lis/$resourceKey'
     | '/products/$productId'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
     | '/uoms/$uomId'
-    | '/clerk/sign-in'
-    | '/clerk/sign-up'
     | '/clerk/user-management'
-    | '/apps'
     | '/audit-logs'
     | '/branches'
     | '/categories'
@@ -955,13 +956,14 @@ export interface FileRouteTypes {
     | '/coding-concepts'
     | '/conversations'
     | '/customers'
+    | '/dashboard'
     | '/drug-components'
     | '/exchanges'
-    | '/help-center'
     | '/inventory'
     | '/journal-entries'
     | '/journal-entry-lines'
     | '/journals'
+    | '/lis'
     | '/manufacturers'
     | '/organizations'
     | '/participants'
@@ -978,8 +980,8 @@ export interface FileRouteTypes {
     | '/roles'
     | '/sales'
     | '/settings'
+    | '/stock-locations'
     | '/suppliers'
-    | '/tasks'
     | '/uoms'
     | '/users'
     | '/workflow-configuration'
@@ -989,16 +991,19 @@ export interface FileRouteTypes {
     | '/uoms/$uomId/edit'
   id:
     | '__root__'
+    | '/'
     | '/_authenticated'
     | '/clerk'
     | '/_authenticated/aes'
     | '/_authenticated/broadcasts'
     | '/_authenticated/communication-channels'
+    | '/_authenticated/mapping'
     | '/_authenticated/message-logs'
     | '/_authenticated/message-templates'
     | '/_authenticated/messages'
     | '/_authenticated/notification-templates'
     | '/_authenticated/notifications'
+    | '/_authenticated/routing'
     | '/_authenticated/settings'
     | '/clerk/(auth)'
     | '/clerk/_authenticated'
@@ -1012,8 +1017,7 @@ export interface FileRouteTypes {
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
-    | '/questionnaire/old_questionnaire'
-    | '/_authenticated/'
+    | '/damorex/'
     | '/questionnaire/'
     | '/_authenticated/coding-concepts/match'
     | '/_authenticated/coding-concepts/search'
@@ -1022,17 +1026,14 @@ export interface FileRouteTypes {
     | '/_authenticated/communication/flow-graph'
     | '/_authenticated/communication/message-tester'
     | '/_authenticated/communication/trace-explorer'
-    | '/_authenticated/errors/$error'
+    | '/_authenticated/lis/$resourceKey'
     | '/_authenticated/products/$productId'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/uoms/$uomId'
-    | '/clerk/(auth)/sign-in'
-    | '/clerk/(auth)/sign-up'
     | '/clerk/_authenticated/user-management'
-    | '/_authenticated/apps/'
     | '/_authenticated/audit-logs/'
     | '/_authenticated/branches/'
     | '/_authenticated/categories/'
@@ -1041,13 +1042,14 @@ export interface FileRouteTypes {
     | '/_authenticated/coding-concepts/'
     | '/_authenticated/conversations/'
     | '/_authenticated/customers/'
+    | '/_authenticated/dashboard/'
     | '/_authenticated/drug-components/'
     | '/_authenticated/exchanges/'
-    | '/_authenticated/help-center/'
     | '/_authenticated/inventory/'
     | '/_authenticated/journal-entries/'
     | '/_authenticated/journal-entry-lines/'
     | '/_authenticated/journals/'
+    | '/_authenticated/lis/'
     | '/_authenticated/manufacturers/'
     | '/_authenticated/organizations/'
     | '/_authenticated/participants/'
@@ -1064,8 +1066,8 @@ export interface FileRouteTypes {
     | '/_authenticated/roles/'
     | '/_authenticated/sales/'
     | '/_authenticated/settings/'
+    | '/_authenticated/stock-locations/'
     | '/_authenticated/suppliers/'
-    | '/_authenticated/tasks/'
     | '/_authenticated/uoms/'
     | '/_authenticated/users/'
     | '/_authenticated/workflow-configuration/'
@@ -1076,6 +1078,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ClerkRouteRoute: typeof ClerkRouteRouteWithChildren
   authForgotPasswordRoute: typeof authForgotPasswordRoute
@@ -1088,7 +1091,7 @@ export interface RootRouteChildren {
   errors404Route: typeof errors404Route
   errors500Route: typeof errors500Route
   errors503Route: typeof errors503Route
-  QuestionnaireOld_questionnaireRoute: typeof QuestionnaireOld_questionnaireRoute
+  DamorexIndexRoute: typeof DamorexIndexRoute
   QuestionnaireIndexRoute: typeof QuestionnaireIndexRoute
 }
 
@@ -1108,6 +1111,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/questionnaire/': {
       id: '/questionnaire/'
       path: '/questionnaire'
@@ -1115,18 +1125,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuestionnaireIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/': {
-      id: '/_authenticated/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/questionnaire/old_questionnaire': {
-      id: '/questionnaire/old_questionnaire'
-      path: '/questionnaire/old_questionnaire'
-      fullPath: '/questionnaire/old_questionnaire'
-      preLoaderRoute: typeof QuestionnaireOld_questionnaireRouteImport
+    '/damorex/': {
+      id: '/damorex/'
+      path: '/damorex'
+      fullPath: '/damorex/'
+      preLoaderRoute: typeof DamorexIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(errors)/503': {
@@ -1220,6 +1223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/routing': {
+      id: '/_authenticated/routing'
+      path: '/routing'
+      fullPath: '/routing'
+      preLoaderRoute: typeof AuthenticatedRoutingRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/notifications': {
       id: '/_authenticated/notifications'
       path: '/notifications'
@@ -1253,6 +1263,13 @@ declare module '@tanstack/react-router' {
       path: '/message-logs'
       fullPath: '/message-logs'
       preLoaderRoute: typeof AuthenticatedMessageLogsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mapping': {
+      id: '/_authenticated/mapping'
+      path: '/mapping'
+      fullPath: '/mapping'
+      preLoaderRoute: typeof AuthenticatedMappingRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/communication-channels': {
@@ -1318,18 +1335,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUomsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/tasks/': {
-      id: '/_authenticated/tasks/'
-      path: '/tasks'
-      fullPath: '/tasks/'
-      preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/suppliers/': {
       id: '/_authenticated/suppliers/'
       path: '/suppliers'
       fullPath: '/suppliers/'
       preLoaderRoute: typeof AuthenticatedSuppliersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/stock-locations/': {
+      id: '/_authenticated/stock-locations/'
+      path: '/stock-locations'
+      fullPath: '/stock-locations/'
+      preLoaderRoute: typeof AuthenticatedStockLocationsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings/': {
@@ -1444,6 +1461,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManufacturersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/lis/': {
+      id: '/_authenticated/lis/'
+      path: '/lis'
+      fullPath: '/lis/'
+      preLoaderRoute: typeof AuthenticatedLisIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/journals/': {
       id: '/_authenticated/journals/'
       path: '/journals'
@@ -1472,13 +1496,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/help-center/': {
-      id: '/_authenticated/help-center/'
-      path: '/help-center'
-      fullPath: '/help-center/'
-      preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/exchanges/': {
       id: '/_authenticated/exchanges/'
       path: '/exchanges'
@@ -1491,6 +1508,13 @@ declare module '@tanstack/react-router' {
       path: '/drug-components'
       fullPath: '/drug-components/'
       preLoaderRoute: typeof AuthenticatedDrugComponentsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/customers/': {
@@ -1549,33 +1573,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditLogsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/apps/': {
-      id: '/_authenticated/apps/'
-      path: '/apps'
-      fullPath: '/apps/'
-      preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/clerk/_authenticated/user-management': {
       id: '/clerk/_authenticated/user-management'
       path: '/user-management'
       fullPath: '/clerk/user-management'
       preLoaderRoute: typeof ClerkAuthenticatedUserManagementRouteImport
       parentRoute: typeof ClerkAuthenticatedRouteRoute
-    }
-    '/clerk/(auth)/sign-up': {
-      id: '/clerk/(auth)/sign-up'
-      path: '/sign-up'
-      fullPath: '/clerk/sign-up'
-      preLoaderRoute: typeof ClerkauthSignUpRouteImport
-      parentRoute: typeof ClerkauthRouteRoute
-    }
-    '/clerk/(auth)/sign-in': {
-      id: '/clerk/(auth)/sign-in'
-      path: '/sign-in'
-      fullPath: '/clerk/sign-in'
-      preLoaderRoute: typeof ClerkauthSignInRouteImport
-      parentRoute: typeof ClerkauthRouteRoute
     }
     '/_authenticated/uoms/$uomId': {
       id: '/_authenticated/uoms/$uomId'
@@ -1619,11 +1622,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductsProductIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/errors/$error': {
-      id: '/_authenticated/errors/$error'
-      path: '/errors/$error'
-      fullPath: '/errors/$error'
-      preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
+    '/_authenticated/lis/$resourceKey': {
+      id: '/_authenticated/lis/$resourceKey'
+      path: '/lis/$resourceKey'
+      fullPath: '/lis/$resourceKey'
+      preLoaderRoute: typeof AuthenticatedLisResourceKeyRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/communication/trace-explorer': {
@@ -1726,13 +1729,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAesRouteRoute: typeof AuthenticatedAesRouteRoute
   AuthenticatedBroadcastsRouteRoute: typeof AuthenticatedBroadcastsRouteRoute
   AuthenticatedCommunicationChannelsRouteRoute: typeof AuthenticatedCommunicationChannelsRouteRoute
+  AuthenticatedMappingRouteRoute: typeof AuthenticatedMappingRouteRoute
   AuthenticatedMessageLogsRouteRoute: typeof AuthenticatedMessageLogsRouteRoute
   AuthenticatedMessageTemplatesRouteRoute: typeof AuthenticatedMessageTemplatesRouteRoute
   AuthenticatedMessagesRouteRoute: typeof AuthenticatedMessagesRouteRoute
   AuthenticatedNotificationTemplatesRouteRoute: typeof AuthenticatedNotificationTemplatesRouteRoute
   AuthenticatedNotificationsRouteRoute: typeof AuthenticatedNotificationsRouteRoute
+  AuthenticatedRoutingRouteRoute: typeof AuthenticatedRoutingRouteRoute
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedCodingConceptsMatchRoute: typeof AuthenticatedCodingConceptsMatchRoute
   AuthenticatedCodingConceptsSearchRoute: typeof AuthenticatedCodingConceptsSearchRoute
   AuthenticatedCodingConceptsUploadRoute: typeof AuthenticatedCodingConceptsUploadRoute
@@ -1740,10 +1744,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCommunicationFlowGraphRoute: typeof AuthenticatedCommunicationFlowGraphRoute
   AuthenticatedCommunicationMessageTesterRoute: typeof AuthenticatedCommunicationMessageTesterRoute
   AuthenticatedCommunicationTraceExplorerRoute: typeof AuthenticatedCommunicationTraceExplorerRoute
-  AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
+  AuthenticatedLisResourceKeyRoute: typeof AuthenticatedLisResourceKeyRoute
   AuthenticatedProductsProductIdRoute: typeof AuthenticatedProductsProductIdRoute
   AuthenticatedUomsUomIdRoute: typeof AuthenticatedUomsUomIdRouteWithChildren
-  AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedAuditLogsIndexRoute: typeof AuthenticatedAuditLogsIndexRoute
   AuthenticatedBranchesIndexRoute: typeof AuthenticatedBranchesIndexRoute
   AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
@@ -1752,13 +1755,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCodingConceptsIndexRoute: typeof AuthenticatedCodingConceptsIndexRoute
   AuthenticatedConversationsIndexRoute: typeof AuthenticatedConversationsIndexRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedDrugComponentsIndexRoute: typeof AuthenticatedDrugComponentsIndexRoute
   AuthenticatedExchangesIndexRoute: typeof AuthenticatedExchangesIndexRoute
-  AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedInventoryIndexRoute: typeof AuthenticatedInventoryIndexRoute
   AuthenticatedJournalEntriesIndexRoute: typeof AuthenticatedJournalEntriesIndexRoute
   AuthenticatedJournalEntryLinesIndexRoute: typeof AuthenticatedJournalEntryLinesIndexRoute
   AuthenticatedJournalsIndexRoute: typeof AuthenticatedJournalsIndexRoute
+  AuthenticatedLisIndexRoute: typeof AuthenticatedLisIndexRoute
   AuthenticatedManufacturersIndexRoute: typeof AuthenticatedManufacturersIndexRoute
   AuthenticatedOrganizationsIndexRoute: typeof AuthenticatedOrganizationsIndexRoute
   AuthenticatedParticipantsIndexRoute: typeof AuthenticatedParticipantsIndexRoute
@@ -1774,8 +1778,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsIndexRoute: typeof AuthenticatedReportsIndexRoute
   AuthenticatedRolesIndexRoute: typeof AuthenticatedRolesIndexRoute
   AuthenticatedSalesIndexRoute: typeof AuthenticatedSalesIndexRoute
+  AuthenticatedStockLocationsIndexRoute: typeof AuthenticatedStockLocationsIndexRoute
   AuthenticatedSuppliersIndexRoute: typeof AuthenticatedSuppliersIndexRoute
-  AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUomsIndexRoute: typeof AuthenticatedUomsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedWorkflowConfigurationIndexRoute: typeof AuthenticatedWorkflowConfigurationIndexRoute
@@ -1789,6 +1793,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBroadcastsRouteRoute: AuthenticatedBroadcastsRouteRoute,
   AuthenticatedCommunicationChannelsRouteRoute:
     AuthenticatedCommunicationChannelsRouteRoute,
+  AuthenticatedMappingRouteRoute: AuthenticatedMappingRouteRoute,
   AuthenticatedMessageLogsRouteRoute: AuthenticatedMessageLogsRouteRoute,
   AuthenticatedMessageTemplatesRouteRoute:
     AuthenticatedMessageTemplatesRouteRoute,
@@ -1796,8 +1801,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotificationTemplatesRouteRoute:
     AuthenticatedNotificationTemplatesRouteRoute,
   AuthenticatedNotificationsRouteRoute: AuthenticatedNotificationsRouteRoute,
+  AuthenticatedRoutingRouteRoute: AuthenticatedRoutingRouteRoute,
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedCodingConceptsMatchRoute: AuthenticatedCodingConceptsMatchRoute,
   AuthenticatedCodingConceptsSearchRoute:
     AuthenticatedCodingConceptsSearchRoute,
@@ -1811,10 +1816,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedCommunicationMessageTesterRoute,
   AuthenticatedCommunicationTraceExplorerRoute:
     AuthenticatedCommunicationTraceExplorerRoute,
-  AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
+  AuthenticatedLisResourceKeyRoute: AuthenticatedLisResourceKeyRoute,
   AuthenticatedProductsProductIdRoute: AuthenticatedProductsProductIdRoute,
   AuthenticatedUomsUomIdRoute: AuthenticatedUomsUomIdRouteWithChildren,
-  AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedAuditLogsIndexRoute: AuthenticatedAuditLogsIndexRoute,
   AuthenticatedBranchesIndexRoute: AuthenticatedBranchesIndexRoute,
   AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
@@ -1823,14 +1827,15 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCodingConceptsIndexRoute: AuthenticatedCodingConceptsIndexRoute,
   AuthenticatedConversationsIndexRoute: AuthenticatedConversationsIndexRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
+  AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedDrugComponentsIndexRoute: AuthenticatedDrugComponentsIndexRoute,
   AuthenticatedExchangesIndexRoute: AuthenticatedExchangesIndexRoute,
-  AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedInventoryIndexRoute: AuthenticatedInventoryIndexRoute,
   AuthenticatedJournalEntriesIndexRoute: AuthenticatedJournalEntriesIndexRoute,
   AuthenticatedJournalEntryLinesIndexRoute:
     AuthenticatedJournalEntryLinesIndexRoute,
   AuthenticatedJournalsIndexRoute: AuthenticatedJournalsIndexRoute,
+  AuthenticatedLisIndexRoute: AuthenticatedLisIndexRoute,
   AuthenticatedManufacturersIndexRoute: AuthenticatedManufacturersIndexRoute,
   AuthenticatedOrganizationsIndexRoute: AuthenticatedOrganizationsIndexRoute,
   AuthenticatedParticipantsIndexRoute: AuthenticatedParticipantsIndexRoute,
@@ -1846,8 +1851,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedReportsIndexRoute: AuthenticatedReportsIndexRoute,
   AuthenticatedRolesIndexRoute: AuthenticatedRolesIndexRoute,
   AuthenticatedSalesIndexRoute: AuthenticatedSalesIndexRoute,
+  AuthenticatedStockLocationsIndexRoute: AuthenticatedStockLocationsIndexRoute,
   AuthenticatedSuppliersIndexRoute: AuthenticatedSuppliersIndexRoute,
-  AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUomsIndexRoute: AuthenticatedUomsIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedWorkflowConfigurationIndexRoute:
@@ -1860,20 +1865,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
-
-interface ClerkauthRouteRouteChildren {
-  ClerkauthSignInRoute: typeof ClerkauthSignInRoute
-  ClerkauthSignUpRoute: typeof ClerkauthSignUpRoute
-}
-
-const ClerkauthRouteRouteChildren: ClerkauthRouteRouteChildren = {
-  ClerkauthSignInRoute: ClerkauthSignInRoute,
-  ClerkauthSignUpRoute: ClerkauthSignUpRoute,
-}
-
-const ClerkauthRouteRouteWithChildren = ClerkauthRouteRoute._addFileChildren(
-  ClerkauthRouteRouteChildren,
-)
 
 interface ClerkAuthenticatedRouteRouteChildren {
   ClerkAuthenticatedUserManagementRoute: typeof ClerkAuthenticatedUserManagementRoute
@@ -1891,12 +1882,12 @@ const ClerkAuthenticatedRouteRouteWithChildren =
   )
 
 interface ClerkRouteRouteChildren {
-  ClerkauthRouteRoute: typeof ClerkauthRouteRouteWithChildren
+  ClerkauthRouteRoute: typeof ClerkauthRouteRoute
   ClerkAuthenticatedRouteRoute: typeof ClerkAuthenticatedRouteRouteWithChildren
 }
 
 const ClerkRouteRouteChildren: ClerkRouteRouteChildren = {
-  ClerkauthRouteRoute: ClerkauthRouteRouteWithChildren,
+  ClerkauthRouteRoute: ClerkauthRouteRoute,
   ClerkAuthenticatedRouteRoute: ClerkAuthenticatedRouteRouteWithChildren,
 }
 
@@ -1905,6 +1896,7 @@ const ClerkRouteRouteWithChildren = ClerkRouteRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ClerkRouteRoute: ClerkRouteRouteWithChildren,
   authForgotPasswordRoute: authForgotPasswordRoute,
@@ -1917,7 +1909,7 @@ const rootRouteChildren: RootRouteChildren = {
   errors404Route: errors404Route,
   errors500Route: errors500Route,
   errors503Route: errors503Route,
-  QuestionnaireOld_questionnaireRoute: QuestionnaireOld_questionnaireRoute,
+  DamorexIndexRoute: DamorexIndexRoute,
   QuestionnaireIndexRoute: QuestionnaireIndexRoute,
 }
 export const routeTree = rootRouteImport

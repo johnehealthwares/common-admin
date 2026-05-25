@@ -1,4 +1,4 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxSettingsPage() {
   return (
@@ -16,10 +16,6 @@ export function RxSettingsPage() {
         { name: 'key', label: 'Key', required: true, placeholder: 'store.name' },
         { name: 'value', label: 'Value', required: true },
         { name: 'description', label: 'Description' },
-      ]}
-      sortOptions={[
-        { value: 'updatedAt', label: 'Updated' },
-        { value: 'key', label: 'Key' },
       ]}
       buildCreatePayload={(values) => ({
         key: values.key,

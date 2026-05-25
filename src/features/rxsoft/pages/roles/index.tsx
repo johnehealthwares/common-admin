@@ -1,4 +1,4 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxRolesPage() {
   return (
@@ -25,10 +25,6 @@ export function RxRolesPage() {
           required: true,
           placeholder: 'products:read,inventory:read',
         },
-      ]}
-      sortOptions={[
-        { value: 'code', label: 'Code' },
-        { value: 'name', label: 'Name' },
       ]}
       buildCreatePayload={(values) => ({
         code: values.code,

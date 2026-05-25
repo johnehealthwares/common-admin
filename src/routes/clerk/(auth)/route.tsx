@@ -1,7 +1,6 @@
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
-import { ClerkFullLogo } from '@/assets/clerk-full-logo'
-import { Logo } from '@/assets/logo'
-import { LearnMore } from '@/components/learn-more'
+import { CircleParking } from 'lucide-react'
+
 
 export const Route = createFileRoute('/clerk/(auth)')({
   component: ClerkAuthLayout,
@@ -17,11 +16,11 @@ function ClerkAuthLayout() {
           to='/'
           className='relative z-20 flex items-center text-lg font-medium'
         >
-          <Logo className='me-2' />
+          < CircleParking className='me-2' />
           Multi Admin
         </Link>
 
-        <ClerkFullLogo className='relative m-auto size-96' />
+        <CircleParking className='relative m-auto size-96' />
 
         <div className='relative z-20 mt-auto'>
           <blockquote className='space-y-2'>
@@ -35,13 +34,7 @@ function ClerkAuthLayout() {
       </div>
       <div className='lg:p-8'>
         <div className='relative mx-auto flex w-full flex-col items-center justify-center gap-4'>
-          <LearnMore
-            defaultOpen
-            triggerProps={{
-              className: 'absolute -top-12 end-0 sm:end-20 size-6',
-            }}
-            contentProps={{ side: 'top', align: 'end', className: 'w-auto' }}
-          >
+          
             Welcome to the example Clerk auth page. <br />
             Back to{' '}
             <Link
@@ -51,7 +44,7 @@ function ClerkAuthLayout() {
               Dashboard
             </Link>{' '}
             ?
-          </LearnMore>
+          
           <Outlet />
         </div>
       </div>

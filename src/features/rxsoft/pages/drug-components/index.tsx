@@ -1,6 +1,16 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxDrugComponentsPage() {
+  const [formState, setFormState] = useState<Record<string, unknown>>({});
+    const updateField = (name: string, value: unknown) => {
+      setFormState((current: any) => ({
+        ...current,
+        [name]: value,
+      }))
+      console.log({ formState })
+    }
+    
   return (
     <DataPageShell
       title='Drug Components'
@@ -11,11 +21,14 @@ export function RxDrugComponentsPage() {
         { key: 'updatedAt', label: 'Updated' },
       ]}
       createFields={[{ name: 'name', label: 'Name', required: true }]}
-      sortOptions={[
-        { value: 'name', label: 'Name' },
-        { value: 'updatedAt', label: 'Updated' },
-      ]}
-      canDelete
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
+      buildCreatePayload={(values) => ({
+        name: values.name,
+      })}
+      canExport
+      csvEndpoint='/drug-components/export'
     />
   )
 }

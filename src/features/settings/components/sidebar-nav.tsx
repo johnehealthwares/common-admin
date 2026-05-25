@@ -1,89 +1,209 @@
-import { useState } from 'react'
-import { useLocation, useNavigate, Link } from '@tanstack/react-router'
+// sidebar-nav-item.tsx
+import { useMemo } from 'react'
+import { Link } from '@tanstack/react-router'
+
 import {
-  Select,
-  Group,
-  Text,
-  ScrollArea,
-  Stack,
-  UnstyledButton,
   Box,
+  Collapse,
+  Group,
+  Stack,
+  Text,
+  ThemeIcon,
+  Tooltip,
+  UnstyledButton,
 } from '@mantine/core'
 
-type SidebarNavProps = React.HTMLAttributes<HTMLElement> & {
-  items: {
-    href: string
-    title: string
-    icon: React.ReactNode
-  }[]
+import { useDisclosure } from '@mantine/hooks'
+
+import {
+  ChevronDown,
+  ChevronRight,
+} from 'lucide-react'
+import { NavItem } from '@/layout/types'
+
+
+interface SidebarNavItemProps {
+  item: NavItem
+  pathname: string
+  collapsed?: boolean
+  resetExpandState: (index: number) => void
+  expanded: boolean
+  index: number
 }
 
-export function SidebarNav({ items, ...props }: SidebarNavProps) {
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
-  const [val, setVal] = useState(pathname ?? '/settings')
+export function SidebarNavItem({
+  item,
+  pathname,
+  collapsed = false,
+  expanded = false,
+  resetExpandState,
+  index
+}: SidebarNavItemProps) {
+  const hasChildren = Boolean(item.items?.length)
 
-  const handleSelect = (value: string | null) => {
-    if (!value) return
-    setVal(value)
-    navigate({ to: value })
+  const active = useMemo(() => {
+    if (!item.url) return false
+
+    return (
+      pathname === item.url ||
+      pathname.startsWith(`${item.url}/`) ||
+     ((item.items || []) as unknown as any[]).some((sub: NavItem) => pathname === sub.url)
+    )
+  }, [pathname, item])
+
+  /**
+   * Automatically open submenu
+   * when one of the children is active
+   */
+  const [opened, { toggle }] = useDisclosure(active)
+
+  const Icon = item.icon
+
+  const button = (
+    <UnstyledButton
+      onClick={() => {
+        if (hasChildren) {
+          toggle()
+          resetExpandState(index)
+        }
+      }}
+      style={{
+        width: '100%',
+        borderRadius: 10,
+        transition: 'all 140ms ease',
+        background: active
+          ? 'var(--mantine-color-blue-light)'
+          : 'transparent',
+      }}
+    >
+      <Group
+        justify="space-between"
+        wrap="nowrap"
+        px="sm"
+        py={10}
+      >
+        {/* LEFT */}
+        <Group gap="sm" wrap="nowrap">
+          {Icon && (
+            <ThemeIcon
+              size={34}
+              radius="md"
+              variant={active ? 'filled' : 'light'}
+            >
+              <Icon size={18} />
+            </ThemeIcon>
+          )}
+
+          {!collapsed && (
+            <Box>
+              <Text
+                size="sm"
+                fw={active ? 700 : 500}
+                c={active ? 'blue' : undefined}
+              >
+                {item.title}
+              </Text>
+
+              {item.title && (
+                <Text size="xs" c="dimmed">
+                  {item.title}
+                </Text>
+              )}
+            </Box>
+          )}
+        </Group>
+
+        {/* RIGHT */}
+        {!collapsed && hasChildren && (
+          <>
+            {opened ? (
+              <ChevronDown size={16} />
+            ) : (
+              <ChevronRight size={16} />
+            )}
+          </>
+        )}
+      </Group>
+    </UnstyledButton>
+  )
+
+  /**
+   * COLLAPSED SIDEBAR MODE
+   */
+  if (collapsed) {
+    return (
+      <Tooltip
+        label={item.title}
+        position="right"
+        withArrow
+      >
+        <Box>
+          {item.url ? (
+            <Link to={item.url}>
+              {button}
+            </Link>
+          ) : (
+            button
+          )}
+        </Box>
+      </Tooltip>
+    )
   }
 
   return (
-    <>
-      {/* Mobile (Select dropdown) */}
-      <Box p="xs" hiddenFrom="md">
-        <Select
-          value={val}
-          onChange={handleSelect}
-          data={items.map((item) => ({
-            value: item.href,
-            label: item.title,
-          }))}
-          renderOption={({ option }) => {
-            const item = items.find((i) => i.href === option.value)
-            return (
-              <Group gap="sm">
-                <span>{item?.icon}</span>
-                <Text>{option.label}</Text>
-              </Group>
-            )
-          }}
-        />
-      </Box>
+    <Stack gap={4}>
+      {/* ROOT ITEM */}
+      {item.url ? (
+        <Link to={item.url}>
+          {button}
+        </Link>
+      ) : (
+        button
+      )}
 
-      {/* Desktop (Sidebar nav) */}
-      <ScrollArea
-        type="always"
-        scrollbars="x"
-        visibleFrom="md"
-      >
-        <Stack gap="xs" p="xs" {...props}>
-          {items.map((item) => {
-            const active = pathname === item.href
+      {/* SUBMENU */}
+      {hasChildren && (
+        <Collapse expanded={expanded}>
+          <Stack gap={2} pl={20}>
+            {item.items?.map((subItem: NavItem) => {
+              const subActive =
+                pathname === subItem.url
 
-            return (
-              <UnstyledButton
-                key={item.href}
-                component={Link}
-                to={item.href}
-                style={{
-                  padding: '8px 10px',
-                  borderRadius: 6,
-                  background: active ? 'var(--mantine-color-gray-2)' : undefined,
-                }}
-              >
-                <Group gap="sm">
-                  {item.icon}
-                  <Text size="sm" fw={500}>
-                    {item.title}
-                  </Text>
-                </Group>
-              </UnstyledButton>
-            )
-          })}
-        </Stack>
-      </ScrollArea>
-    </>
+              return (
+                <Link
+                  key={subItem.title}
+                  to={subItem.url}
+                >
+                  <UnstyledButton
+                    style={{
+                      width: '100%',
+                      borderRadius: 8,
+                      padding: '10px 5px',
+                      transition: 'all 140ms ease',
+                      background: subActive
+                        ? 'var(--mantine-color-gray-1)'
+                        : 'transparent',
+                    }}
+                  >
+                    <Group gap="sm">
+                      {subItem.icon && (
+                        <subItem.icon size={15} />
+                      )}
+
+                      <Text
+                        size="sm"
+                        fw={subActive ? 600 : 500}
+                      >
+                        {subItem.title}
+                      </Text>
+                    </Group>
+                  </UnstyledButton>
+                </Link>
+              )
+            })}
+          </Stack>
+        </Collapse>
+      )}
+    </Stack>
   )
 }

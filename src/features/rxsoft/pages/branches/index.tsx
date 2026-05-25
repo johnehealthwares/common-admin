@@ -1,6 +1,16 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxBranchesPage() {
+  const [formState, setFormState] = useState<Record<string, unknown>>({});
+  const updateField = (name: string, value: unknown) => {
+    setFormState((current) => ({
+      ...current,
+      [name]: value,
+    }))
+    console.log({ formState })
+  }
+
   return (
     <DataPageShell
       title='Branches'
@@ -12,18 +22,30 @@ export function RxBranchesPage() {
         { key: 'address', label: 'Address' },
         { key: 'updatedAt', label: 'Updated' },
       ]}
-      createFields={[
-        { name: 'code', label: 'Code', required: true, placeholder: 'MAIN' },
-        { name: 'name', label: 'Name', required: true, placeholder: 'Main Branch' },
-        { name: 'address', label: 'Address' },
-      ]}
-      sortOptions={[
-        { value: 'createdAt', label: 'Created' },
-        { value: 'updatedAt', label: 'Updated' },
-        { value: 'name', label: 'Name' },
-        { value: 'code', label: 'Code' },
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
+      tabGroups={[
+        {
+          title: 'General Info',
+          value: 'general',
+          fieldGroups: [
+            {
+              fields: [
+                { name: 'code', label: 'Code', required: true, placeholder: 'MAIN' },
+                { name: 'name', label: 'Name', required: true, placeholder: 'Main Branch' },
+                { name: 'address', label: 'Address' },
+              ],
+            },
+          ],
+        },
       ]}
       buildCreatePayload={(values) => ({
+        code: values.code,
+        name: values.name,
+        address: values.address || undefined,
+      })}
+      buildUpdatePayload={(values) => ({
         code: values.code,
         name: values.name,
         address: values.address || undefined,

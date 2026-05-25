@@ -1,7 +1,8 @@
-import { DataPageShell } from "@/features/components/data-page-shell"
+import { DataPageShell } from "@/features/components/page/data-page-shell"
 import { ColumnDataType, ColumnTypeFilters } from "@/features/rxsoft/types"
 import { codingConceptEndpoint } from "@/lib/coding-concept-api"
 import { codingModuleOptions } from "../shared"
+import { useState } from "react"
 
 const conceptsEndpoint = codingConceptEndpoint('/concepts')
 
@@ -54,8 +55,15 @@ const columns = [
 ]
 
 
-export const Concepts = ({formState}: {formState?: any}) => {
-
+export const Concepts = () => {
+  const [formState, setFormState] = useState<any>({});
+  const updateField = (name: string, value: unknown) => {
+      setFormState((prev: any) => ({
+          ...prev,
+          [name]: value,
+      }))
+  }
+  
   return <DataPageShell
     embedded
     title='Concept Codes'
@@ -65,6 +73,8 @@ export const Concepts = ({formState}: {formState?: any}) => {
     modalTitle='Add Concept Code'
     createFields={conceptFields}
     formState={formState}
+    setFormState={setFormState}
+    updateField={updateField}
     buildCreatePayload={(values) => ({
       code: {
         module: values.module,

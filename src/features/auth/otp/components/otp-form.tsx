@@ -3,23 +3,10 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
+
+import { PinInput, Button, Stack, Text } from '@mantine/core'
+
 import { showSubmittedData } from '@/lib/show-submitted-data'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-  InputOTPSeparator,
-} from '@/components/ui/input-otp'
 
 const formSchema = z.object({
   otp: z
@@ -39,7 +26,6 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
     defaultValues: { otp: '' },
   })
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const otp = form.watch('otp')
 
   function onSubmit(data: z.infer<typeof formSchema>) {
@@ -53,48 +39,41 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className={cn('grid gap-2', className)}
-        {...props}
-      >
-        <FormField
-          control={form.control}
-          name='otp'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className='sr-only'>One-Time Password</FormLabel>
-              <FormControl>
-                <InputOTP
-                  maxLength={6}
-                  {...field}
-                  containerClassName='justify-between sm:[&>[data-slot="input-otp-group"]>div]:w-12'
-                >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                  </InputOTPGroup>
-                  <InputOTPSeparator />
-                  <InputOTPGroup>
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                  </InputOTPGroup>
-                  <InputOTPSeparator />
-                  <InputOTPGroup>
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className={className}
+      {...props}
+    >
+      <Stack gap="xs">
+        <Text size="sm" fw={500}>
+          One-Time Password
+        </Text>
+
+        <PinInput
+          length={6}
+          value={form.watch('otp')}
+          onChange={(value) => form.setValue('otp', value)}
+          error={!!form.formState.errors.otp}
+          type="number"
+          inputMode="numeric"
+          oneTimeCode
         />
-        <Button className='mt-2' disabled={otp.length < 6 || isLoading}>
-          Verify
-        </Button>
-      </form>
-    </Form>
+
+        {form.formState.errors.otp && (
+          <Text size="xs" c="red">
+            {form.formState.errors.otp.message}
+          </Text>
+        )}
+      </Stack>
+
+      <Button
+        type="submit"
+        mt="sm"
+        loading={isLoading}
+        disabled={otp.length < 6 || isLoading}
+      >
+        Verify
+      </Button>
+    </form>
   )
 }

@@ -3,9 +3,9 @@ import { Braces, Pencil, Plus, Trash2 } from 'lucide-react'
 import { Button, Modal, TextInput, Textarea, Group, Stack, Checkbox, Select } from '@mantine/core'
 
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { JsonEditorField } from '@/features/components/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/paginated-data-table'
-import { RxPage } from '@/features/components/rx-page'
+import { JsonEditorField } from '@/features/components/form/json-editor-field'
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
+import { RxPage } from '@/features/components/page/rx-page'
 import {
   NOTIFICATION_TYPE_OPTIONS,
 } from '../types/constants'

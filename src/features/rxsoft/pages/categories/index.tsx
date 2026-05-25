@@ -1,6 +1,16 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxCategoriesPage() {
+    const [formState, setFormState] = useState<Record<string, unknown>>({});
+    const updateField = (name: string, value: unknown) => {
+      setFormState((current) => ({
+        ...current,
+        [name]: value,
+      }))
+      console.log({ formState })
+    }
+  
   return (
     <DataPageShell
       title='Categories'
@@ -16,16 +26,14 @@ export function RxCategoriesPage() {
         { name: 'name', label: 'Name', required: true, placeholder: 'Analgesics' },
         { name: 'parentId', label: 'Parent ID',
         type: 'async-select',
+        searchParam: {
         endpoint: 'categories',
-        searchParam: 'search',
         minChars: 2,
+        },
         required: true,
         col: 12, },
       ]}
-      sortOptions={[
-        { value: 'name', label: 'Name' },
-        { value: 'code', label: 'Code' },
-      ]}
+      
       buildCreatePayload={(values) => ({
         code: values.code,
         name: values.name,
@@ -34,6 +42,9 @@ export function RxCategoriesPage() {
       canDelete
       canExport
       csvEndpoint='/categories/export'
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
     />
   )
 }

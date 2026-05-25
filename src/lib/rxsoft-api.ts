@@ -12,7 +12,7 @@ import {
 
 export const API_BASE_URL =
   (import.meta.env.VITE_ADMIN_API_BASE_URL as string | undefined) ??
-  'http://localhost:8080'
+  'https://rxsoft-backend.onrender.com/api'
 
 export const rxsoftApi = axios.create({
   baseURL: API_BASE_URL,

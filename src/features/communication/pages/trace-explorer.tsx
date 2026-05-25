@@ -1,8 +1,18 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { RxPage } from '@/features/components/rx-page'
-import { switchApi } from '@/lib/switch-api'
-import { Button, Input } from '@mantine/core'
+import { RxPage } from '@/features/components/page/rx-page'
+import { communicationApi } from '@/lib/communication-api'
+import {
+  Button,
+  TextInput,
+  Card,
+  Stack,
+  Group,
+  Text,
+  Loader,
+  Code,
+  ScrollArea,
+} from '@mantine/core'
 
 export function TraceExplorerPage() {
   const [messageId, setMessageId] = useState('')
@@ -12,54 +22,82 @@ export function TraceExplorerPage() {
     queryKey: ['communication', 'trace', searchId],
     queryFn: async () => {
       if (!searchId) return null
-      const response = await switchApi.get(`/flow/audit/${encodeURIComponent(searchId)}`)
-      return response.data
+      const res = await communicationApi.get(
+        `/v1/flow/audit/${encodeURIComponent(searchId)}`
+      )
+      return res.data
     },
-    enabled: Boolean(searchId),
+    enabled: !!searchId,
     retry: false,
   })
 
   return (
-    <RxPage title="Trace Explorer" description="Inspect the lifecycle of a message through the switch.">
-      <div className="space-y-6 rounded-lg border bg-white p-6 shadow-sm">
-        <div className="grid gap-4 md:grid-cols-[1fr_auto]">
-          <Input
-            value={messageId}
-            onChange={(event) => setMessageId(event.target.value)}
-            placeholder="Enter trace message ID"
-          />
-          <Button
-            onClick={() => setSearchId(messageId.trim())}
-            disabled={!messageId.trim()}
-          >
-            Load Trace
-          </Button>
-        </div>
+    <RxPage
+      title="Trace Explorer"
+      description="Inspect the lifecycle of a message through the switch."
+    >
+      <Card withBorder radius="md" p="lg">
+        <Stack gap="lg">
+          {/* Search */}
+          <Group align="flex-end">
+            <TextInput
+              style={{ flex: 1 }}
+              value={messageId}
+              onChange={(e) => setMessageId(e.currentTarget.value)}
+              placeholder="Enter trace message ID"
+            />
+            <Button
+              onClick={() => setSearchId(messageId.trim())}
+              disabled={!messageId.trim()}
+            >
+              Load Trace
+            </Button>
+          </Group>
 
-        {isLoading ? <p className="text-sm text-muted-foreground">Loading trace…</p> : null}
+          {/* Loading */}
+          {isLoading && <Loader size="sm" />}
 
-        {data ? (
-          <div className="space-y-4">
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <p className="text-sm font-semibold">Message ID</p>
-              <p>{data.messageId}</p>
-            </div>
-            <div className="grid gap-4">
+          {/* Data */}
+          {data && (
+            <Stack gap="md">
+              {/* Message ID */}
+              <Card withBorder radius="md" p="sm" bg="gray.0">
+                <Text size="sm" fw={600}>
+                  Message ID
+                </Text>
+                <Text>{data.messageId}</Text>
+              </Card>
+
+              {/* Events */}
               {Array.isArray(data.events) && data.events.length > 0 ? (
-                data.events.map((event: any, index: number) => (
-                  <div key={index} className="rounded-lg border border-slate-200 p-4">
-                    <p className="font-medium">{event.eventType}</p>
-                    <p className="text-xs text-slate-500">{new Date(event.timestamp).toLocaleString()}</p>
-                    <pre className="mt-2 whitespace-pre-wrap text-xs text-slate-700">{JSON.stringify(event.snapshot, null, 2)}</pre>
-                  </div>
-                ))
+                <Stack gap="sm">
+                  {data.events.map((event: any, index: number) => (
+                    <Card key={index} withBorder radius="md" p="sm">
+                      <Stack gap={4}>
+                        <Text fw={500}>{event.eventType}</Text>
+
+                        <Text size="xs" c="dimmed">
+                          {new Date(event.timestamp).toLocaleString()}
+                        </Text>
+
+                        <ScrollArea h={180}>
+                          <Code block>
+                            {JSON.stringify(event.snapshot, null, 2)}
+                          </Code>
+                        </ScrollArea>
+                      </Stack>
+                    </Card>
+                  ))}
+                </Stack>
               ) : (
-                <p className="text-sm text-muted-foreground">No trace events found for this ID.</p>
+                <Text size="sm" c="dimmed">
+                  No trace events found for this ID.
+                </Text>
               )}
-            </div>
-          </div>
-        ) : null}
-      </div>
+            </Stack>
+          )}
+        </Stack>
+      </Card>
     </RxPage>
   )
 }

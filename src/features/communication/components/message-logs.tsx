@@ -1,14 +1,15 @@
 import { useMemo, useState } from 'react'
 import { Search } from 'lucide-react'
-import { PaginatedDataTable } from '@/features/components/paginated-data-table'
-import { RxPage } from '@/features/components/rx-page'
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
+import { RxPage } from '@/features/components/page/rx-page'
 import { SelectField } from '@/features/components/form/select'
 import {
   MESSAGE_STATUS_OPTIONS,
   MESSAGE_TYPE_OPTIONS,
 } from '../types/constants'
-import { JsonPreviewDialog, getString, normalizeRows, useCommunicationList } from './shared'
+import { JsonPreviewDialog, getOption, getString, normalizeRows, useCommunicationList } from './shared'
 import { Badge } from '@mantine/core'
+import { Option } from '@/features/rxsoft/types'
 
 const columns = [
   { key: 'id', label: 'ID', width: '80px' },
@@ -22,8 +23,8 @@ const columns = [
 
 export function MessageLogsPage() {
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
-  const [typeFilter, setTypeFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState<Option>(getOption(''))
+  const [typeFilter, setTypeFilter] = useState<Option>(getOption(''))
   const [selectedRow] = useState<any>(null)
   const [isJsonDialogOpen, setIsJsonDialogOpen] = useState(false)
 
@@ -76,7 +77,7 @@ export function MessageLogsPage() {
           placeholder="Filter by status"
           options={MESSAGE_STATUS_OPTIONS}
           value={statusFilter}
-          onChange={setStatusFilter}
+          onChange={(option: any) => setStatusFilter(option)}
           className="w-48"
         />
 
@@ -85,7 +86,7 @@ export function MessageLogsPage() {
           placeholder="Filter by type"
           options={MESSAGE_TYPE_OPTIONS}
           value={typeFilter}
-          onChange={setTypeFilter}
+          onChange={(option: any) => setTypeFilter(option)}
           className="w-48"
         />
       </div>

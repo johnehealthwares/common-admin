@@ -1,11 +1,21 @@
-import { RxPage } from '@/features/components/rx-page'
+import { RxPage } from '@/features/components/page/rx-page'
 import { Tabs } from '@mantine/core'
 import { Concepts } from './components/concepts'
 import { Values } from './components/values'
 import { Mapping } from './components/mappings'
+import { useState } from 'react'
 
 
 export function CodingConceptRegistryPage() {
+
+  const [formState, setFormState] = useState<any>({});
+      const updateField = (name: string, value: unknown) => {
+          console.log({ name, value })
+          setFormState((prev: any) => ({
+              ...prev,
+              [name]: value,
+          }))
+      }
   
   return (
     <RxPage
@@ -28,7 +38,7 @@ export function CodingConceptRegistryPage() {
         </Tabs.Panel>
 
         <Tabs.Panel value='mappings'>
-          <Mapping />
+          <Mapping  />
         </Tabs.Panel>
       </Tabs>
     </RxPage>

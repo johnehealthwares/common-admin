@@ -1,16 +1,18 @@
-import { ColumnFilter, FilterType, FilterValue } from "@/features/rxsoft/types"
+import { Column, ColumnFilter, Field, FilterType, FilterValue } from "@/features/rxsoft/types"
 import { Badge, Text } from "@mantine/core"
 import dayjs from "dayjs"
+import { RenderField } from "../form/RenderField";
 
 
 
-  // ------------------------
-  // AUTO FILTER RESOLVER
-  // ------------------------
+// ------------------------
+// AUTO FILTER RESOLVER
+// ------------------------
 
 export const resolveAutoFilterValue = (
   filter: ColumnFilter
 ): FilterValue | null => {
+  if (filter.filterValue) return filter.filterValue;
   const now = dayjs()
 
   const startOfDay = (d: dayjs.Dayjs) => d.startOf('day')
@@ -91,31 +93,59 @@ export const resolveAutoFilterValue = (
   }
 }
 
-
-export  function renderCellValue(value: unknown) {
-    if (typeof value === 'boolean') {
-      return (
-        <Badge color={value ? 'blue' : 'gray'} variant="light">
-          {String(value)}
-        </Badge>
-      )
-    }
-  
-    if (value == null || value === '') {
-      return (
-        <Text c="dimmed" size="sm">
-          -
+export function getValueByPath(
+  obj: Record<string, any>,
+  path: string,
+): any {
+  return path
+    .split('.')
+    .reduce(
+      (acc, key) => (acc != null ? acc[key] : undefined),
+      obj,
+    )
+}
+export function renderCell(row: Record<string, any>, column: Column) {
+  const value = getValueByPath(row, column.key);
+  if (column.editable && column.field?.updateField) {
+    const update = column.field?.updateField
+    const updateField = (name: string, value: string) => update(row, name, value);
+    return <>
+      <RenderField inTable field={column.field} value={value} updateField={updateField} />
+      {column.error?.(row) && (
+        <Text c="red" size="xs">
+          {column.error(row)}
         </Text>
-      )
-    }
-  
-    if (typeof value === 'object') {
-      return (
-        <Text size="xs" ff="monospace">
-          {JSON.stringify(value)}
-        </Text>
-      )
-    }
-  
-    return <Text size="sm">{String(value)}</Text>
+      )}</>
   }
+  return renderCellValue(value)
+}
+
+export function renderCellValue(value: unknown) {
+
+
+  if (typeof value === 'boolean') {
+    return (
+      <Badge color={value ? 'blue' : 'gray'} variant="light">
+        {String(value)}
+      </Badge>
+    )
+  }
+
+  if (value == null || value === '') {
+    return (
+      <Text c="dimmed" size="sm">
+        -
+      </Text>
+    )
+  }
+
+  if (typeof value === 'object') {
+    return (
+      <Text size="xs" ff="monospace">
+        {JSON.stringify(value)}
+      </Text>
+    )
+  }
+
+  return <Text size="sm">{String(value)}</Text>
+}

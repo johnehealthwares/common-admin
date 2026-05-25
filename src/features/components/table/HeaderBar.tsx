@@ -1,11 +1,10 @@
-import { ActionIcon, Button, Group, Text } from "@mantine/core"
+import { ActionIcon, Button, Group, Text, TextInput } from "@mantine/core"
 import FiltersModal from "./filters-modal"
 import { Column, FilterValue } from "@/features/rxsoft/types"
-import { Search } from "@/components/search"
-import { Download, Filter, RefreshCcw, Trash } from "lucide-react"
+import { Download, Filter, RefreshCcw, Search, Trash } from "lucide-react"
 
 
-export const HeaderBar = ({ open,  setOpen, columns, appliedFilters, updateFilters, pageIndex, pageSize, totalItems,onCreate }: {
+export const HeaderBar = ({ open,  setOpen, columns, appliedFilters, updateFilters, pageIndex, pageSize, totalItems, onCreate, refresh, search, onSearchChange, customActions, onExport }: {
     open: boolean,
     appliedFilters: Record<string, FilterValue | null>,
     updateFilters: (columnKey: string, filterValue: FilterValue | null) => void
@@ -14,8 +13,14 @@ export const HeaderBar = ({ open,  setOpen, columns, appliedFilters, updateFilte
     pageIndex: number
     pageSize: number
     totalItems: number
-    onCreate: () => void
+    onCreate?: () => void
+    refresh: () => void
+    search: string
+    onSearchChange: (value: string) => void
+    customActions?: React.ReactNode
+    onExport?: () => void
 }) => {
+    
 
 
     return (
@@ -23,29 +28,30 @@ export const HeaderBar = ({ open,  setOpen, columns, appliedFilters, updateFilte
             <Group justify="space-between">
 
                 <Group gap="xs">
-                    <Group gap="sm">
-                        <Search placeholder="Open command menu" />
-                    </Group>
+                    <TextInput
+                        leftSection={<Search size={14} />}
+                        placeholder="Search"
+                        value={search}
+                        onChange={(event) => onSearchChange(event.currentTarget.value)}
+                    />
                     <Button variant="subtle" leftSection={<Filter size={14} />} onClick={() => setOpen(true)}>
                         Filters
                     </Button>
-                    <Button variant="subtle" onClick={onCreate}>New</Button>
-                    <Button variant="subtle" leftSection={<Download size={14} />}>
+                    {onCreate && <Button variant="subtle" onClick={onCreate}>New</Button>}
+                    <Button variant="subtle" leftSection={<Download size={14} />} onClick={onExport}>
                         Export
                     </Button>
                     <Button variant="subtle" leftSection={<Trash size={14} />}>
                         Delete
                     </Button>
-                    <Group gap="sm">
-                        <Search placeholder="Open command menu" />
-                    </Group>
+                    {customActions}
                 </Group>
 
                 <Group gap="xs">
                     <Text size="xs" c="dimmed">
                         {Math.ceil(totalItems / pageSize)}–{pageIndex * pageSize} of {totalItems}
                     </Text>
-                    <ActionIcon variant="subtle">
+                    <ActionIcon variant="subtle" onClick={refresh}>
                         <RefreshCcw size={16} />
                     </ActionIcon>
                 </Group>

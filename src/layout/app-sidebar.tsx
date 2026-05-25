@@ -1,84 +1,102 @@
-
 import {
   AppShell,
   Stack,
   ScrollArea,
   Box,
-  Text,
   Divider,
   Badge,
   Group,
+  Text,
 } from '@mantine/core'
+
 import { useAuthStore } from '@/stores/auth-store'
-import { useModuleStore } from '@/stores/module-store'
-import { moduleMap } from '@/features/shared/module-data'
 import { filterNavGroupsByModule, sidebarData } from './data/sidebar-data'
-import { NavGroup } from './nav-group'
+
 import { NavUser } from './nav-user'
 import { TeamSwitcher } from './team-switcher'
-import {  Plus, Search } from 'lucide-react'
+import { SidebarNavItem } from '@/features/settings/components/sidebar-nav'
+import { useModuleId, useModuleName } from '@/context/module-context'
+import { useState } from 'react'
 
 export function AppSidebar() {
-  // const { collapsible, variant } = useLayout()
   const user = useAuthStore((state) => state.user)
-  const selectedModule = useModuleStore((state) => state.selectedModule)
-  const filteredNavGroups = filterNavGroupsByModule(
-    sidebarData.navGroups,
-    selectedModule
-  )
-  const moduleDefinition = moduleMap[selectedModule]
+  const moduleId = useModuleId()
+  const moduleName = useModuleName()
+
+  const navGroups = filterNavGroupsByModule(sidebarData.navGroups, moduleId)
+  const [expandState, setExpandState] = useState<boolean[]>(sidebarData.navGroups.map(() => false))
+
+
+  const resetExpandState = (index: number) => {
+    setExpandState(sidebarData.navGroups.map((_, inde) => inde === index ? true : false))
+  }
+
 
   return (
+    <AppShell.Navbar
+      p="sm"
+      w={{ base: 250 }}
+      style={{
+        borderRight: '1px solid var(--mantine-color-gray-3)',
+      }}
+    >
+      <Stack h="100%" gap="sm">
+        {/* HEADER */}
+        <Box>
+          <Stack gap="md">
+            <TeamSwitcher teams={sidebarData.teams} />
 
+            <Badge
+              variant="light"
+              radius="xl"
+              size="lg"
+              styles={{
+                root: {
+                  width: 'fit-content',
+                },
+              }}
+            >
+              <Group gap={6}>
+                <Text size="xs" fw={700}>
+                  {moduleName}
+                </Text>
 
-  <AppShell.Navbar p="xs">
-    <Stack h="100%" gap="xs">
+                <Text size="10px" c="dimmed">
+                  module
+                </Text>
+              </Group>
+            </Badge>
+          </Stack>
+        </Box>
 
-      {/* 🔹 HEADER */}
-      <Box>
-        <Stack gap="xs">
-          <TeamSwitcher teams={sidebarData.teams} />
+        <Divider />
 
-          <Badge variant="light" radius="xl" px="sm">
-  <Group gap={6}>
-    <Text size="xs" fw={600}>
-      {moduleDefinition.title}
-    </Text>
-    <Text size="9px" c="dimmed">
-      module
-    </Text>
-  </Group>
-</Badge>
-        </Stack>
-      </Box>
-      
-
-      <Divider />
-
-      {/* 🔹 CONTENT (scrollable) */}
-      <ScrollArea style={{ flex: 1 }}>
-        <Stack gap="xs">
-          {filteredNavGroups.map((props) => (
-            <NavGroup key={props.title} items={props.items} />
+        {/* NAVIGATION */}
+        <ScrollArea flex={1} scrollbarSize={0}>
+          {navGroups.map((item, i) => (
+            <SidebarNavItem
+              key={item.title}
+              item={item}
+              pathname={'pathname'}
+              resetExpandState={resetExpandState}
+              expanded={expandState[i]}
+              index={i}
+              collapsed={false}
+            />
           ))}
-        </Stack>
-      </ScrollArea>
+        </ScrollArea>
 
-      <Divider />
+        <Divider />
 
-      {/* 🔹 FOOTER */}
-      <Box>
+        {/* FOOTER */}
         <NavUser
           user={{
             name: user?.username ?? 'RxSoft User',
-            email: user?.roles?.join(', ') || 'No roles assigned',
+            email: user?.roles?.join(', ') ?? 'No roles assigned',
             avatar: sidebarData.user.avatar,
           }}
         />
-      </Box>
-
-    </Stack>
-  </AppShell.Navbar>
-
+      </Stack>
+    </AppShell.Navbar>
   )
 }

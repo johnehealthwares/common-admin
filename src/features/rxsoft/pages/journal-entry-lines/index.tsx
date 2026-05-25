@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 import { rxsoftApi } from '@/lib/rxsoft-api'
-import { RxPage } from '@/features/components/rx-page'
-import { DataPageShell } from '@/features/components/data-page-shell'
+import { RxPage } from '@/features/components/page/rx-page'
+import { DataPageShell } from '@/features/components/page/data-page-shell'
 import { Card, Select, Stack, Text } from '@mantine/core'
 
 type JournalEntryOption = {
@@ -13,6 +13,16 @@ type JournalEntryOption = {
 
 export function RxJournalEntryLinesPage() {
   const [entryId, setEntryId] = useState<string>('')
+ const [formState, setFormState] = useState<Record<string, unknown>>({});
+      const updateField = (name: string, value: unknown) => {
+        setFormState((current: any) => ({
+          ...current,
+          [name]: value,
+        }))
+        console.log({ formState })
+      }
+        
+
 
   const entriesQuery = useQuery<JournalEntryOption[]>({
     queryKey: ['rxsoft-journal-entries-select'],
@@ -96,6 +106,9 @@ export function RxJournalEntryLinesPage() {
             description: values.description || undefined,
           })}
           canDelete
+          formState={formState}
+          setFormState={setFormState}
+          updateField={updateField}
         />
       )}
     </RxPage>

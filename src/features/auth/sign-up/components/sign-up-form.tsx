@@ -1,57 +1,60 @@
 import { useState } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { IconFacebook, IconGithub } from '@/assets/brand-icons'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { PasswordInput } from '@/components/password-input'
+  useForm,
+} from '@mantine/form'
+import {
+  TextInput,
+  PasswordInput,
+  Button,
+  Divider,
+  Group,
+  Stack,
+} from '@mantine/core'
 
-const formSchema = z
-  .object({
-    email: z.email({
-      error: (iss) =>
-        iss.input === '' ? 'Please enter your email' : undefined,
-    }),
-    password: z
-      .string()
-      .min(1, 'Please enter your password')
-      .min(7, 'Password must be at least 7 characters long'),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match.",
-    path: ['confirmPassword'],
-  })
 
-export function SignUpForm({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLFormElement>) {
+export function SignUpForm(
+  props: React.HTMLAttributes<HTMLFormElement>
+) {
   const [isLoading, setIsLoading] = useState(false)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
+  const form = useForm({
+    initialValues: {
       email: '',
       password: '',
       confirmPassword: '',
     },
+
+    validate: {
+      email: (value) => {
+        if (!value) return 'Please enter your email'
+        const isValid = /^\S+@\S+\.\S+$/.test(value)
+        if (!isValid) return 'Invalid email address'
+        return null
+      },
+
+      password: (value) => {
+        if (!value) return 'Please enter your password'
+        if (value.length < 7) {
+          return 'Password must be at least 7 characters long'
+        }
+        return null
+      },
+
+      confirmPassword: (value, values) => {
+        if (!value) return 'Please confirm your password'
+        if (value !== values.password) {
+          return "Passwords don't match"
+        }
+        return null
+      },
+    },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(values: typeof form.values) {
     setIsLoading(true)
+
     // eslint-disable-next-line no-console
-    console.log(data)
+    console.log(values)
 
     setTimeout(() => {
       setIsLoading(false)
@@ -59,85 +62,51 @@ export function SignUpForm({
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className={cn('grid gap-3', className)}
-        {...props}
-      >
-        <FormField
-          control={form.control}
-          name='email'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder='name@example.com' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+    <form onSubmit={form.onSubmit(onSubmit)} {...props}>
+      <Stack gap="sm">
+        <TextInput
+          label="Email"
+          placeholder="name@example.com"
+          {...form.getInputProps('email')}
         />
-        <FormField
-          control={form.control}
-          name='password'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder='********' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+
+        <PasswordInput
+          label="Password"
+          placeholder="********"
+          {...form.getInputProps('password')}
         />
-        <FormField
-          control={form.control}
-          name='confirmPassword'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder='********' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+
+        <PasswordInput
+          label="Confirm Password"
+          placeholder="********"
+          {...form.getInputProps('confirmPassword')}
         />
-        <Button className='mt-2' disabled={isLoading}>
+
+        <Button type="submit" loading={isLoading} mt="xs">
           Create Account
         </Button>
 
-        <div className='relative my-2'>
-          <div className='absolute inset-0 flex items-center'>
-            <span className='w-full border-t' />
-          </div>
-          <div className='relative flex justify-center text-xs uppercase'>
-            <span className='bg-background px-2 text-muted-foreground'>
-              Or continue with
-            </span>
-          </div>
-        </div>
+        <Divider label="Or continue with" labelPosition="center" />
 
-        <div className='grid grid-cols-2 gap-2'>
+        <Group grow>
           <Button
-            variant='outline'
-            className='w-full'
-            type='button'
+            variant="outline"
+            type="button"
+            disabled={isLoading}
+            
+          >
+            GitHub
+          </Button>
+
+          <Button
+            variant="outline"
+            type="button"
             disabled={isLoading}
           >
-            <IconGithub className='h-4 w-4' /> GitHub
+            Facebook
           </Button>
-          <Button
-            variant='outline'
-            className='w-full'
-            type='button'
-            disabled={isLoading}
-          >
-            <IconFacebook className='h-4 w-4' /> Facebook
-          </Button>
-        </div>
-      </form>
-    </Form>
+        </Group>
+      </Stack>
+    </form>
   )
 }

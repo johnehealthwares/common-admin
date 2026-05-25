@@ -10,7 +10,7 @@ import {
 } from '@mantine/core'
 
 import { rxsoftApi } from '@/lib/rxsoft-api'
-import { RxPage } from '../../../components/rx-page'
+import { RxPage } from '../../../components/page/rx-page'
 import type {
   DailySale,
   InventoryValuation,

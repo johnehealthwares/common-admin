@@ -1,6 +1,16 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxCustomersPage() {
+  const [formState, setFormState] = useState<Record<string, unknown>>({});
+  const updateField = (name: string, value: unknown) => {
+    setFormState((current) => ({
+      ...current,
+      [name]: value,
+    }))
+    console.log({ formState })
+  }
+  
   return (
     <DataPageShell
       title='Customers'
@@ -19,10 +29,6 @@ export function RxCustomersPage() {
         { name: 'email', label: 'Email', type: 'email' },
         { name: 'address', label: 'Address' },
       ]}
-      sortOptions={[
-        { value: 'name', label: 'Name' },
-        { value: 'createdAt', label: 'Created' },
-      ]}
       buildCreatePayload={(values) => ({
         name: values.name,
         phone: values.phone || undefined,
@@ -31,6 +37,9 @@ export function RxCustomersPage() {
       })}
       canExport
       csvEndpoint='/customers/export'
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
     />
   )
 }

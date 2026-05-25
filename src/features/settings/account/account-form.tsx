@@ -69,7 +69,7 @@ export function AccountForm() {
           label="Date of birth"
           placeholder="Pick date"
           value={form.watch('dob')}
-          onChange={(value) => form.setValue('dob', value)}
+          onChange={(value: any) => form.setValue('dob', value)}
           description="Your date of birth is used to calculate your age."
         />
 

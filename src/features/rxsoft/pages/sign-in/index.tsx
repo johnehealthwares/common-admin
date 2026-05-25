@@ -7,13 +7,13 @@ import {
   Badge,
   Group,
   Stack,
+  Box,
 } from '@mantine/core'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import z from 'zod'
 import { AuthLayout } from '@/features/auth/auth-layout'
-import { useModuleStore } from '@/stores/module-store'
-import { getModuleRoot } from '@/features/shared/module-data'
+import { useModuleDefinition } from '@/context/module-context'
 import { ModuleSelector } from '@/features/shared/module-selector'
 import { useAuthStore } from '@/stores/auth-store'
 import { Link } from '@tanstack/react-router'
@@ -29,7 +29,8 @@ export function RxSignIn({ redirectTo }: { redirectTo?: string }) {
   const login = useAuthStore((state) => state.login)
   const loading = useAuthStore((state) => state.loading)
   const error = useAuthStore((state) => state.error)
-  const selectedModule = useModuleStore((state) => state.selectedModule)
+  const user = useAuthStore((state) => state.user)
+  const moduleDefinition = useModuleDefinition()
 
   const {
     register,
@@ -39,18 +40,33 @@ export function RxSignIn({ redirectTo }: { redirectTo?: string }) {
     resolver: zodResolver(signInSchema),
     defaultValues: {
       username: 'admin',
-      password: 'test',
+      password: 'password',
     },
   })
-
   const onSubmit = async (values: SignInValues) => {
-    await login(values.username, values.password)
+    try {
+      await login(values.username, values.password)
+      
+      // Wait a moment for state to update
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      const authState = useAuthStore.getState()
+      console.log('Login attempt complete. User:', authState.user, 'Error:', authState.error)
 
-    if (useAuthStore.getState().user) {
-      window.location.href = redirectTo || getModuleRoot(selectedModule)
+      if (authState.user) {
+        const targetUrl = redirectTo || moduleDefinition?.root || '/'
+        const finalUrl = targetUrl.startsWith('/') ? targetUrl : `/${targetUrl}`
+        
+        console.log('Login successful, redirecting to:', finalUrl)
+        window.location.href = finalUrl
+      } else if (authState.error) {
+        console.warn('Login failed with error:', authState.error)
+      }
+    } catch (err) {
+      console.error('Login error:', err)
     }
   }
-
+  
   return (
     <AuthLayout>
       <Card shadow="sm" padding="lg" radius="md">
@@ -79,17 +95,19 @@ export function RxSignIn({ redirectTo }: { redirectTo?: string }) {
               />
 
               <div>
-                <Group justify="space-between">
-                  <Text size="sm" fw={500}>
-                    Password
-                  </Text>
-                  <Link
-                    to="/forgot-password"
-                    style={{ fontSize: 12, color: 'gray' }}
-                  >
-                    Reset password
-                  </Link>
-                </Group>
+                <Box mb="xs">
+                  <Group justify="space-between">
+                    <Box component="label" fw={500} size="sm">
+                      Password
+                    </Box>
+                    <Link
+                      to="/forgot-password"
+                      style={{ fontSize: 12, color: 'gray' }}
+                    >
+                      Reset password
+                    </Link>
+                  </Group>
+                </Box>
 
                 <PasswordInput
                   placeholder="********"
@@ -111,10 +129,14 @@ export function RxSignIn({ redirectTo }: { redirectTo?: string }) {
           </form>
 
           {/* Footer */}
-          <Text size="sm" c="dimmed">
-            Demo defaults:{' '}
-            <Badge variant="light">admin / test</Badge>
-          </Text>
+          <Box mt="md">
+            <Group gap="xs" align="center">
+              <Text size="sm" c="dimmed">
+                Demo defaults:
+              </Text>
+              <Badge variant="light">admin / test</Badge>
+            </Group>
+          </Box>
         </Stack>
       </Card>
     </AuthLayout>

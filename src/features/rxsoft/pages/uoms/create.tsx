@@ -1,46 +1,102 @@
-import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
 import { notifications } from '@mantine/notifications'
-import { Button, Card, TextInput, Stack, Group, Text } from '@mantine/core'
+import { Button, Card } from '@mantine/core'
 
-import { RxPage } from '../../../components/rx-page'
+import { RxPage } from '../../../components/page/rx-page'
+import { FormProvider, useFormContext } from '@/features/components/form/form-context'
+import { FieldGroupEngine } from '@/features/components/form/field-group-engine'
+import { FieldGroupSpec } from '@/features/components/form/types/form-context'
 import { rxsoftApi } from '@/lib/rxsoft-api'
 
-export function RxUomEditPage({ uomId }: { uomId: string }) {
-  const navigate = useNavigate()
+type UomFormState = {
+  code: string
+  name: string
+  categoryId: string
+}
 
-  const [code, setCode] = useState('')
-  const [name, setName] = useState('')
-  const [categoryId, setCategoryId] = useState('')
-  const [status, setStatus] = useState<string | null>(null)
+const uomFormSpec: FieldGroupSpec = {
+  title: 'Edit Unit of Measure',
+  mutationMode: 'field',
+  fields: [
+    {
+      name: 'code',
+      label: 'Code',
+      type: 'text',
+      placeholder: 'e.g., mg, ml, g',
+      required: true,
+    },
+    {
+      name: 'name',
+      label: 'Name',
+      type: 'text',
+      placeholder: 'e.g., Milligrams, Milliliters',
+      required: true,
+    },
+    {
+      name: 'categoryId',
+      label: 'Category ID',
+      type: 'async-select',
+      searchParam: {
+        endpoint: '/uom-categories',
+        minChars: 2,
+        queryParam: 'search',
+        labelKey: 'name',
+        valueKey: 'id'
+
+      },
+      required: true,
+      placeholder: 'Category ',
+    },
+  ],
+}
+
+function UomFormContent({ uomId }: { uomId: string }) {
+  const navigate = useNavigate()
+  const form = useFormContext<UomFormState>()
 
   const mutation = useMutation({
     mutationFn: async () => {
       await rxsoftApi.patch(`/uoms/${uomId}`, {
-        code: code || undefined,
-        name: name || undefined,
-        categoryId: categoryId || undefined,
+        code: form.formState.code || undefined,
+        name: form.formState.name || undefined,
+        categoryId: form.formState.categoryId || undefined,
       })
     },
     onSuccess: () => {
-      setStatus('UOM updated successfully.')
       notifications.show({
         message: 'UOM updated successfully.',
         color: 'green',
       })
       navigate({ to: '/uoms/$uomId', params: { uomId } })
     },
-    onError: () => {
-      setStatus('Failed to update UOM.')
+    onError: (error) => {
       notifications.show({
-        message: 'Failed to update UOM.',
+        message: error instanceof Error ? error.message : 'Failed to update UOM.',
         color: 'red',
       })
     },
   })
 
+  const handleSave = async () => {
+    mutation.mutate()
+  }
+
+  return (
+    <Card withBorder radius="md" p="lg">
+      <FieldGroupEngine spec={uomFormSpec} />
+      <Button
+        onClick={handleSave}
+        loading={mutation.isPending}
+        mt="md"
+      >
+        Save Changes
+      </Button>
+    </Card>
+  )
+}
+
+export function RxUomEditPage({ uomId }: { uomId: string }) {
   return (
     <RxPage
       title="Edit UOM"
@@ -51,48 +107,15 @@ export function RxUomEditPage({ uomId }: { uomId: string }) {
         </Button>
       }
     >
-      <Card withBorder radius="md" p="lg">
-        <form
-          onSubmit={(event) => {
-            event.preventDefault()
-            mutation.mutate()
-          }}
-        >
-          <Stack gap="md">
-            <Group grow>
-              <TextInput
-                label="Code"
-                value={code}
-                onChange={(e) => setCode(e.currentTarget.value)}
-              />
-
-              <TextInput
-                label="Name"
-                value={name}
-                onChange={(e) => setName(e.currentTarget.value)}
-              />
-
-              <TextInput
-                label="Category ID"
-                value={categoryId}
-                onChange={(e) => setCategoryId(e.currentTarget.value)}
-              />
-            </Group>
-
-            <Group justify="flex-start">
-              <Button type="submit" loading={mutation.isPending}>
-                Save
-              </Button>
-            </Group>
-          </Stack>
-        </form>
-
-        {status ? (
-          <Text size="sm" c="dimmed" mt="md">
-            {status}
-          </Text>
-        ) : null}
-      </Card>
+      <FormProvider<UomFormState>
+        initialState={{
+          code: '',
+          name: '',
+          categoryId: '',
+        }}
+      >
+        <UomFormContent uomId={uomId} />
+      </FormProvider>
     </RxPage>
   )
 }

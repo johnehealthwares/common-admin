@@ -158,9 +158,13 @@ export function buildWorkflowAttachmentValidation({
   orderedQuestions.forEach((question) => {
     progressivelyAvailable.add(question.attribute)
     const stepId = mappingByAttribute.get(question.attribute)?.workflowStepId
-    if (!stepId) return
+    if (!stepId) {
+      return
+    }
     const step = stepMap.get(stepId)
-    if (!step) return
+    if (!step) {
+      return
+    }
 
     getStepAttributeReferences(step).forEach((attribute) => {
       if (questionAttributeSet.has(attribute) && !progressivelyAvailable.has(attribute)) {
@@ -265,10 +269,14 @@ function getReachableStepIds(steps: WorkflowStep[]) {
   const visited = new Set<string>()
   const start = steps[0]?.id
 
-  if (!start) return visited
+  if (!start) {
+    return visited
+  }
 
   const visit = (stepId: string) => {
-    if (!stepId || visited.has(stepId) || stepId === 'END') return
+    if (!stepId || visited.has(stepId) || stepId === 'END') {
+      return
+    }
     visited.add(stepId)
     stepMap
       .get(stepId)
@@ -315,7 +323,9 @@ function extractTemplateAttributes(value: unknown, refs: Set<string>) {
 
 function extractResponseMappingDependencies(step: WorkflowStep, refs: Set<string>) {
   Object.values((step.config?.responseMapping as Record<string, unknown> | undefined) ?? {}).forEach((mapping) => {
-    if (!mapping || typeof mapping !== 'object' || Array.isArray(mapping)) return
+    if (!mapping || typeof mapping !== 'object' || Array.isArray(mapping)) {
+      return
+    }
     ;((mapping as { dependencies?: string[] }).dependencies ?? []).forEach((dependency) => {
       if (isLikelyAttributeToken(dependency)) {
         refs.add(dependency)
@@ -325,7 +335,9 @@ function extractResponseMappingDependencies(step: WorkflowStep, refs: Set<string
 }
 
 function tokenizeExpression(expression?: string) {
-  if (!expression) return []
+  if (!expression) {
+    return []
+  }
 
   const rawTokens = expression.match(/[A-Za-z_][A-Za-z0-9_.]*/g) ?? []
   const ignored = new Set([

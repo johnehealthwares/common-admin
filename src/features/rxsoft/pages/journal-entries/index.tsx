@@ -1,6 +1,16 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxJournalEntriesPage() {
+   const [formState, setFormState] = useState<Record<string, unknown>>({});
+      const updateField = (name: string, value: unknown) => {
+        setFormState((current: any) => ({
+          ...current,
+          [name]: value,
+        }))
+        console.log({ formState })
+      }
+      
   return (
     <DataPageShell
       title='Journal Entries'
@@ -27,6 +37,9 @@ export function RxJournalEntriesPage() {
         { name: 'status', label: 'Status', placeholder: 'draft' },
       ]}
       canDelete
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
     />
   )
 }

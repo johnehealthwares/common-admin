@@ -3,21 +3,19 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link } from '@tanstack/react-router'
-import { Loader2, LogIn } from 'lucide-react'
-import { IconFacebook, IconGithub } from '@/assets/brand-icons'
+import { LogIn } from 'lucide-react'
+
 import { useAuthStore } from '@/stores/auth-store'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { PasswordInput } from '@/components/password-input'
+  TextInput,
+  PasswordInput,
+  Button,
+  Stack,
+  Text,
+  Group,
+  Divider,
+} from '@mantine/core'
 
 const formSchema = z.object({
   username: z.string().min(1, 'Please enter your username'),
@@ -47,78 +45,80 @@ export function UserAuthForm({
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
+
     await login(data.username, data.password)
+
     setIsLoading(false)
+
     if (useAuthStore.getState().user) {
       window.location.href = redirectTo || '/'
     }
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className={cn('grid gap-3', className)}
-        {...props}
-      >
-        <FormField
-          control={form.control}
-          name='username'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder='admin' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className={className}
+      {...props}
+    >
+      <Stack gap="sm">
+        {/* Username */}
+        <TextInput
+          label="Username"
+          placeholder="admin"
+          {...form.register('username')}
+          error={form.formState.errors.username?.message}
         />
-        <FormField
-          control={form.control}
-          name='password'
-          render={({ field }) => (
-            <FormItem className='relative'>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder='********' {...field} />
-              </FormControl>
-              <FormMessage />
-              <Link
-                to='/forgot-password'
-                className='absolute end-0 -top-0.5 text-sm font-medium text-muted-foreground hover:opacity-75'
-              >
-                Forgot password?
-              </Link>
-            </FormItem>
-          )}
-        />
-        {error ? <p className='text-sm text-destructive'>{error}</p> : null}
-        <Button className='mt-2' disabled={isLoading}>
-          {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
+
+        {/* Password + Forgot */}
+        <div style={{ position: 'relative' }}>
+          <PasswordInput
+            label="Password"
+            placeholder="********"
+            {...form.register('password')}
+            error={form.formState.errors.password?.message}
+          />
+
+          <Link
+            to="/forgot-password"
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: 0,
+              fontSize: 12,
+              color: 'var(--mantine-color-dimmed)',
+            }}
+          >
+            Forgot password?
+          </Link>
+        </div>
+
+        {/* Error */}
+        {error && <Text c="red" size="sm">{error}</Text>}
+
+        {/* Submit */}
+        <Button
+          type="submit"
+          loading={isLoading}
+          leftSection={<LogIn size={16} />}
+        >
           Sign in
         </Button>
 
-        <div className='relative my-2'>
-          <div className='absolute inset-0 flex items-center'>
-            <span className='w-full border-t' />
-          </div>
-          <div className='relative flex justify-center text-xs uppercase'>
-            <span className='bg-background px-2 text-muted-foreground'>
-              Or continue with
-            </span>
-          </div>
-        </div>
+        {/* Divider */}
+        <Divider label="Or continue with" labelPosition="center" />
 
-        <div className='grid grid-cols-2 gap-2'>
-          <Button variant='outline' type='button' disabled={isLoading}>
-            <IconGithub className='h-4 w-4' /> GitHub
+        {/* Social login */}
+        <Group grow>
+          <Button variant="outline" >
+            GitHub
           </Button>
-          <Button variant='outline' type='button' disabled={isLoading}>
-            <IconFacebook className='h-4 w-4' /> Facebook
+
+          <Button variant="outline" >
+            Facebook
           </Button>
-        </div>
-      </form>
-    </Form>
+        </Group>
+      </Stack>
+    </form>
   )
 }

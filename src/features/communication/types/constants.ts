@@ -98,6 +98,26 @@ export const AUTH_TYPE_OPTIONS = [
   'oauth2',
 ].map((value) => ({ value, label: value }))
 
+// Routing Options
+export const ROUTING_MESSAGE_TYPE_OPTIONS = [
+  { value: 'ORDER', label: 'Order' },
+  { value: 'PATIENT', label: 'Patient' },
+]
+
+export const ROUTE_STATUS_OPTIONS = [
+  { value: 'ACTIVE', label: 'Active' },
+  { value: 'INACTIVE', label: 'Inactive' },
+  { value: 'DELETED', label: 'Deleted' },
+]
+
+export const ROUTING_PROTOCOL_TYPE_OPTIONS = [
+  { value: 'HL7_V2', label: 'HL7 v2' },
+  { value: 'FHIR_R4', label: 'FHIR R4' },
+  { value: 'HTTP', label: 'HTTP' },
+  { value: 'TCP', label: 'TCP' },
+  { value: 'CUSTOM_JSON', label: 'Custom JSON' },
+]
+
 export const HL7_VERSION_OPTIONS = [
   'v2.3',
   'v2.3.1',

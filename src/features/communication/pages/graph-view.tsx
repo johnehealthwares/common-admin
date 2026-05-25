@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { switchApi } from '@/lib/switch-api'
-import { RxPage } from '@/features/components/rx-page'
+import { RxPage } from '@/features/components/page/rx-page'
 
 import {
   Card,

@@ -1,6 +1,16 @@
-import { DataPageShell } from "../../../components/data-page-shell";
+import { useState } from "react";
+import { DataPageShell } from "../../../components/page/data-page-shell";
 
 export function RxSuppliersPage() {
+    const [formState, setFormState] = useState<Record<string, unknown>>({});
+  
+    const updateField = (name: string, value: unknown) => {
+      setFormState((current) => ({
+        ...current,
+        [name]: value,
+      }))
+      console.log({ formState })
+    }
   return (
     <DataPageShell
       title='Suppliers'
@@ -19,17 +29,15 @@ export function RxSuppliersPage() {
         { name: 'email', label: 'Email', type: 'email' },
         { name: 'address', label: 'Address' },
       ]}
-      sortOptions={[
-        { value: 'createdAt', label: 'Created' },
-        { value: 'updatedAt', label: 'Updated' },
-        { value: 'name', label: 'Name' },
-      ]}
       buildCreatePayload={(values) => ({
         name: values.name,
         phone: values.phone || undefined,
         email: values.email || undefined,
         address: values.address || undefined,
       })}
+      formState={formState}
+      setFormState={setFormState}
+      updateField={updateField}
     />
   )
 }

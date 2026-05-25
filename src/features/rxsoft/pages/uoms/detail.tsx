@@ -1,4 +1,4 @@
-import { JsonDetailCard } from "../../../components/json-detail-card";
+import { JsonDetailCard } from "@/features/components/form/json-detail-card";
 
 export function RxUomDetailsPage({ uomId }: { uomId: string }) {
   return (
