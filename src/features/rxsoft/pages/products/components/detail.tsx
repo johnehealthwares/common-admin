@@ -1,12 +1,12 @@
-import { JsonDetailCard } from "@/features/components/form/json-detail-card";
+import { JsonDetailCard } from '@/features/components/form/json-detail-card';
 
-export function RxProductDetailsPage({ productId }: { productId: string }) {
+export function RxItemDetailsPage({ itemId }: { itemId: string }) {
   return (
     <JsonDetailCard
-      title='Product Details'
-      endpoint={`/products/${productId}`}
-      backTo='/products'
-      emptyLabel='GET /products/{productId}'
+      title="Item Details"
+      endpoint={`/items/${itemId}`}
+      backTo="/items"
+      emptyLabel="GET /items/{itemId}"
     />
-  )
+  );
 }

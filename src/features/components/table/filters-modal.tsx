@@ -1,12 +1,7 @@
-import { useState, useEffect } from "react";
-import {
-  Modal,
-  Button,
-  Stack,
-  Group,
-} from "@mantine/core";
-import { Column, FilterValue } from "@/features/rxsoft/types";
-import { FilterRow, LocalFilter } from "./filter-row";
+import { Modal, Button, Stack, Group } from '@mantine/core';
+import { useState, useEffect } from 'react';
+import { Column, FilterValue } from '@/features/rxsoft/types';
+import { FilterRow, LocalFilter } from './filter-row';
 
 export default function FiltersModal({
   open,
@@ -51,16 +46,8 @@ export default function FiltersModal({
     ]);
   };
 
-  const updateFilter = (
-    id: string,
-    field: keyof LocalFilter,
-    value: any
-  ) => {
-    setFilters((prev) =>
-      prev.map((f) =>
-        f.id === id ? { ...f, [field]: value } : f
-      )
-    );
+  const updateFilter = (id: string, field: keyof LocalFilter, value: any) => {
+    setFilters((prev) => prev.map((f) => (f.id === id ? { ...f, [field]: value } : f)));
   };
 
   const removeFilter = (id: string) => {
@@ -69,9 +56,7 @@ export default function FiltersModal({
 
   const applyFilters = () => {
     // reset first
-    Object.keys(appliedFilters).forEach((key) =>
-      updateFilters(key, null)
-    );
+    Object.keys(appliedFilters).forEach((key) => updateFilters(key, null));
 
     filters.forEach((f) => {
       if (!f.columnKey || !f.selectedFilter) return;
@@ -87,13 +72,7 @@ export default function FiltersModal({
   };
 
   return (
-    <Modal
-      opened={open}
-      onClose={() => setOpen(false)}
-      title="Filters"
-      centered
-      size="lg"
-    >
+    <Modal opened={open} onClose={() => setOpen(false)} title="Filters" centered size="lg">
       <Stack gap="md">
         {filters.map((filter) => (
           <FilterRow

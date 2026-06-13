@@ -1,19 +1,18 @@
-import { Link, useNavigate } from '@tanstack/react-router'
-import { useMutation } from '@tanstack/react-query'
-import { notifications } from '@mantine/notifications'
-import { Button, Card } from '@mantine/core'
-
-import { RxPage } from '../../../components/page/rx-page'
-import { FormProvider, useFormContext } from '@/features/components/form/form-context'
-import { FieldGroupEngine } from '@/features/components/form/field-group-engine'
-import { FieldGroupSpec } from '@/features/components/form/types/form-context'
-import { rxsoftApi } from '@/lib/rxsoft-api'
+import { Button, Card } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { useMutation } from '@tanstack/react-query';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { FieldGroupEngine } from '@/features/components/form/field-group-engine';
+import { FormProvider, useFormContext } from '@/features/components/form/form-context';
+import { FieldGroupSpec } from '@/features/components/form/types/form-context';
+import { rxsoftApi } from '@/lib/rxsoft-api';
+import { RxPage } from '../../../components/page/rx-page';
 
 type UomFormState = {
-  code: string
-  name: string
-  categoryId: string
-}
+  code: string;
+  name: string;
+  categoryId: string;
+};
 
 const uomFormSpec: FieldGroupSpec = {
   title: 'Edit Unit of Measure',
@@ -42,18 +41,17 @@ const uomFormSpec: FieldGroupSpec = {
         minChars: 2,
         queryParam: 'search',
         labelKey: 'name',
-        valueKey: 'id'
-
+        valueKey: 'id',
       },
       required: true,
       placeholder: 'Category ',
     },
   ],
-}
+};
 
 function UomFormContent({ uomId }: { uomId: string }) {
-  const navigate = useNavigate()
-  const form = useFormContext<UomFormState>()
+  const navigate = useNavigate();
+  const form = useFormContext<UomFormState>();
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -61,39 +59,35 @@ function UomFormContent({ uomId }: { uomId: string }) {
         code: form.formState.code || undefined,
         name: form.formState.name || undefined,
         categoryId: form.formState.categoryId || undefined,
-      })
+      });
     },
     onSuccess: () => {
       notifications.show({
         message: 'UOM updated successfully.',
         color: 'green',
-      })
-      navigate({ to: '/uoms/$uomId', params: { uomId } })
+      });
+      navigate({ to: '/uoms/$uomId', params: { uomId } });
     },
     onError: (error) => {
       notifications.show({
         message: error instanceof Error ? error.message : 'Failed to update UOM.',
         color: 'red',
-      })
+      });
     },
-  })
+  });
 
   const handleSave = async () => {
-    mutation.mutate()
-  }
+    mutation.mutate();
+  };
 
   return (
     <Card withBorder radius="md" p="lg">
       <FieldGroupEngine spec={uomFormSpec} />
-      <Button
-        onClick={handleSave}
-        loading={mutation.isPending}
-        mt="md"
-      >
+      <Button onClick={handleSave} loading={mutation.isPending} mt="md">
         Save Changes
       </Button>
     </Card>
-  )
+  );
 }
 
 export function RxUomEditPage({ uomId }: { uomId: string }) {
@@ -117,5 +111,5 @@ export function RxUomEditPage({ uomId }: { uomId: string }) {
         <UomFormContent uomId={uomId} />
       </FormProvider>
     </RxPage>
-  )
+  );
 }

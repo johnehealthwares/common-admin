@@ -1,5 +1,3 @@
-import { useMemo, useState } from 'react'
-import { Plus } from 'lucide-react'
 import {
   Button,
   Modal,
@@ -10,18 +8,14 @@ import {
   Stack,
   Group,
   Select,
-} from '@mantine/core'
-
-import { ConfirmDialog } from '@/components/confirm-dialog'
-import { JsonEditorField } from '@/features/components/form/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
-import { RxPage } from '@/features/components/page/rx-page'
-
-import {
-  TEMPLATE_TYPE_OPTIONS,
-  MESSAGE_TYPE_OPTIONS,
-} from '../types/constants'
-
+} from '@mantine/core';
+import { Plus } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { ConfirmDialog } from '@/components/confirm-dialog';
+import { JsonEditorField } from '@/features/components/form/json-editor-field';
+import { RxPage } from '@/features/components/page/rx-page';
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table';
+import { TEMPLATE_TYPE_OPTIONS, MESSAGE_TYPE_OPTIONS } from '../types/constants';
 import {
   DialogActions,
   JsonPreviewDialog,
@@ -31,20 +25,20 @@ import {
   useCommunicationCrud,
   useCommunicationList,
   CommunicationRow,
-} from './shared'
+} from './shared';
 
 type MessageTemplateFormState = {
-  id?: string
-  name: string
-  description: string
-  templateType: string
-  messageType: string
-  subject: string
-  content: string
-  variables: Record<string, unknown>
-  isActive: boolean
-  metadata: Record<string, unknown> | unknown[]
-}
+  id?: string;
+  name: string;
+  description: string;
+  templateType: string;
+  messageType: string;
+  subject: string;
+  content: string;
+  variables: Record<string, unknown>;
+  isActive: boolean;
+  metadata: Record<string, unknown> | unknown[];
+};
 
 const defaultFormState: MessageTemplateFormState = {
   name: '',
@@ -56,7 +50,7 @@ const defaultFormState: MessageTemplateFormState = {
   variables: {},
   isActive: true,
   metadata: {},
-}
+};
 
 const columns = [
   { key: 'id', label: 'ID' },
@@ -65,38 +59,35 @@ const columns = [
   { key: 'messageType', label: 'Message Type' },
   { key: 'isActive', label: 'Active' },
   { key: 'createdAt', label: 'Created' },
-]
+];
 
 export function MessageTemplatesPage() {
-  const [search, setSearch] = useState('')
-  const [selectedRow, setSelectedRow] =
-    useState<CommunicationRow | null>(null)
+  const [search, setSearch] = useState('');
+  const [selectedRow, setSelectedRow] = useState<CommunicationRow | null>(null);
 
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [isJsonOpen, setIsJsonOpen] = useState(false)
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isJsonOpen, setIsJsonOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const [formState, setFormState] =
-    useState<MessageTemplateFormState>(defaultFormState)
+  const [formState, setFormState] = useState<MessageTemplateFormState>(defaultFormState);
 
-  const { data: templates = [], isLoading } =
-    useCommunicationList('message-templates', search)
+  const { data: templates = [], isLoading } = useCommunicationList('message-templates', search);
 
   const { createMutation, updateMutation, deleteMutation } =
-    useCommunicationCrud('message-templates')
+    useCommunicationCrud('message-templates');
 
-  const rows = useMemo(() => normalizeRows(templates), [templates])
+  const rows = useMemo(() => normalizeRows(templates), [templates]);
 
   /* ---------------- ACTIONS ---------------- */
 
   const openCreate = () => {
-    setFormState(defaultFormState)
-    setSelectedRow(null)
-    setIsFormOpen(true)
-  }
+    setFormState(defaultFormState);
+    setSelectedRow(null);
+    setIsFormOpen(true);
+  };
 
   const openEdit = (row: CommunicationRow) => {
-    setSelectedRow(row)
+    setSelectedRow(row);
 
     setFormState({
       id: getString(row.id),
@@ -109,43 +100,43 @@ export function MessageTemplatesPage() {
       variables: (row.variables as Record<string, unknown>) ?? {},
       isActive: Boolean(row.isActive),
       metadata: (row.metadata as Record<string, unknown>) ?? {},
-    })
+    });
 
-    setIsFormOpen(true)
-  }
+    setIsFormOpen(true);
+  };
 
   const openJson = (row: CommunicationRow) => {
-    setSelectedRow(row)
-    setIsJsonOpen(true)
-  }
+    setSelectedRow(row);
+    setIsJsonOpen(true);
+  };
 
   const openDelete = (row: CommunicationRow) => {
-    setSelectedRow(row)
-    setIsDeleteOpen(true)
-  }
+    setSelectedRow(row);
+    setIsDeleteOpen(true);
+  };
 
   const handleSave = async () => {
-    const payload = { ...formState }
-    delete payload.id
+    const payload = { ...formState };
+    delete payload.id;
 
     if (formState.id) {
       await updateMutation.mutateAsync({
         id: formState.id,
         payload: getDirtyPayload(selectedRow || {}, payload),
-      })
+      });
     } else {
-      await createMutation.mutateAsync(payload)
+      await createMutation.mutateAsync(payload);
     }
 
-    setIsFormOpen(false)
-  }
+    setIsFormOpen(false);
+  };
 
   const handleDelete = async () => {
     if (selectedRow?.id) {
-      await deleteMutation.mutateAsync(String(selectedRow.id))
-      setIsDeleteOpen(false)
+      await deleteMutation.mutateAsync(String(selectedRow.id));
+      setIsDeleteOpen(false);
     }
-  }
+  };
 
   /* ---------------- UI ---------------- */
 
@@ -237,10 +228,7 @@ export function MessageTemplatesPage() {
               />
             </Grid.Col>
 
-            <Grid.Col
-              span={6}
-              style={{ display: 'flex', alignItems: 'flex-end' }}
-            >
+            <Grid.Col span={6} style={{ display: 'flex', alignItems: 'flex-end' }}>
               <Checkbox
                 label="Active"
                 checked={formState.isActive}
@@ -281,26 +269,19 @@ export function MessageTemplatesPage() {
           <JsonEditorField
             label="Variables"
             value={formState.variables}
-            onChange={(v) =>
-              setFormState((p: any) => ({ ...p, variables: v }))
-            }
+            onChange={(v) => setFormState((p: any) => ({ ...p, variables: v }))}
           />
 
           <JsonEditorField
             label="Metadata"
             value={formState.metadata}
-            onChange={(v) =>
-              setFormState((p) => ({ ...p, metadata: v }))
-            }
+            onChange={(v) => setFormState((p) => ({ ...p, metadata: v }))}
           />
 
           <DialogActions
             onSave={handleSave}
             onCancel={() => setIsFormOpen(false)}
-            isLoading={
-              createMutation.isPending ||
-              updateMutation.isPending
-            }
+            isLoading={createMutation.isPending || updateMutation.isPending}
           />
         </Stack>
       </Modal>
@@ -323,5 +304,5 @@ export function MessageTemplatesPage() {
         isLoading={deleteMutation.isPending}
       />
     </RxPage>
-  )
+  );
 }

@@ -1,30 +1,19 @@
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowRight } from "lucide-react"
-import z from "zod"
-
-import {
-  Card,
-  Text,
-  Stack,
-  TextInput,
-  Button,
-} from "@mantine/core"
-
-import { AuthLayout } from "@/features/auth/auth-layout"
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Card, Text, Stack, TextInput, Button } from '@mantine/core';
+import { ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import z from 'zod';
+import { AuthLayout } from '@/features/auth/auth-layout';
 
 const resetPasswordSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Please enter your email")
-    .email("Invalid email address"),
-})
+  email: z.string().min(1, 'Please enter your email').email('Invalid email address'),
+});
 
-type ResetPasswordValues = z.infer<typeof resetPasswordSchema>
+type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 
 export function RxResetPasswordPage() {
-  const [submitted, setSubmitted] = useState<string | null>(null)
+  const [submitted, setSubmitted] = useState<string | null>(null);
 
   const {
     register,
@@ -33,14 +22,14 @@ export function RxResetPasswordPage() {
   } = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      email: "",
+      email: '',
     },
-  })
+  });
 
   const onSubmit = (values: ResetPasswordValues) => {
-    setSubmitted(values.email)
+    setSubmitted(values.email);
     // TODO: call API here
-  }
+  };
 
   return (
     <AuthLayout>
@@ -63,7 +52,7 @@ export function RxResetPasswordPage() {
                 label="Email"
                 placeholder="name@example.com"
                 autoComplete="email"
-                {...register("email")}
+                {...register('email')}
                 error={errors.email?.message}
               />
 
@@ -76,12 +65,11 @@ export function RxResetPasswordPage() {
           {/* Feedback */}
           {submitted && (
             <Text size="sm" c="dimmed">
-              Reset link queued for{" "}
-              <span style={{ fontWeight: 500 }}>{submitted}</span>.
+              Reset link queued for <span style={{ fontWeight: 500 }}>{submitted}</span>.
             </Text>
           )}
         </Stack>
       </Card>
     </AuthLayout>
-  )
+  );
 }

@@ -1,0 +1,175 @@
+import axios, { type InternalAxiosRequestConfig } from 'axios';
+import type {
+  HomepageData,
+  WebsiteProduct,
+  CategoryView,
+  HealthConcernView,
+  PrescriptionView,
+  ConsultationView,
+  OrderView,
+  BlogArticleView,
+  DeliveryAreaView,
+  BranchView,
+  ProductReviewView,
+  RewardView,
+  SearchResults,
+  PaginatedResponse,
+} from './types';
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
+});
+
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  try {
+    const raw = localStorage.getItem('damorex-auth');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      const token = parsed?.state?.token;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+  } catch {
+    // ignore parse errors
+  }
+  return config;
+});
+
+export const websiteApi = {
+  // Homepage
+  getHomepage: () => api.get<HomepageData>('/website/homepage').then((r) => r.data),
+
+  // Products
+  listProducts: (params?: Record<string, string | number>) =>
+    api.get<PaginatedResponse<WebsiteProduct>>('/website/products', { params }).then((r) => r.data),
+
+  getProduct: (id: string) =>
+    api
+      .get<{ product: WebsiteProduct; reviews: ProductReviewView[]; related: WebsiteProduct[] }>(
+        `/website/products/${id}`
+      )
+      .then((r) => r.data),
+
+  // Categories
+  listCategories: () => api.get<CategoryView[]>('/website/categories').then((r) => r.data),
+
+  getCategoryBySlug: (slug: string) =>
+    api
+      .get<{ category: CategoryView; products: WebsiteProduct[] }>(`/website/categories/${slug}`)
+      .then((r) => r.data),
+
+  // Health Concerns
+  listHealthConcerns: () =>
+    api.get<HealthConcernView[]>('/website/health-concerns').then((r) => r.data),
+
+  getHealthConcernBySlug: (slug: string) =>
+    api
+      .get<{ concern: HealthConcernView; products: WebsiteProduct[]; articles: BlogArticleView[] }>(
+        `/website/health-concerns/${slug}`
+      )
+      .then((r) => r.data),
+
+  // Prescriptions
+  createPrescription: (formData: FormData) =>
+    api.post<PrescriptionView>('/website/prescriptions', formData).then((r) => r.data),
+
+  listPrescriptions: () =>
+    api.get<PrescriptionView[]>('/website/prescriptions').then((r) => r.data),
+
+  // Consultations
+  createConsultation: (data: {
+    name: string;
+    phone: string;
+    email?: string;
+    symptoms?: string;
+    questions?: string;
+    channel?: string;
+  }) => api.post<ConsultationView>('/website/consultations', data).then((r) => r.data),
+
+  listConsultations: () =>
+    api.get<ConsultationView[]>('/website/consultations').then((r) => r.data),
+
+  // Cart
+  getCart: (ids: string[]) =>
+    api
+      .get<WebsiteProduct[]>('/website/cart', { params: { ids: ids.join(',') } })
+      .then((r) => r.data),
+
+  // Orders
+  createOrder: (data: {
+    deliveryAddress: string;
+    city?: string;
+    state?: string;
+    phone?: string;
+    shippingMethod?: string;
+    paymentMethod: string;
+    prescriptionIds?: string[];
+    notes?: string;
+  }) => api.post<OrderView>('/website/orders', data).then((r) => r.data),
+
+  listOrders: () => api.get<OrderView[]>('/website/orders').then((r) => r.data),
+
+  getOrder: (id: string) => api.get<OrderView>(`/website/orders/${id}`).then((r) => r.data),
+
+  trackOrder: (code: string) =>
+    api.get<OrderView>(`/website/orders/track/${code}`).then((r) => r.data),
+
+  // Blog
+  listArticles: (params?: Record<string, string | number>) =>
+    api
+      .get<PaginatedResponse<BlogArticleView>>('/website/articles', { params })
+      .then((r) => r.data),
+
+  getArticleBySlug: (slug: string) =>
+    api
+      .get<{ article: BlogArticleView; related: BlogArticleView[] }>(`/website/articles/${slug}`)
+      .then((r) => r.data),
+
+  // Delivery Areas
+  listDeliveryAreas: () =>
+    api.get<DeliveryAreaView[]>('/website/delivery-areas').then((r) => r.data),
+
+  // Branches
+  listBranches: () => api.get<BranchView[]>('/website/branches').then((r) => r.data),
+
+  getBranch: (id: string) => api.get<BranchView>(`/website/branches/${id}`).then((r) => r.data),
+
+  // Contact
+  submitContact: (data: {
+    name: string;
+    email: string;
+    phone?: string;
+    subject: string;
+    message: string;
+  }) => api.post('/website/contact', data).then((r) => r.data),
+
+  // Newsletter
+  subscribe: (data: { email: string; phone?: string }) =>
+    api.post('/website/newsletter/subscribe', data).then((r) => r.data),
+
+  // Reviews
+  createReview: (data: {
+    productId: string;
+    rating: number;
+    comment?: string;
+    imageUrls?: string[];
+  }) => api.post<ProductReviewView>('/website/reviews', data).then((r) => r.data),
+
+  getProductReviews: (productId: string) =>
+    api.get<ProductReviewView[]>(`/website/reviews/${productId}`).then((r) => r.data),
+
+  // Rewards
+  getRewards: () => api.get<RewardView>('/website/rewards').then((r) => r.data),
+
+  // Auth
+  register: (data: { username: string; email?: string; phone?: string; password: string }) =>
+    api.post<{ accessToken: string; refreshToken: string }>('/website/auth/register', data).then((r) => r.data),
+
+  login: (data: { username: string; password: string }) =>
+    api.post<{ accessToken: string; refreshToken: string }>('/website/auth/login', data).then((r) => r.data),
+
+  // Search
+  search: (q: string, type?: string) =>
+    api.get<SearchResults>('/website/search', { params: { q, type } }).then((r) => r.data),
+};

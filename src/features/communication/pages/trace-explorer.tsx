@@ -1,7 +1,3 @@
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { RxPage } from '@/features/components/page/rx-page'
-import { communicationApi } from '@/lib/communication-api'
 import {
   Button,
   TextInput,
@@ -12,24 +8,26 @@ import {
   Loader,
   Code,
   ScrollArea,
-} from '@mantine/core'
+} from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { RxPage } from '@/features/components/page/rx-page';
+import { communicationApi } from '@/lib/communication-api';
 
 export function TraceExplorerPage() {
-  const [messageId, setMessageId] = useState('')
-  const [searchId, setSearchId] = useState('')
+  const [messageId, setMessageId] = useState('');
+  const [searchId, setSearchId] = useState('');
 
   const { data, isLoading } = useQuery<any>({
     queryKey: ['communication', 'trace', searchId],
     queryFn: async () => {
-      if (!searchId) return null
-      const res = await communicationApi.get(
-        `/v1/flow/audit/${encodeURIComponent(searchId)}`
-      )
-      return res.data
+      if (!searchId) return null;
+      const res = await communicationApi.get(`/v1/flow/audit/${encodeURIComponent(searchId)}`);
+      return res.data;
     },
     enabled: !!searchId,
     retry: false,
-  })
+  });
 
   return (
     <RxPage
@@ -46,10 +44,7 @@ export function TraceExplorerPage() {
               onChange={(e) => setMessageId(e.currentTarget.value)}
               placeholder="Enter trace message ID"
             />
-            <Button
-              onClick={() => setSearchId(messageId.trim())}
-              disabled={!messageId.trim()}
-            >
+            <Button onClick={() => setSearchId(messageId.trim())} disabled={!messageId.trim()}>
               Load Trace
             </Button>
           </Group>
@@ -81,9 +76,7 @@ export function TraceExplorerPage() {
                         </Text>
 
                         <ScrollArea h={180}>
-                          <Code block>
-                            {JSON.stringify(event.snapshot, null, 2)}
-                          </Code>
+                          <Code block>{JSON.stringify(event.snapshot, null, 2)}</Code>
                         </ScrollArea>
                       </Stack>
                     </Card>
@@ -99,5 +92,5 @@ export function TraceExplorerPage() {
         </Stack>
       </Card>
     </RxPage>
-  )
+  );
 }

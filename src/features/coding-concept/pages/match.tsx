@@ -1,7 +1,3 @@
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { ListFilter } from 'lucide-react'
-
 import {
   AppShell,
   Card,
@@ -14,27 +10,25 @@ import {
   Loader,
   Alert,
   Switch,
-} from '@mantine/core'
-
-import { RxPage } from '@/features/components/page/rx-page'
-import { SelectField } from '@/features/components/form/select'
-import { codingConceptApi } from '@/lib/coding-concept-api'
-import {
-  ConceptSummaryCard,
-  MetadataPreview,
-  codingModuleOptions,
-} from './shared'
-import { Option } from '@/features/rxsoft/types'
+} from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { ListFilter } from 'lucide-react';
+import { useState } from 'react';
+import { SelectField } from '@/features/components/form/select';
+import { RxPage } from '@/features/components/page/rx-page';
+import { Option } from '@/features/rxsoft/types';
+import { codingConceptApi } from '@/lib/coding-concept-api';
+import { ConceptSummaryCard, MetadataPreview, codingModuleOptions } from './shared';
 
 export function CodingConceptMatchPage() {
-  const [module, setModule] = useState<Option | null>({value:'DICOM', label:'DICOM'})
-  const [term, setTerm] = useState('')
-  const [metadata, setMetadata] = useState(false)
+  const [module, setModule] = useState<Option | null>({ value: 'DICOM', label: 'DICOM' });
+  const [term, setTerm] = useState('');
+  const [metadata, setMetadata] = useState(false);
   const [submitted, setSubmitted] = useState<{
-    module: string
-    term: string
-    metadata: boolean
-  } | null>(null)
+    module: string;
+    term: string;
+    metadata: boolean;
+  } | null>(null);
 
   const query = useQuery({
     queryKey: ['coding-concept', 'match', submitted],
@@ -46,13 +40,11 @@ export function CodingConceptMatchPage() {
         {
           params: submitted?.metadata ? { metadata: 'true' } : undefined,
         }
-      )
+      );
 
-      return Array.isArray(response.data?.data)
-        ? response.data.data
-        : []
+      return Array.isArray(response.data?.data) ? response.data.data : [];
     },
-  })
+  });
 
   return (
     <RxPage
@@ -104,10 +96,7 @@ export function CodingConceptMatchPage() {
                   </Text>
                 </div>
 
-                <Switch
-                  checked={metadata}
-                  onChange={(e) => setMetadata(e.currentTarget.checked)}
-                />
+                <Switch checked={metadata} onChange={(e) => setMetadata(e.currentTarget.checked)} />
               </Group>
             </Card>
           </Stack>
@@ -124,11 +113,7 @@ export function CodingConceptMatchPage() {
             </Group>
           )}
 
-          {query.isError && (
-            <Alert color="red">
-              Unable to load concept matches.
-            </Alert>
-          )}
+          {query.isError && <Alert color="red">Unable to load concept matches.</Alert>}
 
           {!query.isLoading &&
             !query.isError &&
@@ -143,13 +128,11 @@ export function CodingConceptMatchPage() {
             <Stack key={concept.id} gap="sm">
               <ConceptSummaryCard concept={concept} />
 
-              {submitted?.metadata && (
-                <MetadataPreview metadata={concept.metadata} />
-              )}
+              {submitted?.metadata && <MetadataPreview metadata={concept.metadata} />}
             </Stack>
           ))}
         </Stack>
       </Group>
     </RxPage>
-  )
+  );
 }

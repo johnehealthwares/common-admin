@@ -1,22 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
-import {
-  Card,
-  Text,
-  Stack,
-  Grid,
-  Loader,
-  Center,
-  SimpleGrid,
-} from '@mantine/core'
-
-import { rxsoftApi } from '@/lib/rxsoft-api'
-import { RxPage } from '../../../components/page/rx-page'
-import type {
-  DailySale,
-  InventoryValuation,
-  TopProduct,
-} from '../../types'
-import { ReportsTable } from '../reports/components/table'
+import { Card, Text, Stack, Grid, Loader, Center, SimpleGrid } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { rxsoftApi } from '@/lib/rxsoft-api';
+import { RxPage } from '../../../components/page/rx-page';
+import type { DailySale, InventoryValuation, TopProduct } from '../../types';
+import { ReportsTable } from '../reports/components/table';
 
 export function RxDashboardPage() {
   const reportsQuery = useQuery({
@@ -26,23 +13,20 @@ export function RxDashboardPage() {
         rxsoftApi.get<DailySale[]>('/reports/daily-sales'),
         rxsoftApi.get<InventoryValuation>('/reports/inventory-valuation'),
         rxsoftApi.get<TopProduct[]>('/reports/top-selling-products'),
-      ])
+      ]);
 
       return {
         dailySales: dailySales.data,
         inventory: inventory.data,
         topProducts: topProducts.data,
-      }
+      };
     },
-  })
+  });
 
-  const data = reportsQuery.data
+  const data = reportsQuery.data;
 
   return (
-    <RxPage
-      title="Dashboard"
-      description="Operational KPIs from RxSoft reporting endpoints."
-    >
+    <RxPage title="Dashboard" description="Operational KPIs from RxSoft reporting endpoints.">
       {/* LOADING */}
       {reportsQuery.isLoading && (
         <Center py="xl">
@@ -134,5 +118,5 @@ export function RxDashboardPage() {
         </Stack>
       )}
     </RxPage>
-  )
+  );
 }

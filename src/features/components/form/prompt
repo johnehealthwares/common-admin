@@ -1,0 +1,317 @@
+You are working on a React + Mantine + TanStack Query dynamic form system.
+
+The current codebase includes:
+
+ModalDataForm
+FieldGroup
+RenderField
+AsyncSelectField, RemoteSelectField, SelectField, MultiSelectField
+custom formState + updateField context
+partial React Hook Form usage
+🎯 GOAL
+
+Refactor the system into a fully declarative, FormProvider-driven form engine that removes duplicated state logic, eliminates sync bugs, and introduces a scalable schema-driven architecture.
+
+🧠 1. Introduce FormProvider (CRITICAL ARCHITECTURAL SHIFT)
+
+Replace:
+
+scattered formState
+updateField prop drilling
+partial React Hook Form usage (unless justified)
+Requirements
+
+FormProvider becomes the single source of truth for all form state.
+
+It must expose:
+
+getField(name)
+setField(name, value)
+setFields(partial)
+reset()
+subscribe?(optional optimization)
+dispatch?(optional advanced mode)
+Constraints
+Must NOT mix uncontrolled RHF usage with external state unless explicitly justified
+Must support nested structures:
+FieldGroup
+TabGroups
+Must support schema-driven updates safely
+Remove completely:
+duplicated useState(formState)
+inconsistent updateField prop chains
+RHF Controller usage where unnecessary
+manual sync effects between inputs and state
+🧭 2. Add Breadcrumb / Stepper Progress System
+
+Introduce a unified form progress indicator system.
+
+Requirements
+
+Must support:
+
+TabGroups OR FieldGroups as steps (configurable)
+Active step tracking
+Completed steps
+Disabled steps using waitFor
+Optional URL sync (nice-to-have)
+UI Implementation
+Prefer Mantine Stepper
+OR custom breadcrumb system if more flexible
+Must sync with:
+TabGroups.activeTab
+FieldGroup grouping logic
+form progression state
+⚙️ 3. FULL FieldGroup.mutationMode STANDARDIZATION
+
+FieldGroup must strictly implement declarative mutation behavior.
+
+mutationMode rules:
+🧩 row
+User fills form fields
+Clicking “Add”:
+appends row to collection
+triggers setField(formStateField, newRow)
+resets input state
+🧩 cell
+NO automatic updates
+NO persistence triggers
+Pure local editing only
+Save happens only via explicit action
+🧩 collection
+Maintains localRows internally OR via FormProvider array field
+User can:
+add rows
+edit rows
+delete rows
+Clicking Save:
+triggers ONE setField(formStateField, localRows)
+🧩 field
+Every field change immediately updates FormProvider:
+setField(name, value)
+Debouncing allowed for performance optimization
+No batching required
+🧱 4. REQUIRED ARCHITECTURE CHANGES
+FieldGroup must:
+Become purely declarative
+Stop mixing RHF + external state unless explicitly required
+Respect mutationMode strictly
+Use FormProvider instead of prop drilling
+Never mutate arrays (splice forbidden)
+RenderField must:
+Consume FormProvider via useFormContext() or useFormField()
+NOT receive value via props if avoidable
+Emit only events (no direct state mutation)
+Async / Remote / Select fields must:
+Read/write ONLY via FormProvider
+Avoid internal duplicated state unless necessary:
+inputValue is allowed for UX only
+Must not maintain hidden second sources of truth
+🧹 5. CLEANUP REQUIREMENTS
+REMOVE:
+formState prop drilling
+updateField chains across components
+mixed RHF Controller usage inside FieldGroup
+unsafe mutations:
+splice
+direct object mutation
+NORMALIZE VALUE TYPES:
+
+All field values must conform to:
+
+string | number | boolean | Option | Option[] | null
+INTRODUCE:
+useFormField(name)
+useFormContext()
+optional useFieldArray() abstraction for collection mode
+optional useFormSubscription() for performance optimization
+🧩 6. TABGROUPS INTEGRATION
+
+Stepper must:
+
+Reflect TabGroups structure
+Respect:
+waitFor
+activeTab
+Sync with FieldGroup progression
+Optionally support URL-based navigation
+⚡ 7. EXPECTED FINAL OUTCOME
+
+After refactor:
+
+✔ Single FormProvider state layer
+✔ No sync bugs between inputs
+✔ Predictable mutationMode behavior
+✔ TabGroups + FieldGroups unified under one progression system
+✔ Fully schema-driven form system
+✔ No imperative state logic in UI components
+🚀 BONUS (OPTIONAL BUT RECOMMENDED)
+
+If time allows:
+
+Add validation layer per FieldGroup
+Add async validation per field
+Add dirty-state tracking per step/tab
+Add autosave for field mode
+Add dependency graph system between fields (when field A changes, recompute B)
+
+function FieldGroupEngine({ spec }: { spec: FieldGroupSpec }) {
+  const form = useFormContext()
+
+  const [localRows, setLocalRows] = useState([])
+
+  // run fetch effects
+  useEffect(() => {
+    runEffects(spec.effects, {
+      form,
+      localRows,
+      setLocalRows,
+    })
+  }, [spec])
+
+  const handleEvent = (event: FormEvent) => {
+    runMutation(event, spec, {
+      form,
+      localRows,
+      setLocalRows,
+    })
+  }
+
+  return (
+    <Stack>
+      {spec.title && <Text>{spec.title}</Text>}
+
+      {spec.fields.map(field => (
+        <FieldRenderer
+          key={field.name}
+          field={field}
+          value={form.get(field.name)}
+          onChange={(v) =>
+            handleEvent({
+              type: 'field-change',
+              field: field.name,
+              value: v,
+            })
+          }
+        />
+      ))}
+
+      {spec.mutationMode !== 'cell' && (
+        <MutationControls
+          spec={spec}
+          onEvent={handleEvent}
+          localRows={localRows}
+        />
+      )}
+    </Stack>
+  )
+}
+
+Field rendering becomes pure
+onChange={(value) =>
+  dispatch({
+    type: 'FIELD_CHANGE',
+    field: name,
+    value,
+    scope: spec.mutationMode,
+  })
+}
+
+MutationMode becomes declarative rules
+mutation: {
+  mode: 'row',
+  trigger: 'onAddClick',
+  source: 'currentForm',
+  target: 'formStateField'
+}
+
+Effect runner:
+function runEffects(effects, ctx) {
+  effects.forEach(effect => {
+    switch (effect.type) {
+      case 'fetch':
+        return runFetch(effect, ctx)
+
+      case 'sync-form':
+        return runSync(effect, ctx)
+
+      case 'compute':
+        return runCompute(effect, ctx)
+    }
+  })
+}
+
+Engine Execution Model
+useEffect(() => {
+  runEffects(spec.effects, context)
+}, [deps])
+
+Effects System (THIS is the core upgrade)
+
+Instead of useEffect + imperative logic:
+
+Example:
+type FieldGroupEffect =
+  | {
+      type: 'fetch'
+      trigger: 'mount' | 'watch'
+      watch?: string[]
+      endpoint: string
+      params?: Record<string, string>
+      target: 'localRows' | 'formState'
+    }
+
+  | {
+      type: 'sync-form'
+      trigger: 'change'
+      field: string
+      to: string
+    }
+
+  | {
+      type: 'compute'
+      trigger: 'change'
+      watch: string[]
+      compute: (ctx: any) => Record<string, any>
+    }
+
+
+Declarative FieldGroup Spec
+
+We extend your type:
+type FieldGroupSpec = {
+  title?: string
+
+  formStateField?: string
+
+  mutationMode?: 'row' | 'cell' | 'collection' | 'field'
+
+  fields: Field[]
+
+  columns?: Column[]
+
+  endpoint?: {
+    url: string
+    method: 'get' | 'post'
+    query?: {
+      when: 'mount' | 'dependency-change'
+      watch: string[]
+      map: Record<string, string>
+    }
+  }
+
+  effects?: FieldGroupEffect[]
+}
+
+New Architecture
+Replace FieldGroup with:
+<FieldGroupEngine spec={fieldGroup} />
+
+Core Idea: FieldGroup becomes a “spec runner”
+
+Add validation layer per FieldGroup
+Add async validation support per field
+Add dirty-state tracking per step
+Add autosave for field mode
+
+

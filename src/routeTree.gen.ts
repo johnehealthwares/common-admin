@@ -14,6 +14,32 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuestionnaireIndexRouteImport } from './routes/questionnaire/index'
 import { Route as DamorexIndexRouteImport } from './routes/damorex/index'
+import { Route as DamorexUploadPrescriptionRouteImport } from './routes/damorex/upload-prescription'
+import { Route as DamorexTermsRouteImport } from './routes/damorex/terms'
+import { Route as DamorexShopRouteImport } from './routes/damorex/shop'
+import { Route as DamorexSearchRouteImport } from './routes/damorex/search'
+import { Route as DamorexRewardsRouteImport } from './routes/damorex/rewards'
+import { Route as DamorexPrivacyPolicyRouteImport } from './routes/damorex/privacy-policy'
+import { Route as DamorexPos2RouteImport } from './routes/damorex/pos2'
+import { Route as DamorexPosRouteImport } from './routes/damorex/pos'
+import { Route as DamorexOrdersRouteImport } from './routes/damorex/orders'
+import { Route as DamorexMyPrescriptionsRouteImport } from './routes/damorex/my-prescriptions'
+import { Route as DamorexLoginRouteImport } from './routes/damorex/login'
+import { Route as DamorexHealthConcernsRouteImport } from './routes/damorex/health-concerns'
+import { Route as DamorexForgotPasswordRouteImport } from './routes/damorex/forgot-password'
+import { Route as DamorexFaqRouteImport } from './routes/damorex/faq'
+import { Route as DamorexDeliveryAreasRouteImport } from './routes/damorex/delivery-areas'
+import { Route as DamorexDashboardRouteImport } from './routes/damorex/dashboard'
+import { Route as DamorexContactRouteImport } from './routes/damorex/contact'
+import { Route as DamorexConsultationsRouteImport } from './routes/damorex/consultations'
+import { Route as DamorexConsultPharmacistRouteImport } from './routes/damorex/consult-pharmacist'
+import { Route as DamorexCheckoutRouteImport } from './routes/damorex/checkout'
+import { Route as DamorexCategoriesRouteImport } from './routes/damorex/categories'
+import { Route as DamorexCartRouteImport } from './routes/damorex/cart'
+import { Route as DamorexBranchesRouteImport } from './routes/damorex/branches'
+import { Route as DamorexBlogRouteImport } from './routes/damorex/blog'
+import { Route as DamorexAboutRouteImport } from './routes/damorex/about'
+import { Route as errorsServiceUnavailableRouteImport } from './routes/(errors)/service-unavailable'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
@@ -37,12 +63,14 @@ import { Route as AuthenticatedMappingRouteRouteImport } from './routes/_authent
 import { Route as AuthenticatedCommunicationChannelsRouteRouteImport } from './routes/_authenticated/communication-channels/route'
 import { Route as AuthenticatedBroadcastsRouteRouteImport } from './routes/_authenticated/broadcasts/route'
 import { Route as AuthenticatedAesRouteRouteImport } from './routes/_authenticated/aes/route'
+import { Route as DamorexPurchasesIndexRouteImport } from './routes/damorex/purchases/index'
 import { Route as AuthenticatedWorkflowsIndexRouteImport } from './routes/_authenticated/workflows/index'
 import { Route as AuthenticatedWorkflowInstancesIndexRouteImport } from './routes/_authenticated/workflow-instances/index'
 import { Route as AuthenticatedWorkflowEventsIndexRouteImport } from './routes/_authenticated/workflow-events/index'
 import { Route as AuthenticatedWorkflowConfigurationIndexRouteImport } from './routes/_authenticated/workflow-configuration/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedUomsIndexRouteImport } from './routes/_authenticated/uoms/index'
+import { Route as AuthenticatedUomCategoryIndexRouteImport } from './routes/_authenticated/uom-category/index'
 import { Route as AuthenticatedSuppliersIndexRouteImport } from './routes/_authenticated/suppliers/index'
 import { Route as AuthenticatedStockLocationsIndexRouteImport } from './routes/_authenticated/stock-locations/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
@@ -53,7 +81,6 @@ import { Route as AuthenticatedReceivablesIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedQuestionsIndexRouteImport } from './routes/_authenticated/questions/index'
 import { Route as AuthenticatedQuestionnairesIndexRouteImport } from './routes/_authenticated/questionnaires/index'
 import { Route as AuthenticatedPurchasesIndexRouteImport } from './routes/_authenticated/purchases/index'
-import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedPriceListsIndexRouteImport } from './routes/_authenticated/price-lists/index'
 import { Route as AuthenticatedPriceListItemsIndexRouteImport } from './routes/_authenticated/price-list-items/index'
 import { Route as AuthenticatedPharmaceuticsIndexRouteImport } from './routes/_authenticated/pharmaceutics/index'
@@ -65,6 +92,7 @@ import { Route as AuthenticatedLisIndexRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedJournalsIndexRouteImport } from './routes/_authenticated/journals/index'
 import { Route as AuthenticatedJournalEntryLinesIndexRouteImport } from './routes/_authenticated/journal-entry-lines/index'
 import { Route as AuthenticatedJournalEntriesIndexRouteImport } from './routes/_authenticated/journal-entries/index'
+import { Route as AuthenticatedItemsIndexRouteImport } from './routes/_authenticated/items/index'
 import { Route as AuthenticatedInventoryIndexRouteImport } from './routes/_authenticated/inventory/index'
 import { Route as AuthenticatedExchangesIndexRouteImport } from './routes/_authenticated/exchanges/index'
 import { Route as AuthenticatedDrugComponentsIndexRouteImport } from './routes/_authenticated/drug-components/index'
@@ -77,14 +105,21 @@ import { Route as AuthenticatedChannelsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as AuthenticatedBranchesIndexRouteImport } from './routes/_authenticated/branches/index'
 import { Route as AuthenticatedAuditLogsIndexRouteImport } from './routes/_authenticated/audit-logs/index'
+import { Route as DamorexTrackOrderCodeRouteImport } from './routes/damorex/track-order.$code'
+import { Route as DamorexShopSlugRouteImport } from './routes/damorex/shop_.$slug'
+import { Route as DamorexOrdersIdRouteImport } from './routes/damorex/orders_.$id'
+import { Route as DamorexHealthConcernsSlugRouteImport } from './routes/damorex/health-concerns.$slug'
+import { Route as DamorexCategoriesSlugRouteImport } from './routes/damorex/categories.$slug'
+import { Route as DamorexBranchesIdRouteImport } from './routes/damorex/branches.$id'
+import { Route as DamorexBlogSlugRouteImport } from './routes/damorex/blog.$slug'
 import { Route as ClerkAuthenticatedUserManagementRouteImport } from './routes/clerk/_authenticated/user-management'
 import { Route as AuthenticatedUomsUomIdRouteImport } from './routes/_authenticated/uoms/$uomId'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
-import { Route as AuthenticatedProductsProductIdRouteImport } from './routes/_authenticated/products/$productId'
 import { Route as AuthenticatedLisResourceKeyRouteImport } from './routes/_authenticated/lis/$resourceKey'
+import { Route as AuthenticatedItemsCreateRouteImport } from './routes/_authenticated/items/create'
 import { Route as AuthenticatedCommunicationTraceExplorerRouteImport } from './routes/_authenticated/communication/trace-explorer'
 import { Route as AuthenticatedCommunicationMessageTesterRouteImport } from './routes/_authenticated/communication/message-tester'
 import { Route as AuthenticatedCommunicationFlowGraphRouteImport } from './routes/_authenticated/communication/flow-graph'
@@ -92,7 +127,10 @@ import { Route as AuthenticatedCommunicationAuditCenterRouteImport } from './rou
 import { Route as AuthenticatedCodingConceptsUploadRouteImport } from './routes/_authenticated/coding-concepts/upload'
 import { Route as AuthenticatedCodingConceptsSearchRouteImport } from './routes/_authenticated/coding-concepts/search'
 import { Route as AuthenticatedCodingConceptsMatchRouteImport } from './routes/_authenticated/coding-concepts/match'
+import { Route as AuthenticatedPageCreateRouteImport } from './routes/_authenticated/$page/create'
+import { Route as AuthenticatedPageIdRouteImport } from './routes/_authenticated/$page/$id'
 import { Route as AuthenticatedUomsUomIdEditRouteImport } from './routes/_authenticated/uoms/$uomId/edit'
+import { Route as AuthenticatedRolesIdPermissionsIndexRouteImport } from './routes/_authenticated/roles/$id/permissions/index'
 
 const ClerkRouteRoute = ClerkRouteRouteImport.update({
   id: '/clerk',
@@ -118,6 +156,139 @@ const DamorexIndexRoute = DamorexIndexRouteImport.update({
   path: '/damorex/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DamorexUploadPrescriptionRoute =
+  DamorexUploadPrescriptionRouteImport.update({
+    id: '/damorex/upload-prescription',
+    path: '/damorex/upload-prescription',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DamorexTermsRoute = DamorexTermsRouteImport.update({
+  id: '/damorex/terms',
+  path: '/damorex/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexShopRoute = DamorexShopRouteImport.update({
+  id: '/damorex/shop',
+  path: '/damorex/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexSearchRoute = DamorexSearchRouteImport.update({
+  id: '/damorex/search',
+  path: '/damorex/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexRewardsRoute = DamorexRewardsRouteImport.update({
+  id: '/damorex/rewards',
+  path: '/damorex/rewards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexPrivacyPolicyRoute = DamorexPrivacyPolicyRouteImport.update({
+  id: '/damorex/privacy-policy',
+  path: '/damorex/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexPos2Route = DamorexPos2RouteImport.update({
+  id: '/damorex/pos2',
+  path: '/damorex/pos2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexPosRoute = DamorexPosRouteImport.update({
+  id: '/damorex/pos',
+  path: '/damorex/pos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexOrdersRoute = DamorexOrdersRouteImport.update({
+  id: '/damorex/orders',
+  path: '/damorex/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexMyPrescriptionsRoute = DamorexMyPrescriptionsRouteImport.update({
+  id: '/damorex/my-prescriptions',
+  path: '/damorex/my-prescriptions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexLoginRoute = DamorexLoginRouteImport.update({
+  id: '/damorex/login',
+  path: '/damorex/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexHealthConcernsRoute = DamorexHealthConcernsRouteImport.update({
+  id: '/damorex/health-concerns',
+  path: '/damorex/health-concerns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexForgotPasswordRoute = DamorexForgotPasswordRouteImport.update({
+  id: '/damorex/forgot-password',
+  path: '/damorex/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexFaqRoute = DamorexFaqRouteImport.update({
+  id: '/damorex/faq',
+  path: '/damorex/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexDeliveryAreasRoute = DamorexDeliveryAreasRouteImport.update({
+  id: '/damorex/delivery-areas',
+  path: '/damorex/delivery-areas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexDashboardRoute = DamorexDashboardRouteImport.update({
+  id: '/damorex/dashboard',
+  path: '/damorex/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexContactRoute = DamorexContactRouteImport.update({
+  id: '/damorex/contact',
+  path: '/damorex/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexConsultationsRoute = DamorexConsultationsRouteImport.update({
+  id: '/damorex/consultations',
+  path: '/damorex/consultations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexConsultPharmacistRoute =
+  DamorexConsultPharmacistRouteImport.update({
+    id: '/damorex/consult-pharmacist',
+    path: '/damorex/consult-pharmacist',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DamorexCheckoutRoute = DamorexCheckoutRouteImport.update({
+  id: '/damorex/checkout',
+  path: '/damorex/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexCategoriesRoute = DamorexCategoriesRouteImport.update({
+  id: '/damorex/categories',
+  path: '/damorex/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexCartRoute = DamorexCartRouteImport.update({
+  id: '/damorex/cart',
+  path: '/damorex/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexBranchesRoute = DamorexBranchesRouteImport.update({
+  id: '/damorex/branches',
+  path: '/damorex/branches',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexBlogRoute = DamorexBlogRouteImport.update({
+  id: '/damorex/blog',
+  path: '/damorex/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexAboutRoute = DamorexAboutRouteImport.update({
+  id: '/damorex/about',
+  path: '/damorex/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const errorsServiceUnavailableRoute =
+  errorsServiceUnavailableRouteImport.update({
+    id: '/(errors)/service-unavailable',
+    path: '/service-unavailable',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const errors503Route = errors503RouteImport.update({
   id: '/(errors)/503',
   path: '/503',
@@ -241,6 +412,11 @@ const AuthenticatedAesRouteRoute = AuthenticatedAesRouteRouteImport.update({
   path: '/aes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const DamorexPurchasesIndexRoute = DamorexPurchasesIndexRouteImport.update({
+  id: '/damorex/purchases/',
+  path: '/damorex/purchases/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedWorkflowsIndexRoute =
   AuthenticatedWorkflowsIndexRouteImport.update({
     id: '/workflows/',
@@ -275,6 +451,12 @@ const AuthenticatedUomsIndexRoute = AuthenticatedUomsIndexRouteImport.update({
   path: '/uoms/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedUomCategoryIndexRoute =
+  AuthenticatedUomCategoryIndexRouteImport.update({
+    id: '/uom-category/',
+    path: '/uom-category/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSuppliersIndexRoute =
   AuthenticatedSuppliersIndexRouteImport.update({
     id: '/suppliers/',
@@ -331,12 +513,6 @@ const AuthenticatedPurchasesIndexRoute =
   AuthenticatedPurchasesIndexRouteImport.update({
     id: '/purchases/',
     path: '/purchases/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedProductsIndexRoute =
-  AuthenticatedProductsIndexRouteImport.update({
-    id: '/products/',
-    path: '/products/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPriceListsIndexRoute =
@@ -404,6 +580,11 @@ const AuthenticatedJournalEntriesIndexRoute =
     path: '/journal-entries/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedItemsIndexRoute = AuthenticatedItemsIndexRouteImport.update({
+  id: '/items/',
+  path: '/items/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedInventoryIndexRoute =
   AuthenticatedInventoryIndexRouteImport.update({
     id: '/inventory/',
@@ -475,6 +656,42 @@ const AuthenticatedAuditLogsIndexRoute =
     path: '/audit-logs/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const DamorexTrackOrderCodeRoute = DamorexTrackOrderCodeRouteImport.update({
+  id: '/damorex/track-order/$code',
+  path: '/damorex/track-order/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexShopSlugRoute = DamorexShopSlugRouteImport.update({
+  id: '/damorex/shop_/$slug',
+  path: '/damorex/shop/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexOrdersIdRoute = DamorexOrdersIdRouteImport.update({
+  id: '/damorex/orders_/$id',
+  path: '/damorex/orders/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DamorexHealthConcernsSlugRoute =
+  DamorexHealthConcernsSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => DamorexHealthConcernsRoute,
+  } as any)
+const DamorexCategoriesSlugRoute = DamorexCategoriesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => DamorexCategoriesRoute,
+} as any)
+const DamorexBranchesIdRoute = DamorexBranchesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DamorexBranchesRoute,
+} as any)
+const DamorexBlogSlugRoute = DamorexBlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => DamorexBlogRoute,
+} as any)
 const ClerkAuthenticatedUserManagementRoute =
   ClerkAuthenticatedUserManagementRouteImport.update({
     id: '/user-management',
@@ -510,16 +727,16 @@ const AuthenticatedSettingsAccountRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedProductsProductIdRoute =
-  AuthenticatedProductsProductIdRouteImport.update({
-    id: '/products/$productId',
-    path: '/products/$productId',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedLisResourceKeyRoute =
   AuthenticatedLisResourceKeyRouteImport.update({
     id: '/lis/$resourceKey',
     path: '/lis/$resourceKey',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedItemsCreateRoute =
+  AuthenticatedItemsCreateRouteImport.update({
+    id: '/items/create',
+    path: '/items/create',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCommunicationTraceExplorerRoute =
@@ -564,11 +781,27 @@ const AuthenticatedCodingConceptsMatchRoute =
     path: '/coding-concepts/match',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPageCreateRoute = AuthenticatedPageCreateRouteImport.update({
+  id: '/$page/create',
+  path: '/$page/create',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPageIdRoute = AuthenticatedPageIdRouteImport.update({
+  id: '/$page/$id',
+  path: '/$page/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedUomsUomIdEditRoute =
   AuthenticatedUomsUomIdEditRouteImport.update({
     id: '/edit',
     path: '/edit',
     getParentRoute: () => AuthenticatedUomsUomIdRoute,
+  } as any)
+const AuthenticatedRolesIdPermissionsIndexRoute =
+  AuthenticatedRolesIdPermissionsIndexRouteImport.update({
+    id: '/roles/$id/permissions/',
+    path: '/roles/$id/permissions/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -595,8 +828,36 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/service-unavailable': typeof errorsServiceUnavailableRoute
+  '/damorex/about': typeof DamorexAboutRoute
+  '/damorex/blog': typeof DamorexBlogRouteWithChildren
+  '/damorex/branches': typeof DamorexBranchesRouteWithChildren
+  '/damorex/cart': typeof DamorexCartRoute
+  '/damorex/categories': typeof DamorexCategoriesRouteWithChildren
+  '/damorex/checkout': typeof DamorexCheckoutRoute
+  '/damorex/consult-pharmacist': typeof DamorexConsultPharmacistRoute
+  '/damorex/consultations': typeof DamorexConsultationsRoute
+  '/damorex/contact': typeof DamorexContactRoute
+  '/damorex/dashboard': typeof DamorexDashboardRoute
+  '/damorex/delivery-areas': typeof DamorexDeliveryAreasRoute
+  '/damorex/faq': typeof DamorexFaqRoute
+  '/damorex/forgot-password': typeof DamorexForgotPasswordRoute
+  '/damorex/health-concerns': typeof DamorexHealthConcernsRouteWithChildren
+  '/damorex/login': typeof DamorexLoginRoute
+  '/damorex/my-prescriptions': typeof DamorexMyPrescriptionsRoute
+  '/damorex/orders': typeof DamorexOrdersRoute
+  '/damorex/pos': typeof DamorexPosRoute
+  '/damorex/pos2': typeof DamorexPos2Route
+  '/damorex/privacy-policy': typeof DamorexPrivacyPolicyRoute
+  '/damorex/rewards': typeof DamorexRewardsRoute
+  '/damorex/search': typeof DamorexSearchRoute
+  '/damorex/shop': typeof DamorexShopRoute
+  '/damorex/terms': typeof DamorexTermsRoute
+  '/damorex/upload-prescription': typeof DamorexUploadPrescriptionRoute
   '/damorex/': typeof DamorexIndexRoute
   '/questionnaire/': typeof QuestionnaireIndexRoute
+  '/$page/$id': typeof AuthenticatedPageIdRoute
+  '/$page/create': typeof AuthenticatedPageCreateRoute
   '/coding-concepts/match': typeof AuthenticatedCodingConceptsMatchRoute
   '/coding-concepts/search': typeof AuthenticatedCodingConceptsSearchRoute
   '/coding-concepts/upload': typeof AuthenticatedCodingConceptsUploadRoute
@@ -604,14 +865,21 @@ export interface FileRoutesByFullPath {
   '/communication/flow-graph': typeof AuthenticatedCommunicationFlowGraphRoute
   '/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
+  '/items/create': typeof AuthenticatedItemsCreateRoute
   '/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
-  '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/uoms/$uomId': typeof AuthenticatedUomsUomIdRouteWithChildren
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
+  '/damorex/blog/$slug': typeof DamorexBlogSlugRoute
+  '/damorex/branches/$id': typeof DamorexBranchesIdRoute
+  '/damorex/categories/$slug': typeof DamorexCategoriesSlugRoute
+  '/damorex/health-concerns/$slug': typeof DamorexHealthConcernsSlugRoute
+  '/damorex/orders/$id': typeof DamorexOrdersIdRoute
+  '/damorex/shop/$slug': typeof DamorexShopSlugRoute
+  '/damorex/track-order/$code': typeof DamorexTrackOrderCodeRoute
   '/audit-logs/': typeof AuthenticatedAuditLogsIndexRoute
   '/branches/': typeof AuthenticatedBranchesIndexRoute
   '/categories/': typeof AuthenticatedCategoriesIndexRoute
@@ -624,6 +892,7 @@ export interface FileRoutesByFullPath {
   '/drug-components/': typeof AuthenticatedDrugComponentsIndexRoute
   '/exchanges/': typeof AuthenticatedExchangesIndexRoute
   '/inventory/': typeof AuthenticatedInventoryIndexRoute
+  '/items/': typeof AuthenticatedItemsIndexRoute
   '/journal-entries/': typeof AuthenticatedJournalEntriesIndexRoute
   '/journal-entry-lines/': typeof AuthenticatedJournalEntryLinesIndexRoute
   '/journals/': typeof AuthenticatedJournalsIndexRoute
@@ -635,7 +904,6 @@ export interface FileRoutesByFullPath {
   '/pharmaceutics/': typeof AuthenticatedPharmaceuticsIndexRoute
   '/price-list-items/': typeof AuthenticatedPriceListItemsIndexRoute
   '/price-lists/': typeof AuthenticatedPriceListsIndexRoute
-  '/products/': typeof AuthenticatedProductsIndexRoute
   '/purchases/': typeof AuthenticatedPurchasesIndexRoute
   '/questionnaires/': typeof AuthenticatedQuestionnairesIndexRoute
   '/questions/': typeof AuthenticatedQuestionsIndexRoute
@@ -646,13 +914,16 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/stock-locations/': typeof AuthenticatedStockLocationsIndexRoute
   '/suppliers/': typeof AuthenticatedSuppliersIndexRoute
+  '/uom-category/': typeof AuthenticatedUomCategoryIndexRoute
   '/uoms/': typeof AuthenticatedUomsIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
   '/workflow-configuration/': typeof AuthenticatedWorkflowConfigurationIndexRoute
   '/workflow-events/': typeof AuthenticatedWorkflowEventsIndexRoute
   '/workflow-instances/': typeof AuthenticatedWorkflowInstancesIndexRoute
   '/workflows/': typeof AuthenticatedWorkflowsIndexRoute
+  '/damorex/purchases/': typeof DamorexPurchasesIndexRoute
   '/uoms/$uomId/edit': typeof AuthenticatedUomsUomIdEditRoute
+  '/roles/$id/permissions/': typeof AuthenticatedRolesIdPermissionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -677,8 +948,36 @@ export interface FileRoutesByTo {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/service-unavailable': typeof errorsServiceUnavailableRoute
+  '/damorex/about': typeof DamorexAboutRoute
+  '/damorex/blog': typeof DamorexBlogRouteWithChildren
+  '/damorex/branches': typeof DamorexBranchesRouteWithChildren
+  '/damorex/cart': typeof DamorexCartRoute
+  '/damorex/categories': typeof DamorexCategoriesRouteWithChildren
+  '/damorex/checkout': typeof DamorexCheckoutRoute
+  '/damorex/consult-pharmacist': typeof DamorexConsultPharmacistRoute
+  '/damorex/consultations': typeof DamorexConsultationsRoute
+  '/damorex/contact': typeof DamorexContactRoute
+  '/damorex/dashboard': typeof DamorexDashboardRoute
+  '/damorex/delivery-areas': typeof DamorexDeliveryAreasRoute
+  '/damorex/faq': typeof DamorexFaqRoute
+  '/damorex/forgot-password': typeof DamorexForgotPasswordRoute
+  '/damorex/health-concerns': typeof DamorexHealthConcernsRouteWithChildren
+  '/damorex/login': typeof DamorexLoginRoute
+  '/damorex/my-prescriptions': typeof DamorexMyPrescriptionsRoute
+  '/damorex/orders': typeof DamorexOrdersRoute
+  '/damorex/pos': typeof DamorexPosRoute
+  '/damorex/pos2': typeof DamorexPos2Route
+  '/damorex/privacy-policy': typeof DamorexPrivacyPolicyRoute
+  '/damorex/rewards': typeof DamorexRewardsRoute
+  '/damorex/search': typeof DamorexSearchRoute
+  '/damorex/shop': typeof DamorexShopRoute
+  '/damorex/terms': typeof DamorexTermsRoute
+  '/damorex/upload-prescription': typeof DamorexUploadPrescriptionRoute
   '/damorex': typeof DamorexIndexRoute
   '/questionnaire': typeof QuestionnaireIndexRoute
+  '/$page/$id': typeof AuthenticatedPageIdRoute
+  '/$page/create': typeof AuthenticatedPageCreateRoute
   '/coding-concepts/match': typeof AuthenticatedCodingConceptsMatchRoute
   '/coding-concepts/search': typeof AuthenticatedCodingConceptsSearchRoute
   '/coding-concepts/upload': typeof AuthenticatedCodingConceptsUploadRoute
@@ -686,14 +985,21 @@ export interface FileRoutesByTo {
   '/communication/flow-graph': typeof AuthenticatedCommunicationFlowGraphRoute
   '/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
+  '/items/create': typeof AuthenticatedItemsCreateRoute
   '/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
-  '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/uoms/$uomId': typeof AuthenticatedUomsUomIdRouteWithChildren
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
+  '/damorex/blog/$slug': typeof DamorexBlogSlugRoute
+  '/damorex/branches/$id': typeof DamorexBranchesIdRoute
+  '/damorex/categories/$slug': typeof DamorexCategoriesSlugRoute
+  '/damorex/health-concerns/$slug': typeof DamorexHealthConcernsSlugRoute
+  '/damorex/orders/$id': typeof DamorexOrdersIdRoute
+  '/damorex/shop/$slug': typeof DamorexShopSlugRoute
+  '/damorex/track-order/$code': typeof DamorexTrackOrderCodeRoute
   '/audit-logs': typeof AuthenticatedAuditLogsIndexRoute
   '/branches': typeof AuthenticatedBranchesIndexRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
@@ -706,6 +1012,7 @@ export interface FileRoutesByTo {
   '/drug-components': typeof AuthenticatedDrugComponentsIndexRoute
   '/exchanges': typeof AuthenticatedExchangesIndexRoute
   '/inventory': typeof AuthenticatedInventoryIndexRoute
+  '/items': typeof AuthenticatedItemsIndexRoute
   '/journal-entries': typeof AuthenticatedJournalEntriesIndexRoute
   '/journal-entry-lines': typeof AuthenticatedJournalEntryLinesIndexRoute
   '/journals': typeof AuthenticatedJournalsIndexRoute
@@ -717,7 +1024,6 @@ export interface FileRoutesByTo {
   '/pharmaceutics': typeof AuthenticatedPharmaceuticsIndexRoute
   '/price-list-items': typeof AuthenticatedPriceListItemsIndexRoute
   '/price-lists': typeof AuthenticatedPriceListsIndexRoute
-  '/products': typeof AuthenticatedProductsIndexRoute
   '/purchases': typeof AuthenticatedPurchasesIndexRoute
   '/questionnaires': typeof AuthenticatedQuestionnairesIndexRoute
   '/questions': typeof AuthenticatedQuestionsIndexRoute
@@ -728,13 +1034,16 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/stock-locations': typeof AuthenticatedStockLocationsIndexRoute
   '/suppliers': typeof AuthenticatedSuppliersIndexRoute
+  '/uom-category': typeof AuthenticatedUomCategoryIndexRoute
   '/uoms': typeof AuthenticatedUomsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/workflow-configuration': typeof AuthenticatedWorkflowConfigurationIndexRoute
   '/workflow-events': typeof AuthenticatedWorkflowEventsIndexRoute
   '/workflow-instances': typeof AuthenticatedWorkflowInstancesIndexRoute
   '/workflows': typeof AuthenticatedWorkflowsIndexRoute
+  '/damorex/purchases': typeof DamorexPurchasesIndexRoute
   '/uoms/$uomId/edit': typeof AuthenticatedUomsUomIdEditRoute
+  '/roles/$id/permissions': typeof AuthenticatedRolesIdPermissionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -764,8 +1073,36 @@ export interface FileRoutesById {
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
+  '/(errors)/service-unavailable': typeof errorsServiceUnavailableRoute
+  '/damorex/about': typeof DamorexAboutRoute
+  '/damorex/blog': typeof DamorexBlogRouteWithChildren
+  '/damorex/branches': typeof DamorexBranchesRouteWithChildren
+  '/damorex/cart': typeof DamorexCartRoute
+  '/damorex/categories': typeof DamorexCategoriesRouteWithChildren
+  '/damorex/checkout': typeof DamorexCheckoutRoute
+  '/damorex/consult-pharmacist': typeof DamorexConsultPharmacistRoute
+  '/damorex/consultations': typeof DamorexConsultationsRoute
+  '/damorex/contact': typeof DamorexContactRoute
+  '/damorex/dashboard': typeof DamorexDashboardRoute
+  '/damorex/delivery-areas': typeof DamorexDeliveryAreasRoute
+  '/damorex/faq': typeof DamorexFaqRoute
+  '/damorex/forgot-password': typeof DamorexForgotPasswordRoute
+  '/damorex/health-concerns': typeof DamorexHealthConcernsRouteWithChildren
+  '/damorex/login': typeof DamorexLoginRoute
+  '/damorex/my-prescriptions': typeof DamorexMyPrescriptionsRoute
+  '/damorex/orders': typeof DamorexOrdersRoute
+  '/damorex/pos': typeof DamorexPosRoute
+  '/damorex/pos2': typeof DamorexPos2Route
+  '/damorex/privacy-policy': typeof DamorexPrivacyPolicyRoute
+  '/damorex/rewards': typeof DamorexRewardsRoute
+  '/damorex/search': typeof DamorexSearchRoute
+  '/damorex/shop': typeof DamorexShopRoute
+  '/damorex/terms': typeof DamorexTermsRoute
+  '/damorex/upload-prescription': typeof DamorexUploadPrescriptionRoute
   '/damorex/': typeof DamorexIndexRoute
   '/questionnaire/': typeof QuestionnaireIndexRoute
+  '/_authenticated/$page/$id': typeof AuthenticatedPageIdRoute
+  '/_authenticated/$page/create': typeof AuthenticatedPageCreateRoute
   '/_authenticated/coding-concepts/match': typeof AuthenticatedCodingConceptsMatchRoute
   '/_authenticated/coding-concepts/search': typeof AuthenticatedCodingConceptsSearchRoute
   '/_authenticated/coding-concepts/upload': typeof AuthenticatedCodingConceptsUploadRoute
@@ -773,14 +1110,21 @@ export interface FileRoutesById {
   '/_authenticated/communication/flow-graph': typeof AuthenticatedCommunicationFlowGraphRoute
   '/_authenticated/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/_authenticated/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
+  '/_authenticated/items/create': typeof AuthenticatedItemsCreateRoute
   '/_authenticated/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
-  '/_authenticated/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/uoms/$uomId': typeof AuthenticatedUomsUomIdRouteWithChildren
   '/clerk/_authenticated/user-management': typeof ClerkAuthenticatedUserManagementRoute
+  '/damorex/blog/$slug': typeof DamorexBlogSlugRoute
+  '/damorex/branches/$id': typeof DamorexBranchesIdRoute
+  '/damorex/categories/$slug': typeof DamorexCategoriesSlugRoute
+  '/damorex/health-concerns/$slug': typeof DamorexHealthConcernsSlugRoute
+  '/damorex/orders_/$id': typeof DamorexOrdersIdRoute
+  '/damorex/shop_/$slug': typeof DamorexShopSlugRoute
+  '/damorex/track-order/$code': typeof DamorexTrackOrderCodeRoute
   '/_authenticated/audit-logs/': typeof AuthenticatedAuditLogsIndexRoute
   '/_authenticated/branches/': typeof AuthenticatedBranchesIndexRoute
   '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
@@ -793,6 +1137,7 @@ export interface FileRoutesById {
   '/_authenticated/drug-components/': typeof AuthenticatedDrugComponentsIndexRoute
   '/_authenticated/exchanges/': typeof AuthenticatedExchangesIndexRoute
   '/_authenticated/inventory/': typeof AuthenticatedInventoryIndexRoute
+  '/_authenticated/items/': typeof AuthenticatedItemsIndexRoute
   '/_authenticated/journal-entries/': typeof AuthenticatedJournalEntriesIndexRoute
   '/_authenticated/journal-entry-lines/': typeof AuthenticatedJournalEntryLinesIndexRoute
   '/_authenticated/journals/': typeof AuthenticatedJournalsIndexRoute
@@ -804,7 +1149,6 @@ export interface FileRoutesById {
   '/_authenticated/pharmaceutics/': typeof AuthenticatedPharmaceuticsIndexRoute
   '/_authenticated/price-list-items/': typeof AuthenticatedPriceListItemsIndexRoute
   '/_authenticated/price-lists/': typeof AuthenticatedPriceListsIndexRoute
-  '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/purchases/': typeof AuthenticatedPurchasesIndexRoute
   '/_authenticated/questionnaires/': typeof AuthenticatedQuestionnairesIndexRoute
   '/_authenticated/questions/': typeof AuthenticatedQuestionsIndexRoute
@@ -815,13 +1159,16 @@ export interface FileRoutesById {
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/stock-locations/': typeof AuthenticatedStockLocationsIndexRoute
   '/_authenticated/suppliers/': typeof AuthenticatedSuppliersIndexRoute
+  '/_authenticated/uom-category/': typeof AuthenticatedUomCategoryIndexRoute
   '/_authenticated/uoms/': typeof AuthenticatedUomsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/workflow-configuration/': typeof AuthenticatedWorkflowConfigurationIndexRoute
   '/_authenticated/workflow-events/': typeof AuthenticatedWorkflowEventsIndexRoute
   '/_authenticated/workflow-instances/': typeof AuthenticatedWorkflowInstancesIndexRoute
   '/_authenticated/workflows/': typeof AuthenticatedWorkflowsIndexRoute
+  '/damorex/purchases/': typeof DamorexPurchasesIndexRoute
   '/_authenticated/uoms/$uomId/edit': typeof AuthenticatedUomsUomIdEditRoute
+  '/_authenticated/roles/$id/permissions/': typeof AuthenticatedRolesIdPermissionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -849,8 +1196,36 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/service-unavailable'
+    | '/damorex/about'
+    | '/damorex/blog'
+    | '/damorex/branches'
+    | '/damorex/cart'
+    | '/damorex/categories'
+    | '/damorex/checkout'
+    | '/damorex/consult-pharmacist'
+    | '/damorex/consultations'
+    | '/damorex/contact'
+    | '/damorex/dashboard'
+    | '/damorex/delivery-areas'
+    | '/damorex/faq'
+    | '/damorex/forgot-password'
+    | '/damorex/health-concerns'
+    | '/damorex/login'
+    | '/damorex/my-prescriptions'
+    | '/damorex/orders'
+    | '/damorex/pos'
+    | '/damorex/pos2'
+    | '/damorex/privacy-policy'
+    | '/damorex/rewards'
+    | '/damorex/search'
+    | '/damorex/shop'
+    | '/damorex/terms'
+    | '/damorex/upload-prescription'
     | '/damorex/'
     | '/questionnaire/'
+    | '/$page/$id'
+    | '/$page/create'
     | '/coding-concepts/match'
     | '/coding-concepts/search'
     | '/coding-concepts/upload'
@@ -858,14 +1233,21 @@ export interface FileRouteTypes {
     | '/communication/flow-graph'
     | '/communication/message-tester'
     | '/communication/trace-explorer'
+    | '/items/create'
     | '/lis/$resourceKey'
-    | '/products/$productId'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
     | '/uoms/$uomId'
     | '/clerk/user-management'
+    | '/damorex/blog/$slug'
+    | '/damorex/branches/$id'
+    | '/damorex/categories/$slug'
+    | '/damorex/health-concerns/$slug'
+    | '/damorex/orders/$id'
+    | '/damorex/shop/$slug'
+    | '/damorex/track-order/$code'
     | '/audit-logs/'
     | '/branches/'
     | '/categories/'
@@ -878,6 +1260,7 @@ export interface FileRouteTypes {
     | '/drug-components/'
     | '/exchanges/'
     | '/inventory/'
+    | '/items/'
     | '/journal-entries/'
     | '/journal-entry-lines/'
     | '/journals/'
@@ -889,7 +1272,6 @@ export interface FileRouteTypes {
     | '/pharmaceutics/'
     | '/price-list-items/'
     | '/price-lists/'
-    | '/products/'
     | '/purchases/'
     | '/questionnaires/'
     | '/questions/'
@@ -900,13 +1282,16 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/stock-locations/'
     | '/suppliers/'
+    | '/uom-category/'
     | '/uoms/'
     | '/users/'
     | '/workflow-configuration/'
     | '/workflow-events/'
     | '/workflow-instances/'
     | '/workflows/'
+    | '/damorex/purchases/'
     | '/uoms/$uomId/edit'
+    | '/roles/$id/permissions/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -931,8 +1316,36 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/service-unavailable'
+    | '/damorex/about'
+    | '/damorex/blog'
+    | '/damorex/branches'
+    | '/damorex/cart'
+    | '/damorex/categories'
+    | '/damorex/checkout'
+    | '/damorex/consult-pharmacist'
+    | '/damorex/consultations'
+    | '/damorex/contact'
+    | '/damorex/dashboard'
+    | '/damorex/delivery-areas'
+    | '/damorex/faq'
+    | '/damorex/forgot-password'
+    | '/damorex/health-concerns'
+    | '/damorex/login'
+    | '/damorex/my-prescriptions'
+    | '/damorex/orders'
+    | '/damorex/pos'
+    | '/damorex/pos2'
+    | '/damorex/privacy-policy'
+    | '/damorex/rewards'
+    | '/damorex/search'
+    | '/damorex/shop'
+    | '/damorex/terms'
+    | '/damorex/upload-prescription'
     | '/damorex'
     | '/questionnaire'
+    | '/$page/$id'
+    | '/$page/create'
     | '/coding-concepts/match'
     | '/coding-concepts/search'
     | '/coding-concepts/upload'
@@ -940,14 +1353,21 @@ export interface FileRouteTypes {
     | '/communication/flow-graph'
     | '/communication/message-tester'
     | '/communication/trace-explorer'
+    | '/items/create'
     | '/lis/$resourceKey'
-    | '/products/$productId'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
     | '/uoms/$uomId'
     | '/clerk/user-management'
+    | '/damorex/blog/$slug'
+    | '/damorex/branches/$id'
+    | '/damorex/categories/$slug'
+    | '/damorex/health-concerns/$slug'
+    | '/damorex/orders/$id'
+    | '/damorex/shop/$slug'
+    | '/damorex/track-order/$code'
     | '/audit-logs'
     | '/branches'
     | '/categories'
@@ -960,6 +1380,7 @@ export interface FileRouteTypes {
     | '/drug-components'
     | '/exchanges'
     | '/inventory'
+    | '/items'
     | '/journal-entries'
     | '/journal-entry-lines'
     | '/journals'
@@ -971,7 +1392,6 @@ export interface FileRouteTypes {
     | '/pharmaceutics'
     | '/price-list-items'
     | '/price-lists'
-    | '/products'
     | '/purchases'
     | '/questionnaires'
     | '/questions'
@@ -982,13 +1402,16 @@ export interface FileRouteTypes {
     | '/settings'
     | '/stock-locations'
     | '/suppliers'
+    | '/uom-category'
     | '/uoms'
     | '/users'
     | '/workflow-configuration'
     | '/workflow-events'
     | '/workflow-instances'
     | '/workflows'
+    | '/damorex/purchases'
     | '/uoms/$uomId/edit'
+    | '/roles/$id/permissions'
   id:
     | '__root__'
     | '/'
@@ -1017,8 +1440,36 @@ export interface FileRouteTypes {
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
+    | '/(errors)/service-unavailable'
+    | '/damorex/about'
+    | '/damorex/blog'
+    | '/damorex/branches'
+    | '/damorex/cart'
+    | '/damorex/categories'
+    | '/damorex/checkout'
+    | '/damorex/consult-pharmacist'
+    | '/damorex/consultations'
+    | '/damorex/contact'
+    | '/damorex/dashboard'
+    | '/damorex/delivery-areas'
+    | '/damorex/faq'
+    | '/damorex/forgot-password'
+    | '/damorex/health-concerns'
+    | '/damorex/login'
+    | '/damorex/my-prescriptions'
+    | '/damorex/orders'
+    | '/damorex/pos'
+    | '/damorex/pos2'
+    | '/damorex/privacy-policy'
+    | '/damorex/rewards'
+    | '/damorex/search'
+    | '/damorex/shop'
+    | '/damorex/terms'
+    | '/damorex/upload-prescription'
     | '/damorex/'
     | '/questionnaire/'
+    | '/_authenticated/$page/$id'
+    | '/_authenticated/$page/create'
     | '/_authenticated/coding-concepts/match'
     | '/_authenticated/coding-concepts/search'
     | '/_authenticated/coding-concepts/upload'
@@ -1026,14 +1477,21 @@ export interface FileRouteTypes {
     | '/_authenticated/communication/flow-graph'
     | '/_authenticated/communication/message-tester'
     | '/_authenticated/communication/trace-explorer'
+    | '/_authenticated/items/create'
     | '/_authenticated/lis/$resourceKey'
-    | '/_authenticated/products/$productId'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/uoms/$uomId'
     | '/clerk/_authenticated/user-management'
+    | '/damorex/blog/$slug'
+    | '/damorex/branches/$id'
+    | '/damorex/categories/$slug'
+    | '/damorex/health-concerns/$slug'
+    | '/damorex/orders_/$id'
+    | '/damorex/shop_/$slug'
+    | '/damorex/track-order/$code'
     | '/_authenticated/audit-logs/'
     | '/_authenticated/branches/'
     | '/_authenticated/categories/'
@@ -1046,6 +1504,7 @@ export interface FileRouteTypes {
     | '/_authenticated/drug-components/'
     | '/_authenticated/exchanges/'
     | '/_authenticated/inventory/'
+    | '/_authenticated/items/'
     | '/_authenticated/journal-entries/'
     | '/_authenticated/journal-entry-lines/'
     | '/_authenticated/journals/'
@@ -1057,7 +1516,6 @@ export interface FileRouteTypes {
     | '/_authenticated/pharmaceutics/'
     | '/_authenticated/price-list-items/'
     | '/_authenticated/price-lists/'
-    | '/_authenticated/products/'
     | '/_authenticated/purchases/'
     | '/_authenticated/questionnaires/'
     | '/_authenticated/questions/'
@@ -1068,13 +1526,16 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/'
     | '/_authenticated/stock-locations/'
     | '/_authenticated/suppliers/'
+    | '/_authenticated/uom-category/'
     | '/_authenticated/uoms/'
     | '/_authenticated/users/'
     | '/_authenticated/workflow-configuration/'
     | '/_authenticated/workflow-events/'
     | '/_authenticated/workflow-instances/'
     | '/_authenticated/workflows/'
+    | '/damorex/purchases/'
     | '/_authenticated/uoms/$uomId/edit'
+    | '/_authenticated/roles/$id/permissions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1091,8 +1552,38 @@ export interface RootRouteChildren {
   errors404Route: typeof errors404Route
   errors500Route: typeof errors500Route
   errors503Route: typeof errors503Route
+  errorsServiceUnavailableRoute: typeof errorsServiceUnavailableRoute
+  DamorexAboutRoute: typeof DamorexAboutRoute
+  DamorexBlogRoute: typeof DamorexBlogRouteWithChildren
+  DamorexBranchesRoute: typeof DamorexBranchesRouteWithChildren
+  DamorexCartRoute: typeof DamorexCartRoute
+  DamorexCategoriesRoute: typeof DamorexCategoriesRouteWithChildren
+  DamorexCheckoutRoute: typeof DamorexCheckoutRoute
+  DamorexConsultPharmacistRoute: typeof DamorexConsultPharmacistRoute
+  DamorexConsultationsRoute: typeof DamorexConsultationsRoute
+  DamorexContactRoute: typeof DamorexContactRoute
+  DamorexDashboardRoute: typeof DamorexDashboardRoute
+  DamorexDeliveryAreasRoute: typeof DamorexDeliveryAreasRoute
+  DamorexFaqRoute: typeof DamorexFaqRoute
+  DamorexForgotPasswordRoute: typeof DamorexForgotPasswordRoute
+  DamorexHealthConcernsRoute: typeof DamorexHealthConcernsRouteWithChildren
+  DamorexLoginRoute: typeof DamorexLoginRoute
+  DamorexMyPrescriptionsRoute: typeof DamorexMyPrescriptionsRoute
+  DamorexOrdersRoute: typeof DamorexOrdersRoute
+  DamorexPosRoute: typeof DamorexPosRoute
+  DamorexPos2Route: typeof DamorexPos2Route
+  DamorexPrivacyPolicyRoute: typeof DamorexPrivacyPolicyRoute
+  DamorexRewardsRoute: typeof DamorexRewardsRoute
+  DamorexSearchRoute: typeof DamorexSearchRoute
+  DamorexShopRoute: typeof DamorexShopRoute
+  DamorexTermsRoute: typeof DamorexTermsRoute
+  DamorexUploadPrescriptionRoute: typeof DamorexUploadPrescriptionRoute
   DamorexIndexRoute: typeof DamorexIndexRoute
   QuestionnaireIndexRoute: typeof QuestionnaireIndexRoute
+  DamorexOrdersIdRoute: typeof DamorexOrdersIdRoute
+  DamorexShopSlugRoute: typeof DamorexShopSlugRoute
+  DamorexTrackOrderCodeRoute: typeof DamorexTrackOrderCodeRoute
+  DamorexPurchasesIndexRoute: typeof DamorexPurchasesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1130,6 +1621,188 @@ declare module '@tanstack/react-router' {
       path: '/damorex'
       fullPath: '/damorex/'
       preLoaderRoute: typeof DamorexIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/upload-prescription': {
+      id: '/damorex/upload-prescription'
+      path: '/damorex/upload-prescription'
+      fullPath: '/damorex/upload-prescription'
+      preLoaderRoute: typeof DamorexUploadPrescriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/terms': {
+      id: '/damorex/terms'
+      path: '/damorex/terms'
+      fullPath: '/damorex/terms'
+      preLoaderRoute: typeof DamorexTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/shop': {
+      id: '/damorex/shop'
+      path: '/damorex/shop'
+      fullPath: '/damorex/shop'
+      preLoaderRoute: typeof DamorexShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/search': {
+      id: '/damorex/search'
+      path: '/damorex/search'
+      fullPath: '/damorex/search'
+      preLoaderRoute: typeof DamorexSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/rewards': {
+      id: '/damorex/rewards'
+      path: '/damorex/rewards'
+      fullPath: '/damorex/rewards'
+      preLoaderRoute: typeof DamorexRewardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/privacy-policy': {
+      id: '/damorex/privacy-policy'
+      path: '/damorex/privacy-policy'
+      fullPath: '/damorex/privacy-policy'
+      preLoaderRoute: typeof DamorexPrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/pos2': {
+      id: '/damorex/pos2'
+      path: '/damorex/pos2'
+      fullPath: '/damorex/pos2'
+      preLoaderRoute: typeof DamorexPos2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/pos': {
+      id: '/damorex/pos'
+      path: '/damorex/pos'
+      fullPath: '/damorex/pos'
+      preLoaderRoute: typeof DamorexPosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/orders': {
+      id: '/damorex/orders'
+      path: '/damorex/orders'
+      fullPath: '/damorex/orders'
+      preLoaderRoute: typeof DamorexOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/my-prescriptions': {
+      id: '/damorex/my-prescriptions'
+      path: '/damorex/my-prescriptions'
+      fullPath: '/damorex/my-prescriptions'
+      preLoaderRoute: typeof DamorexMyPrescriptionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/login': {
+      id: '/damorex/login'
+      path: '/damorex/login'
+      fullPath: '/damorex/login'
+      preLoaderRoute: typeof DamorexLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/health-concerns': {
+      id: '/damorex/health-concerns'
+      path: '/damorex/health-concerns'
+      fullPath: '/damorex/health-concerns'
+      preLoaderRoute: typeof DamorexHealthConcernsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/forgot-password': {
+      id: '/damorex/forgot-password'
+      path: '/damorex/forgot-password'
+      fullPath: '/damorex/forgot-password'
+      preLoaderRoute: typeof DamorexForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/faq': {
+      id: '/damorex/faq'
+      path: '/damorex/faq'
+      fullPath: '/damorex/faq'
+      preLoaderRoute: typeof DamorexFaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/delivery-areas': {
+      id: '/damorex/delivery-areas'
+      path: '/damorex/delivery-areas'
+      fullPath: '/damorex/delivery-areas'
+      preLoaderRoute: typeof DamorexDeliveryAreasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/dashboard': {
+      id: '/damorex/dashboard'
+      path: '/damorex/dashboard'
+      fullPath: '/damorex/dashboard'
+      preLoaderRoute: typeof DamorexDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/contact': {
+      id: '/damorex/contact'
+      path: '/damorex/contact'
+      fullPath: '/damorex/contact'
+      preLoaderRoute: typeof DamorexContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/consultations': {
+      id: '/damorex/consultations'
+      path: '/damorex/consultations'
+      fullPath: '/damorex/consultations'
+      preLoaderRoute: typeof DamorexConsultationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/consult-pharmacist': {
+      id: '/damorex/consult-pharmacist'
+      path: '/damorex/consult-pharmacist'
+      fullPath: '/damorex/consult-pharmacist'
+      preLoaderRoute: typeof DamorexConsultPharmacistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/checkout': {
+      id: '/damorex/checkout'
+      path: '/damorex/checkout'
+      fullPath: '/damorex/checkout'
+      preLoaderRoute: typeof DamorexCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/categories': {
+      id: '/damorex/categories'
+      path: '/damorex/categories'
+      fullPath: '/damorex/categories'
+      preLoaderRoute: typeof DamorexCategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/cart': {
+      id: '/damorex/cart'
+      path: '/damorex/cart'
+      fullPath: '/damorex/cart'
+      preLoaderRoute: typeof DamorexCartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/branches': {
+      id: '/damorex/branches'
+      path: '/damorex/branches'
+      fullPath: '/damorex/branches'
+      preLoaderRoute: typeof DamorexBranchesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/blog': {
+      id: '/damorex/blog'
+      path: '/damorex/blog'
+      fullPath: '/damorex/blog'
+      preLoaderRoute: typeof DamorexBlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/about': {
+      id: '/damorex/about'
+      path: '/damorex/about'
+      fullPath: '/damorex/about'
+      preLoaderRoute: typeof DamorexAboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(errors)/service-unavailable': {
+      id: '/(errors)/service-unavailable'
+      path: '/service-unavailable'
+      fullPath: '/service-unavailable'
+      preLoaderRoute: typeof errorsServiceUnavailableRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(errors)/503': {
@@ -1293,6 +1966,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAesRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/damorex/purchases/': {
+      id: '/damorex/purchases/'
+      path: '/damorex/purchases'
+      fullPath: '/damorex/purchases/'
+      preLoaderRoute: typeof DamorexPurchasesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/workflows/': {
       id: '/_authenticated/workflows/'
       path: '/workflows'
@@ -1333,6 +2013,13 @@ declare module '@tanstack/react-router' {
       path: '/uoms'
       fullPath: '/uoms/'
       preLoaderRoute: typeof AuthenticatedUomsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/uom-category/': {
+      id: '/_authenticated/uom-category/'
+      path: '/uom-category'
+      fullPath: '/uom-category/'
+      preLoaderRoute: typeof AuthenticatedUomCategoryIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/suppliers/': {
@@ -1403,13 +2090,6 @@ declare module '@tanstack/react-router' {
       path: '/purchases'
       fullPath: '/purchases/'
       preLoaderRoute: typeof AuthenticatedPurchasesIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/products/': {
-      id: '/_authenticated/products/'
-      path: '/products'
-      fullPath: '/products/'
-      preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/price-lists/': {
@@ -1487,6 +2167,13 @@ declare module '@tanstack/react-router' {
       path: '/journal-entries'
       fullPath: '/journal-entries/'
       preLoaderRoute: typeof AuthenticatedJournalEntriesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/items/': {
+      id: '/_authenticated/items/'
+      path: '/items'
+      fullPath: '/items/'
+      preLoaderRoute: typeof AuthenticatedItemsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/inventory/': {
@@ -1573,6 +2260,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditLogsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/damorex/track-order/$code': {
+      id: '/damorex/track-order/$code'
+      path: '/damorex/track-order/$code'
+      fullPath: '/damorex/track-order/$code'
+      preLoaderRoute: typeof DamorexTrackOrderCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/shop_/$slug': {
+      id: '/damorex/shop_/$slug'
+      path: '/damorex/shop/$slug'
+      fullPath: '/damorex/shop/$slug'
+      preLoaderRoute: typeof DamorexShopSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/orders_/$id': {
+      id: '/damorex/orders_/$id'
+      path: '/damorex/orders/$id'
+      fullPath: '/damorex/orders/$id'
+      preLoaderRoute: typeof DamorexOrdersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/damorex/health-concerns/$slug': {
+      id: '/damorex/health-concerns/$slug'
+      path: '/$slug'
+      fullPath: '/damorex/health-concerns/$slug'
+      preLoaderRoute: typeof DamorexHealthConcernsSlugRouteImport
+      parentRoute: typeof DamorexHealthConcernsRoute
+    }
+    '/damorex/categories/$slug': {
+      id: '/damorex/categories/$slug'
+      path: '/$slug'
+      fullPath: '/damorex/categories/$slug'
+      preLoaderRoute: typeof DamorexCategoriesSlugRouteImport
+      parentRoute: typeof DamorexCategoriesRoute
+    }
+    '/damorex/branches/$id': {
+      id: '/damorex/branches/$id'
+      path: '/$id'
+      fullPath: '/damorex/branches/$id'
+      preLoaderRoute: typeof DamorexBranchesIdRouteImport
+      parentRoute: typeof DamorexBranchesRoute
+    }
+    '/damorex/blog/$slug': {
+      id: '/damorex/blog/$slug'
+      path: '/$slug'
+      fullPath: '/damorex/blog/$slug'
+      preLoaderRoute: typeof DamorexBlogSlugRouteImport
+      parentRoute: typeof DamorexBlogRoute
+    }
     '/clerk/_authenticated/user-management': {
       id: '/clerk/_authenticated/user-management'
       path: '/user-management'
@@ -1615,18 +2351,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAccountRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/products/$productId': {
-      id: '/_authenticated/products/$productId'
-      path: '/products/$productId'
-      fullPath: '/products/$productId'
-      preLoaderRoute: typeof AuthenticatedProductsProductIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/lis/$resourceKey': {
       id: '/_authenticated/lis/$resourceKey'
       path: '/lis/$resourceKey'
       fullPath: '/lis/$resourceKey'
       preLoaderRoute: typeof AuthenticatedLisResourceKeyRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/items/create': {
+      id: '/_authenticated/items/create'
+      path: '/items/create'
+      fullPath: '/items/create'
+      preLoaderRoute: typeof AuthenticatedItemsCreateRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/communication/trace-explorer': {
@@ -1678,12 +2414,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCodingConceptsMatchRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/$page/create': {
+      id: '/_authenticated/$page/create'
+      path: '/$page/create'
+      fullPath: '/$page/create'
+      preLoaderRoute: typeof AuthenticatedPageCreateRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/$page/$id': {
+      id: '/_authenticated/$page/$id'
+      path: '/$page/$id'
+      fullPath: '/$page/$id'
+      preLoaderRoute: typeof AuthenticatedPageIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/uoms/$uomId/edit': {
       id: '/_authenticated/uoms/$uomId/edit'
       path: '/edit'
       fullPath: '/uoms/$uomId/edit'
       preLoaderRoute: typeof AuthenticatedUomsUomIdEditRouteImport
       parentRoute: typeof AuthenticatedUomsUomIdRoute
+    }
+    '/_authenticated/roles/$id/permissions/': {
+      id: '/_authenticated/roles/$id/permissions/'
+      path: '/roles/$id/permissions'
+      fullPath: '/roles/$id/permissions/'
+      preLoaderRoute: typeof AuthenticatedRolesIdPermissionsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
@@ -1737,6 +2494,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotificationsRouteRoute: typeof AuthenticatedNotificationsRouteRoute
   AuthenticatedRoutingRouteRoute: typeof AuthenticatedRoutingRouteRoute
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
+  AuthenticatedPageIdRoute: typeof AuthenticatedPageIdRoute
+  AuthenticatedPageCreateRoute: typeof AuthenticatedPageCreateRoute
   AuthenticatedCodingConceptsMatchRoute: typeof AuthenticatedCodingConceptsMatchRoute
   AuthenticatedCodingConceptsSearchRoute: typeof AuthenticatedCodingConceptsSearchRoute
   AuthenticatedCodingConceptsUploadRoute: typeof AuthenticatedCodingConceptsUploadRoute
@@ -1744,8 +2503,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCommunicationFlowGraphRoute: typeof AuthenticatedCommunicationFlowGraphRoute
   AuthenticatedCommunicationMessageTesterRoute: typeof AuthenticatedCommunicationMessageTesterRoute
   AuthenticatedCommunicationTraceExplorerRoute: typeof AuthenticatedCommunicationTraceExplorerRoute
+  AuthenticatedItemsCreateRoute: typeof AuthenticatedItemsCreateRoute
   AuthenticatedLisResourceKeyRoute: typeof AuthenticatedLisResourceKeyRoute
-  AuthenticatedProductsProductIdRoute: typeof AuthenticatedProductsProductIdRoute
   AuthenticatedUomsUomIdRoute: typeof AuthenticatedUomsUomIdRouteWithChildren
   AuthenticatedAuditLogsIndexRoute: typeof AuthenticatedAuditLogsIndexRoute
   AuthenticatedBranchesIndexRoute: typeof AuthenticatedBranchesIndexRoute
@@ -1759,6 +2518,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDrugComponentsIndexRoute: typeof AuthenticatedDrugComponentsIndexRoute
   AuthenticatedExchangesIndexRoute: typeof AuthenticatedExchangesIndexRoute
   AuthenticatedInventoryIndexRoute: typeof AuthenticatedInventoryIndexRoute
+  AuthenticatedItemsIndexRoute: typeof AuthenticatedItemsIndexRoute
   AuthenticatedJournalEntriesIndexRoute: typeof AuthenticatedJournalEntriesIndexRoute
   AuthenticatedJournalEntryLinesIndexRoute: typeof AuthenticatedJournalEntryLinesIndexRoute
   AuthenticatedJournalsIndexRoute: typeof AuthenticatedJournalsIndexRoute
@@ -1770,7 +2530,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPharmaceuticsIndexRoute: typeof AuthenticatedPharmaceuticsIndexRoute
   AuthenticatedPriceListItemsIndexRoute: typeof AuthenticatedPriceListItemsIndexRoute
   AuthenticatedPriceListsIndexRoute: typeof AuthenticatedPriceListsIndexRoute
-  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
   AuthenticatedPurchasesIndexRoute: typeof AuthenticatedPurchasesIndexRoute
   AuthenticatedQuestionnairesIndexRoute: typeof AuthenticatedQuestionnairesIndexRoute
   AuthenticatedQuestionsIndexRoute: typeof AuthenticatedQuestionsIndexRoute
@@ -1780,12 +2539,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSalesIndexRoute: typeof AuthenticatedSalesIndexRoute
   AuthenticatedStockLocationsIndexRoute: typeof AuthenticatedStockLocationsIndexRoute
   AuthenticatedSuppliersIndexRoute: typeof AuthenticatedSuppliersIndexRoute
+  AuthenticatedUomCategoryIndexRoute: typeof AuthenticatedUomCategoryIndexRoute
   AuthenticatedUomsIndexRoute: typeof AuthenticatedUomsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedWorkflowConfigurationIndexRoute: typeof AuthenticatedWorkflowConfigurationIndexRoute
   AuthenticatedWorkflowEventsIndexRoute: typeof AuthenticatedWorkflowEventsIndexRoute
   AuthenticatedWorkflowInstancesIndexRoute: typeof AuthenticatedWorkflowInstancesIndexRoute
   AuthenticatedWorkflowsIndexRoute: typeof AuthenticatedWorkflowsIndexRoute
+  AuthenticatedRolesIdPermissionsIndexRoute: typeof AuthenticatedRolesIdPermissionsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -1803,6 +2564,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotificationsRouteRoute: AuthenticatedNotificationsRouteRoute,
   AuthenticatedRoutingRouteRoute: AuthenticatedRoutingRouteRoute,
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
+  AuthenticatedPageIdRoute: AuthenticatedPageIdRoute,
+  AuthenticatedPageCreateRoute: AuthenticatedPageCreateRoute,
   AuthenticatedCodingConceptsMatchRoute: AuthenticatedCodingConceptsMatchRoute,
   AuthenticatedCodingConceptsSearchRoute:
     AuthenticatedCodingConceptsSearchRoute,
@@ -1816,8 +2579,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedCommunicationMessageTesterRoute,
   AuthenticatedCommunicationTraceExplorerRoute:
     AuthenticatedCommunicationTraceExplorerRoute,
+  AuthenticatedItemsCreateRoute: AuthenticatedItemsCreateRoute,
   AuthenticatedLisResourceKeyRoute: AuthenticatedLisResourceKeyRoute,
-  AuthenticatedProductsProductIdRoute: AuthenticatedProductsProductIdRoute,
   AuthenticatedUomsUomIdRoute: AuthenticatedUomsUomIdRouteWithChildren,
   AuthenticatedAuditLogsIndexRoute: AuthenticatedAuditLogsIndexRoute,
   AuthenticatedBranchesIndexRoute: AuthenticatedBranchesIndexRoute,
@@ -1831,6 +2594,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDrugComponentsIndexRoute: AuthenticatedDrugComponentsIndexRoute,
   AuthenticatedExchangesIndexRoute: AuthenticatedExchangesIndexRoute,
   AuthenticatedInventoryIndexRoute: AuthenticatedInventoryIndexRoute,
+  AuthenticatedItemsIndexRoute: AuthenticatedItemsIndexRoute,
   AuthenticatedJournalEntriesIndexRoute: AuthenticatedJournalEntriesIndexRoute,
   AuthenticatedJournalEntryLinesIndexRoute:
     AuthenticatedJournalEntryLinesIndexRoute,
@@ -1843,7 +2607,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPharmaceuticsIndexRoute: AuthenticatedPharmaceuticsIndexRoute,
   AuthenticatedPriceListItemsIndexRoute: AuthenticatedPriceListItemsIndexRoute,
   AuthenticatedPriceListsIndexRoute: AuthenticatedPriceListsIndexRoute,
-  AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedPurchasesIndexRoute: AuthenticatedPurchasesIndexRoute,
   AuthenticatedQuestionnairesIndexRoute: AuthenticatedQuestionnairesIndexRoute,
   AuthenticatedQuestionsIndexRoute: AuthenticatedQuestionsIndexRoute,
@@ -1853,6 +2616,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSalesIndexRoute: AuthenticatedSalesIndexRoute,
   AuthenticatedStockLocationsIndexRoute: AuthenticatedStockLocationsIndexRoute,
   AuthenticatedSuppliersIndexRoute: AuthenticatedSuppliersIndexRoute,
+  AuthenticatedUomCategoryIndexRoute: AuthenticatedUomCategoryIndexRoute,
   AuthenticatedUomsIndexRoute: AuthenticatedUomsIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedWorkflowConfigurationIndexRoute:
@@ -1861,6 +2625,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedWorkflowInstancesIndexRoute:
     AuthenticatedWorkflowInstancesIndexRoute,
   AuthenticatedWorkflowsIndexRoute: AuthenticatedWorkflowsIndexRoute,
+  AuthenticatedRolesIdPermissionsIndexRoute:
+    AuthenticatedRolesIdPermissionsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -1895,6 +2661,54 @@ const ClerkRouteRouteWithChildren = ClerkRouteRoute._addFileChildren(
   ClerkRouteRouteChildren,
 )
 
+interface DamorexBlogRouteChildren {
+  DamorexBlogSlugRoute: typeof DamorexBlogSlugRoute
+}
+
+const DamorexBlogRouteChildren: DamorexBlogRouteChildren = {
+  DamorexBlogSlugRoute: DamorexBlogSlugRoute,
+}
+
+const DamorexBlogRouteWithChildren = DamorexBlogRoute._addFileChildren(
+  DamorexBlogRouteChildren,
+)
+
+interface DamorexBranchesRouteChildren {
+  DamorexBranchesIdRoute: typeof DamorexBranchesIdRoute
+}
+
+const DamorexBranchesRouteChildren: DamorexBranchesRouteChildren = {
+  DamorexBranchesIdRoute: DamorexBranchesIdRoute,
+}
+
+const DamorexBranchesRouteWithChildren = DamorexBranchesRoute._addFileChildren(
+  DamorexBranchesRouteChildren,
+)
+
+interface DamorexCategoriesRouteChildren {
+  DamorexCategoriesSlugRoute: typeof DamorexCategoriesSlugRoute
+}
+
+const DamorexCategoriesRouteChildren: DamorexCategoriesRouteChildren = {
+  DamorexCategoriesSlugRoute: DamorexCategoriesSlugRoute,
+}
+
+const DamorexCategoriesRouteWithChildren =
+  DamorexCategoriesRoute._addFileChildren(DamorexCategoriesRouteChildren)
+
+interface DamorexHealthConcernsRouteChildren {
+  DamorexHealthConcernsSlugRoute: typeof DamorexHealthConcernsSlugRoute
+}
+
+const DamorexHealthConcernsRouteChildren: DamorexHealthConcernsRouteChildren = {
+  DamorexHealthConcernsSlugRoute: DamorexHealthConcernsSlugRoute,
+}
+
+const DamorexHealthConcernsRouteWithChildren =
+  DamorexHealthConcernsRoute._addFileChildren(
+    DamorexHealthConcernsRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -1909,8 +2723,38 @@ const rootRouteChildren: RootRouteChildren = {
   errors404Route: errors404Route,
   errors500Route: errors500Route,
   errors503Route: errors503Route,
+  errorsServiceUnavailableRoute: errorsServiceUnavailableRoute,
+  DamorexAboutRoute: DamorexAboutRoute,
+  DamorexBlogRoute: DamorexBlogRouteWithChildren,
+  DamorexBranchesRoute: DamorexBranchesRouteWithChildren,
+  DamorexCartRoute: DamorexCartRoute,
+  DamorexCategoriesRoute: DamorexCategoriesRouteWithChildren,
+  DamorexCheckoutRoute: DamorexCheckoutRoute,
+  DamorexConsultPharmacistRoute: DamorexConsultPharmacistRoute,
+  DamorexConsultationsRoute: DamorexConsultationsRoute,
+  DamorexContactRoute: DamorexContactRoute,
+  DamorexDashboardRoute: DamorexDashboardRoute,
+  DamorexDeliveryAreasRoute: DamorexDeliveryAreasRoute,
+  DamorexFaqRoute: DamorexFaqRoute,
+  DamorexForgotPasswordRoute: DamorexForgotPasswordRoute,
+  DamorexHealthConcernsRoute: DamorexHealthConcernsRouteWithChildren,
+  DamorexLoginRoute: DamorexLoginRoute,
+  DamorexMyPrescriptionsRoute: DamorexMyPrescriptionsRoute,
+  DamorexOrdersRoute: DamorexOrdersRoute,
+  DamorexPosRoute: DamorexPosRoute,
+  DamorexPos2Route: DamorexPos2Route,
+  DamorexPrivacyPolicyRoute: DamorexPrivacyPolicyRoute,
+  DamorexRewardsRoute: DamorexRewardsRoute,
+  DamorexSearchRoute: DamorexSearchRoute,
+  DamorexShopRoute: DamorexShopRoute,
+  DamorexTermsRoute: DamorexTermsRoute,
+  DamorexUploadPrescriptionRoute: DamorexUploadPrescriptionRoute,
   DamorexIndexRoute: DamorexIndexRoute,
   QuestionnaireIndexRoute: QuestionnaireIndexRoute,
+  DamorexOrdersIdRoute: DamorexOrdersIdRoute,
+  DamorexShopSlugRoute: DamorexShopSlugRoute,
+  DamorexTrackOrderCodeRoute: DamorexTrackOrderCodeRoute,
+  DamorexPurchasesIndexRoute: DamorexPurchasesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

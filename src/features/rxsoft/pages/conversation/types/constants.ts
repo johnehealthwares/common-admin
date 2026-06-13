@@ -8,7 +8,7 @@ export const QUESTION_TYPE_OPTIONS = [
   'boolean',
   'file',
   'ai_open',
-].map((value) => ({ value, label: value }))
+].map((value) => ({ value, label: value }));
 
 export const RENDER_MODE_OPTIONS = [
   'input',
@@ -22,7 +22,7 @@ export const RENDER_MODE_OPTIONS = [
   'dropdown',
   'chat',
   'file_upload',
-].map((value) => ({ value, label: value }))
+].map((value) => ({ value, label: value }));
 
 export const PROCESS_MODE_OPTIONS = [
   'none',
@@ -31,26 +31,21 @@ export const PROCESS_MODE_OPTIONS = [
   'ai_processed',
   'question_type',
   'rule_engine',
-].map((value) => ({ value, label: value }))
+].map((value) => ({ value, label: value }));
 
-export const PROCESSING_STRATEGY_OPTIONS = [
-  'STATIC',
-  'AI_ASSISTED',
-  'FULL_AI',
-].map((value) => ({ value, label: value }))
+export const PROCESSING_STRATEGY_OPTIONS = ['STATIC', 'AI_ASSISTED', 'FULL_AI'].map((value) => ({
+  value,
+  label: value,
+}));
 
-export const WORKFLOW_STEP_TYPE_OPTIONS = [
-  'QUESTIONNAIRE',
-  'ACTION',
-  'WAIT',
-  'END',
-].map((value) => ({ value, label: value }))
+export const WORKFLOW_STEP_TYPE_OPTIONS = ['QUESTIONNAIRE', 'ACTION', 'WAIT', 'END'].map(
+  (value) => ({ value, label: value })
+);
 
-export const WORKFLOW_STATUS_OPTIONS = [
-  'ACTIVE',
-  'COMPLETED',
-  'STOPPED',
-].map((value) => ({ value, label: value }))
+export const WORKFLOW_STATUS_OPTIONS = ['ACTIVE', 'COMPLETED', 'STOPPED'].map((value) => ({
+  value,
+  label: value,
+}));
 
 export const CHANNEL_TYPE_OPTIONS = [
   'MOCK',
@@ -60,25 +55,21 @@ export const CHANNEL_TYPE_OPTIONS = [
   'WEBCHAT',
   'TELEGRAM',
   'API',
-].map((value) => ({ value, label: value }))
+].map((value) => ({ value, label: value }));
 
-export const EXCHANGE_DIRECTION_OPTIONS = [
-  'INBOUND',
-  'OUTBOUND',
-].map((value) => ({ value, label: value }))
+export const EXCHANGE_DIRECTION_OPTIONS = ['INBOUND', 'OUTBOUND', 'PAGE_REQUEST'].map((value) => ({
+  value,
+  label: value,
+}));
 
-export const EXCHANGE_STATUS_OPTIONS = [
-  'RECEIVED',
-  'SENT',
-  'FAILED',
-].map((value) => ({ value, label: value }))
+export const EXCHANGE_STATUS_OPTIONS = ['RECEIVED', 'SENT', 'FAILED'].map((value) => ({
+  value,
+  label: value,
+}));
 
-export const CONVERSATION_STATUS_OPTIONS = [
-  'ACTIVE',
-  'COMPLETED',
-  'STOPPED',
-  'CANCELLED',
-].map((value) => ({ value, label: value }))
+export const CONVERSATION_STATUS_OPTIONS = ['ACTIVE', 'COMPLETED', 'STOPPED', 'CANCELLED'].map(
+  (value) => ({ value, label: value })
+);
 
 export const CONVERSATION_STATE_OPTIONS = [
   'START',
@@ -86,7 +77,7 @@ export const CONVERSATION_STATE_OPTIONS = [
   'WAITING_FOR_DELIVERY',
   'WAITING_FOR_USER',
   'COMPLETED',
-].map((value) => ({ value, label: value }))
+].map((value) => ({ value, label: value }));
 
 export const VALIDATION_RULE_OPTIONS = [
   'question-type',
@@ -95,4 +86,4 @@ export const VALIDATION_RULE_OPTIONS = [
   'max',
   'regex',
   'api',
-].map((value) => ({ value, label: value }))
+].map((value) => ({ value, label: value }));

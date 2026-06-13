@@ -1,16 +1,14 @@
-import { Select, Text, Paper, Group, Stack } from '@mantine/core'
-import { modules, moduleMap, type ModuleId } from './module-data'
-import { useModuleId, useSetSelectedModule } from '@/context/module-context'
+import { Select, Text, Paper, Group, Stack } from '@mantine/core';
+import { useModuleId, useSetSelectedModule } from '@/context/module-context';
+import { modules, moduleMap, type ModuleId } from './module-data';
 
 export function ModuleSelector() {
-  const selectedModule = useModuleId()
-  const setSelectedModule = useSetSelectedModule()
+  const selectedModule = useModuleId();
+  const setSelectedModule = useSetSelectedModule();
 
   return (
     <Paper withBorder radius="md" p="sm">
-
       <Group justify="space-between" align="flex-start">
-
         {/* LEFT INFO */}
         <Stack gap={2}>
           <Text size="sm" fw={600}>
@@ -33,14 +31,12 @@ export function ModuleSelector() {
           w={200}
           size="sm"
         />
-
       </Group>
 
       {/* DESCRIPTION */}
       <Text size="xs" c="dimmed" mt="xs">
         {moduleMap[selectedModule].description}
       </Text>
-
     </Paper>
-  )
+  );
 }

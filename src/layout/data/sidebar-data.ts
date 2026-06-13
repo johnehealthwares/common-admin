@@ -30,28 +30,27 @@ import {
   Workflow,
   Store,
   BookOpen,
+  HeartPulse,
   Receipt,
   ShieldCheck,
   MessagesSquare,
   Braces,
-} from 'lucide-react'
-import { NavItem, type SidebarData } from '../types'
-import type { ModuleId } from '@/features/shared/module-data'
-import { lisResources } from '@/features/rxsoft/pages/lis/resources'
+} from 'lucide-react';
+import { lisResources } from '@/features/lis/schema/resources';
+import type { ModuleId } from '@/features/shared/module-data';
+import { NavItem, type SidebarData } from '../types';
 
-export function filterNavGroupsByModule(
-  navGroups: NavItem[],
-  selectedModule: ModuleId
-): NavItem[] {
+export function filterNavGroupsByModule(navGroups: NavItem[], selectedModule: ModuleId): NavItem[] {
   return navGroups
     .map((group: NavItem) => ({
       ...group,
       items: (group.items || []).filter(
-        (item) => selectedModule === 'admin' || !item.modules || item.modules.includes(selectedModule)
+        (item) =>
+          selectedModule === 'admin' || !item.modules || item.modules.includes(selectedModule)
       ),
-      url: undefined
+      url: undefined,
     }))
-    .filter((group) => group.items.length > 0)
+    .filter((group) => group.items.length > 0);
 }
 
 export const sidebarData: SidebarData = {
@@ -123,7 +122,7 @@ export const sidebarData: SidebarData = {
       items: [
         {
           title: 'Products',
-          url: '/products',
+          url: '/items',
           icon: Package,
           modules: ['rxsoft', 'admin'],
         },
@@ -274,6 +273,30 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
+      title: 'Website',
+      icon: Store,
+      items: [
+        {
+          title: 'Health Concerns',
+          url: '/website-health-concerns',
+          icon: HeartPulse,
+          modules: ['admin'],
+        },
+        {
+          title: 'Blog Articles',
+          url: '/website-articles',
+          icon: BookOpen,
+          modules: ['admin'],
+        },
+        {
+          title: 'Prescriptions',
+          url: '/website-prescriptions',
+          icon: FileText,
+          modules: ['admin'],
+        },
+      ],
+    },
+    {
       title: 'Administration',
       icon: ShieldCheck,
       items: [
@@ -403,7 +426,7 @@ export const sidebarData: SidebarData = {
           url: '/message-logs',
           icon: FileText,
           modules: ['conversation', 'admin'],
-        }
+        },
       ],
     },
     {
@@ -486,14 +509,14 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: "LIS",
+      title: 'LIS',
       icon: Microscope,
       items: lisResources.map((lisResource) => ({
-           title: lisResource.title,
-          url: '/lis/' + lisResource.key,
-          icon: Microscope,
-          modules: ['lis', 'admin'],
-        })),
-    }
+        title: lisResource.title,
+        url: '/lis/' + lisResource.key,
+        icon: Microscope,
+        modules: ['lis', 'admin'],
+      })),
+    },
   ],
-}
+};

@@ -9,23 +9,18 @@ import {
   SimpleGrid,
   Stack,
   Divider,
-} from '@mantine/core'
-
+} from '@mantine/core';
 // import { ConfigDrawer } from '@/components/config-drawer'
 // import { ProfileDropdown } from '@/components/profile-dropdown'
 // import { Search } from '@/components/search'
 // import { ThemeSwitch } from '@/components/theme-switch'
-
-import { Analytics } from '../components/analytics'
-import { Overview } from '../components/overview'
+import { Analytics } from '../components/analytics';
+import { Overview } from '../components/overview';
 // import { RecentSales } from '../components/recent-sales'
 
 export function Dashboard() {
   return (
-    <AppShell
-      header={{ height: 64 }}
-      padding="md"
-    >
+    <AppShell header={{ height: 64 }} padding="md">
       {/* ===== Header ===== */}
       <AppShell.Header>
         <Group justify="space-between" h="100%" px="md">
@@ -133,5 +128,5 @@ export function Dashboard() {
         </Tabs>
       </AppShell.Main>
     </AppShell>
-  )
+  );
 }

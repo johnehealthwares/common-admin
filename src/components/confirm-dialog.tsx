@@ -1,21 +1,21 @@
-import { Modal, Button, Group, Text, Stack } from '@mantine/core'
+import { Modal, Button, Group, Text, Stack } from '@mantine/core';
 
 type ConfirmDialogProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: React.ReactNode
-  disabled?: boolean
-  desc?: React.JSX.Element | string
-  description?: React.JSX.Element | string
-  cancelBtnText?: string
-  confirmText?: React.ReactNode
-  destructive?: boolean
-  handleConfirm?: () => void
-  onConfirm?: () => void
-  isLoading?: boolean
-  className?: string
-  children?: React.ReactNode
-}
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: React.ReactNode;
+  disabled?: boolean;
+  desc?: React.JSX.Element | string;
+  description?: React.JSX.Element | string;
+  cancelBtnText?: string;
+  confirmText?: React.ReactNode;
+  destructive?: boolean;
+  handleConfirm?: () => void;
+  onConfirm?: () => void;
+  isLoading?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+};
 
 export function ConfirmDialog(props: ConfirmDialogProps) {
   const {
@@ -33,14 +33,18 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
     onConfirm,
     onOpenChange,
     ...actions
-  } = props
-  const dialogDescription = desc ?? description
-  const confirmHandler = onConfirm ?? handleConfirm
+  } = props;
+  const dialogDescription = desc ?? description;
+  const confirmHandler = onConfirm ?? handleConfirm;
   return (
     <Modal
       opened={props.open}
       onClose={() => handleConfirm && handleConfirm()}
-      title={<Text fw={700} size="lg">{title}</Text>}
+      title={
+        <Text fw={700} size="lg">
+          {title}
+        </Text>
+      }
       centered
       {...actions}
     >
@@ -64,5 +68,5 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
         </Group>
       </Stack>
     </Modal>
-  )
+  );
 }

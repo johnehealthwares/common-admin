@@ -1,6 +1,3 @@
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { RxPage } from '@/features/components/page/rx-page'
 import {
   Button,
   TextInput,
@@ -13,12 +10,15 @@ import {
   Alert,
   Code,
   ScrollArea,
-} from '@mantine/core'
-import { communicationApi } from '@/lib/communication-api'
+} from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { RxPage } from '@/features/components/page/rx-page';
+import { communicationApi } from '@/lib/communication-api';
 
 export function AuditCenterPage() {
-  const [selectedId, setSelectedId] = useState('')
-  const [searchId, setSearchId] = useState('')
+  const [selectedId, setSelectedId] = useState('');
+  const [searchId, setSearchId] = useState('');
 
   const {
     data: traces,
@@ -28,11 +28,11 @@ export function AuditCenterPage() {
   } = useQuery({
     queryKey: ['communication', 'flow', 'traces'],
     queryFn: async () => {
-      const res = await communicationApi.get('/v1/flow/traces?limit=50')
-      return res.data
+      const res = await communicationApi.get('/v1/flow/traces?limit=50');
+      return res.data;
     },
     retry: false,
-  })
+  });
 
   const {
     data: audit,
@@ -41,15 +41,13 @@ export function AuditCenterPage() {
   } = useQuery({
     queryKey: ['communication', 'flow', 'audit', selectedId],
     queryFn: async () => {
-      if (!selectedId) return null
-      const res = await communicationApi.get(
-        `/v1/flow/audit/${encodeURIComponent(selectedId)}`
-      )
-      return res.data
+      if (!selectedId) return null;
+      const res = await communicationApi.get(`/v1/flow/audit/${encodeURIComponent(selectedId)}`);
+      return res.data;
     },
     enabled: !!selectedId,
     retry: false,
-  })
+  });
 
   return (
     <RxPage
@@ -69,10 +67,7 @@ export function AuditCenterPage() {
                   onChange={(e) => setSearchId(e.currentTarget.value)}
                   placeholder="Search trace by message ID"
                 />
-                <Button
-                  onClick={() => setSelectedId(searchId.trim())}
-                  disabled={!searchId.trim()}
-                >
+                <Button onClick={() => setSelectedId(searchId.trim())} disabled={!searchId.trim()}>
                   Load Audit
                 </Button>
               </Group>
@@ -135,11 +130,7 @@ export function AuditCenterPage() {
                 </div>
 
                 {selectedId && (
-                  <Button
-                    variant="light"
-                    size="xs"
-                    onClick={() => setSelectedId('')}
-                  >
+                  <Button variant="light" size="xs" onClick={() => setSelectedId('')}>
                     Clear
                   </Button>
                 )}
@@ -160,9 +151,7 @@ export function AuditCenterPage() {
                   </Text>
 
                   <ScrollArea h={300} mt="sm">
-                    <Code block>
-                      {JSON.stringify(audit, null, 2)}
-                    </Code>
+                    <Code block>{JSON.stringify(audit, null, 2)}</Code>
                   </ScrollArea>
                 </Card>
               ) : selectedId ? (
@@ -179,5 +168,5 @@ export function AuditCenterPage() {
         </Grid.Col>
       </Grid>
     </RxPage>
-  )
+  );
 }

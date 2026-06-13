@@ -1,6 +1,9 @@
-import { DataPageShell } from '@/features/components/page/data-page-shell'
-import { questionnairePageSchema } from './conversation-page-schemas'
+import { DataPageShell } from '@/features/components/page/data-page-shell';
+import type { ModelConfig } from '@/features/shared/model-schema';
+import { questionnairePageSchema } from './conversation-page-schemas';
+
+const config: ModelConfig = questionnairePageSchema;
 
 export function RxQuestionnairesPage() {
-  return <DataPageShell {...questionnairePageSchema} />
+  return <DataPageShell config={config} />;
 }

@@ -1,25 +1,18 @@
-import {
-  Table,
-  Text,
-  Loader,
-  Center,
-} from '@mantine/core'
-
-import { Column, Field, FilterValue } from '../../rxsoft/types'
-import { ActionCell, ActionCellProps } from './action-cell'
-import { TableHeader } from './table-header'
-import { renderCell } from './utils'
-
+import { Table, Text, Loader, Center } from '@mantine/core';
+import { Column, FilterValue } from '../../rxsoft/types';
+import { ActionCell, ActionCellProps } from './action-cell';
+import { TableHeader } from './table-header';
+import { renderCell } from './utils';
 
 type DataTableProps = {
-  columns: Column[]
-  rows: Record<string, unknown>[]
-  isLoading: boolean
-  errorLoading: boolean
-  actionCellProps?: ActionCellProps
-  appliedFilters?: Record<string, FilterValue | null>
-  applyColumnFilter?: (columnKey: string, filterValue: FilterValue | null) => void
-}
+  columns: Column[];
+  rows: Record<string, unknown>[];
+  isLoading: boolean;
+  errorLoading: boolean;
+  actionCellProps?: ActionCellProps;
+  appliedFilters?: Record<string, FilterValue | null>;
+  applyColumnFilter?: (columnKey: string, filterValue: FilterValue | null) => void;
+};
 
 export const DataTable = ({
   columns,
@@ -29,9 +22,8 @@ export const DataTable = ({
   errorLoading,
   appliedFilters,
   applyColumnFilter,
-
 }: DataTableProps) => {
-  const colSpan = columns.length + (actionCellProps ? 1 : 0)
+  const colSpan = columns.length + (actionCellProps ? 1 : 0);
 
   return (
     <Table striped highlightOnHover withTableBorder>
@@ -40,15 +32,17 @@ export const DataTable = ({
           <Table.Th>SN</Table.Th>
           {columns.map((column) => (
             <Table.Th key={column.key}>
-              <TableHeader column={column} filterValue={appliedFilters && appliedFilters[column.key]} onFilterValueChange={(filterValue) => { applyColumnFilter && applyColumnFilter(column.key, filterValue) }} />
+              <TableHeader
+                column={column}
+                filterValue={appliedFilters && appliedFilters[column.key]}
+                onFilterValueChange={(filterValue) => {
+                  applyColumnFilter && applyColumnFilter(column.key, filterValue);
+                }}
+              />
             </Table.Th>
           ))}
 
-          {actionCellProps && (
-            <Table.Th style={{ width: 140 }}>
-              Actions
-            </Table.Th>
-          )}
+          {actionCellProps && <Table.Th style={{ width: 140 }}>Actions</Table.Th>}
         </Table.Tr>
       </Table.Thead>
 
@@ -85,16 +79,13 @@ export const DataTable = ({
 
         {rows.map((row: any, index: number) => (
           <Table.Tr key={String(row.id ?? index)}>
-             <Table.Td key={index}>{index + 1}</Table.Td>
+            <Table.Td key={index}>{index + 1}</Table.Td>
             {columns.map((column) => (
               <Table.Td key={column.key}>
-                {column.render
-                  ? column.render(row, actionCellProps)
-                   :  renderCell(row, column)
-                }
+                {column.render ? column.render(row, actionCellProps) : renderCell(row, column)}
               </Table.Td>
             ))}
-            
+
             {actionCellProps && (
               <Table.Td>
                 <ActionCell {...actionCellProps} row={row} rowIndex={index} />
@@ -104,5 +95,5 @@ export const DataTable = ({
         ))}
       </Table.Tbody>
     </Table>
-  )
-}
+  );
+};

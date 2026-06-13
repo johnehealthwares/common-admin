@@ -1,36 +1,23 @@
-import {
-  AppShell,
-  Stack,
-  ScrollArea,
-  Box,
-  Divider,
-  Badge,
-  Group,
-  Text,
-} from '@mantine/core'
-
-import { useAuthStore } from '@/stores/auth-store'
-import { filterNavGroupsByModule, sidebarData } from './data/sidebar-data'
-
-import { NavUser } from './nav-user'
-import { TeamSwitcher } from './team-switcher'
-import { SidebarNavItem } from '@/features/settings/components/sidebar-nav'
-import { useModuleId, useModuleName } from '@/context/module-context'
-import { useState } from 'react'
+import { AppShell, Stack, ScrollArea, Box, Divider, Badge, Group, Text } from '@mantine/core';
+import { useState } from 'react';
+import { useModuleId, useModuleName } from '@/context/module-context';
+import { SidebarNavItem } from '@/features/settings/components/sidebar-nav';
+import { useAuthStore } from '@/stores/auth-store';
+import { filterNavGroupsByModule, sidebarData } from './data/sidebar-data';
+import { NavUser } from './nav-user';
+import { TeamSwitcher } from './team-switcher';
 
 export function AppSidebar() {
-  const user = useAuthStore((state) => state.user)
-  const moduleId = useModuleId()
-  const moduleName = useModuleName()
+  const user = useAuthStore((state) => state.user);
+  const moduleId = useModuleId();
+  const moduleName = useModuleName();
 
-  const navGroups = filterNavGroupsByModule(sidebarData.navGroups, moduleId)
-  const [expandState, setExpandState] = useState<boolean[]>(sidebarData.navGroups.map(() => false))
-
+  const navGroups = filterNavGroupsByModule(sidebarData.navGroups, moduleId);
+  const [expandState, setExpandState] = useState<boolean[]>(sidebarData.navGroups.map(() => false));
 
   const resetExpandState = (index: number) => {
-    setExpandState(sidebarData.navGroups.map((_, inde) => inde === index ? true : false))
-  }
-
+    setExpandState(sidebarData.navGroups.map((_, inde) => (inde === index ? true : false)));
+  };
 
   return (
     <AppShell.Navbar
@@ -44,7 +31,7 @@ export function AppSidebar() {
         {/* HEADER */}
         <Box>
           <Stack gap="md">
-            <TeamSwitcher teams={sidebarData.teams} />
+            <TeamSwitcher />
 
             <Badge
               variant="light"
@@ -98,5 +85,5 @@ export function AppSidebar() {
         />
       </Stack>
     </AppShell.Navbar>
-  )
+  );
 }

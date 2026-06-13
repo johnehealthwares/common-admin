@@ -1,15 +1,9 @@
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import {
-  TextInput,
-  Button,
-  Stack,
-  Select,
-} from '@mantine/core'
-import { DatePickerInput } from '@mantine/dates'
-
+import { zodResolver } from '@hookform/resolvers/zod';
+import { TextInput, Button, Stack, Select } from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { showSubmittedData } from '@/lib/show-submitted-data';
 
 const languages = [
   { label: 'English', value: 'en' },
@@ -21,7 +15,7 @@ const languages = [
   { label: 'Japanese', value: 'ja' },
   { label: 'Korean', value: 'ko' },
   { label: 'Chinese', value: 'zh' },
-] as const
+] as const;
 
 const accountFormSchema = z.object({
   name: z
@@ -31,31 +25,29 @@ const accountFormSchema = z.object({
     .max(30, 'Name must not be longer than 30 characters.'),
   dob: z.date('Please select your date of birth.').nullable(),
   language: z.string('Please select a language.'),
-})
+});
 
-type AccountFormValues = z.infer<typeof accountFormSchema>
+type AccountFormValues = z.infer<typeof accountFormSchema>;
 
 // This can come from your database or API.
 const defaultValues: Partial<AccountFormValues> = {
   name: '',
   language: '',
-}
+};
 
 export function AccountForm() {
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues,
-  })
+  });
 
   function onSubmit(data: AccountFormValues) {
-    showSubmittedData(data)
+    showSubmittedData(data);
   }
-
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <Stack gap="lg">
-
         {/* NAME */}
         <TextInput
           label="Name"
@@ -88,11 +80,8 @@ export function AccountForm() {
         />
 
         {/* SUBMIT */}
-        <Button type="submit">
-          Update account
-        </Button>
-
+        <Button type="submit">Update account</Button>
       </Stack>
     </form>
-  )
+  );
 }

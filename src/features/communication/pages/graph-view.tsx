@@ -1,33 +1,16 @@
-import { useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { switchApi } from '@/lib/switch-api'
-import { RxPage } from '@/features/components/page/rx-page'
-
-import {
-  Card,
-  Text,
-  Stack,
-  Group,
-  Badge,
-  Button,
-  ScrollArea,
-  Divider,
-} from '@mantine/core'
-
-import ReactFlow, {
-  Background,
-  Controls,
-  MiniMap,
-  Handle,
-  Position,
-} from 'reactflow'
-import 'reactflow/dist/style.css'
+import 'reactflow/dist/style.css';
+import { Card, Text, Stack, Group, Badge, Button, ScrollArea, Divider } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import ReactFlow, { Background, Controls, MiniMap, Handle, Position } from 'reactflow';
+import { RxPage } from '@/features/components/page/rx-page';
+import { communicationApi } from '@/lib/communication-api';
 
 type FlowTopology = {
-  applicationEntities?: any[]
-  routingTables?: any[]
-  validationRules?: any[]
-}
+  applicationEntities?: any[];
+  routingTables?: any[];
+  validationRules?: any[];
+};
 
 const sampleTopology: FlowTopology = {
   applicationEntities: [
@@ -83,7 +66,7 @@ const sampleTopology: FlowTopology = {
     { id: 'v1', name: 'DICOM Validation', action: { module: 'DICOM' } },
     { id: 'v2', name: 'LOINC Validation', action: { module: 'LOINC' } },
   ],
-}
+};
 
 /* -------------------- Custom Node -------------------- */
 function AENode({ data }: any) {
@@ -110,7 +93,7 @@ function AENode({ data }: any) {
       <Handle type="target" position={Position.Left} />
       <Handle type="source" position={Position.Right} />
     </Card>
-  )
+  );
 }
 
 /* -------------------- Page -------------------- */
@@ -118,13 +101,13 @@ export function GraphViewPage() {
   const { data, isLoading, isError } = useQuery<FlowTopology>({
     queryKey: ['communication', 'flow', 'topology'],
     queryFn: async () => {
-      const res = await switchApi.get('/flow/topology')
-      return res.data
+      const res = await communicationApi.get('/flow/topology');
+      return res.data;
     },
     retry: false,
-  })
+  });
 
-  const topology = useMemo(() => data ?? sampleTopology, [data])
+  const topology = useMemo(() => data ?? sampleTopology, [data]);
 
   /* -------------------- Convert to Graph -------------------- */
   const nodes = useMemo(() => {
@@ -139,11 +122,11 @@ export function GraphViewPage() {
         },
         type: 'ae',
       })) ?? []
-    )
-  }, [topology])
+    );
+  }, [topology]);
 
   const edges = useMemo(() => {
-    const routes = topology.routingTables?.[0]?.routes ?? []
+    const routes = topology.routingTables?.[0]?.routes ?? [];
 
     return routes.map((r: any) => ({
       id: r.name,
@@ -151,8 +134,8 @@ export function GraphViewPage() {
       target: r.targetAE,
       label: r.protocol,
       animated: true,
-    }))
-  }, [topology])
+    }));
+  }, [topology]);
 
   return (
     <RxPage
@@ -210,12 +193,7 @@ export function GraphViewPage() {
 
         {/* ---------------- GRAPH ---------------- */}
         <Card withBorder radius="md" p="sm" style={{ height: 700 }}>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={{ ae: AENode }}
-            fitView
-          >
+          <ReactFlow nodes={nodes} edges={edges} nodeTypes={{ ae: AENode }} fitView>
             <Background />
             <MiniMap />
             <Controls />
@@ -235,5 +213,5 @@ export function GraphViewPage() {
         </Card>
       </div>
     </RxPage>
-  )
+  );
 }

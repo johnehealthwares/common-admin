@@ -4,9 +4,10 @@
  */
 
 // Re-export RxSoft features
-export * from '@/features/rxsoft'
+export * from '@/features/rxsoft';
 
 // Module metadata
-export const rxsoftModuleId = 'rxsoft' as const
-export const rxsoftModuleName = 'Multi Admin'
-export const rxsoftModuleDescription = 'Pharmacy admin workspace with catalog, operations, and reporting'
+export const rxsoftModuleId = 'rxsoft' as const;
+export const rxsoftModuleName = 'Multi Admin';
+export const rxsoftModuleDescription =
+  'Pharmacy admin workspace with catalog, operations, and reporting';

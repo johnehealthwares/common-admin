@@ -1,28 +1,22 @@
-import { useMemo, useState } from 'react'
-import { ArrowDown, ArrowUp, GripVertical, Trash2 } from 'lucide-react'
-import {
-  Table,
-  Button,
-  Modal,
-  Text,
-  Group,
-} from '@mantine/core'
+import { Table, Button, Modal, Text, Group } from '@mantine/core';
+import { ArrowDown, ArrowUp, GripVertical, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 export type DragAndDropColumn<TItem> = {
-  key: string
-  label: string
-  width?: string
-  render: (item: TItem) => React.ReactNode
-}
+  key: string;
+  label: string;
+  width?: string;
+  render: (item: TItem) => React.ReactNode;
+};
 
 type DragAndDropListProps<TItem> = {
-  items: TItem[]
-  columns: DragAndDropColumn<TItem>[]
-  getKey: (item: TItem, index: number) => string
-  onChange: (items: TItem[]) => void
-  onDelete?: (item: TItem, index: number) => void
-  emptyText?: string
-}
+  items: TItem[];
+  columns: DragAndDropColumn<TItem>[];
+  getKey: (item: TItem, index: number) => string;
+  onChange: (items: TItem[]) => void;
+  onDelete?: (item: TItem, index: number) => void;
+  emptyText?: string;
+};
 
 export function DragAndDropList<TItem>({
   items,
@@ -32,30 +26,30 @@ export function DragAndDropList<TItem>({
   onDelete,
   emptyText = 'No items added yet.',
 }: DragAndDropListProps<TItem>) {
-  const [dragIndex, setDragIndex] = useState<number | null>(null)
-  const [deleteIndex, setDeleteIndex] = useState<number | null>(null)
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
   const deleteTarget = useMemo(
-    () => (deleteIndex == null ? null : items[deleteIndex] ?? null),
+    () => (deleteIndex == null ? null : (items[deleteIndex] ?? null)),
     [deleteIndex, items]
-  )
+  );
 
   function moveItem(from: number, to: number) {
-    if (from === to || to < 0 || to >= items.length) return
+    if (from === to || to < 0 || to >= items.length) return;
 
-    const nextItems = [...items]
-    const [moved] = nextItems.splice(from, 1)
-    nextItems.splice(to, 0, moved)
-    onChange(nextItems)
+    const nextItems = [...items];
+    const [moved] = nextItems.splice(from, 1);
+    nextItems.splice(to, 0, moved);
+    onChange(nextItems);
   }
 
   function confirmDelete() {
     if (deleteTarget != null && deleteIndex != null) {
-      const nextItems = items.filter((_, i) => i !== deleteIndex)
-      onDelete?.(deleteTarget, deleteIndex)
-      onChange(nextItems)
+      const nextItems = items.filter((_, i) => i !== deleteIndex);
+      onDelete?.(deleteTarget, deleteIndex);
+      onChange(nextItems);
     }
-    setDeleteIndex(null)
+    setDeleteIndex(null);
   }
 
   return (
@@ -68,10 +62,7 @@ export function DragAndDropList<TItem>({
               <Table.Th style={{ width: 60 }}>Drag</Table.Th>
 
               {columns.map((col) => (
-                <Table.Th
-                  key={col.key}
-                  style={col.width ? { width: col.width } : undefined}
-                >
+                <Table.Th key={col.key} style={col.width ? { width: col.width } : undefined}>
                   {col.label}
                 </Table.Th>
               ))}
@@ -98,8 +89,8 @@ export function DragAndDropList<TItem>({
                 onDragStart={() => setDragIndex(index)}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={() => {
-                  if (dragIndex != null) moveItem(dragIndex, index)
-                  setDragIndex(null)
+                  if (dragIndex != null) moveItem(dragIndex, index);
+                  setDragIndex(null);
                 }}
                 onDragEnd={() => setDragIndex(null)}
               >
@@ -172,5 +163,5 @@ export function DragAndDropList<TItem>({
         </Group>
       </Modal>
     </>
-  )
+  );
 }

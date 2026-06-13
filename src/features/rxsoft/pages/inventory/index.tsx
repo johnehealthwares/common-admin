@@ -1,34 +1,16 @@
-import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
-import {
-  Card,
-  Text,
-  Stack,
-  Grid,
-  Button,
-  TextInput,
-  Loader,
-  Group,
-} from '@mantine/core'
-
-import { notifications } from '@mantine/notifications'
-import { rxsoftApi } from '@/lib/rxsoft-api'
-import { RxPage } from '../../../components/page/rx-page'
-import { DataPageShell } from '../../../components/page/data-page-shell'
+import { Card, Text, Stack, Grid, Button, TextInput, Group } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
+import { rxsoftApi } from '@/lib/rxsoft-api';
+import { DataPageShell } from '../../../components/page/data-page-shell';
+import { RxPage } from '../../../components/page/rx-page';
+import { stockBalancesConfig, stockMovementsConfig } from './schema';
 
 export function RxInventoryPage() {
-  const [stockBalanceId, setStockBalanceId] = useState('')
-  const [deltaQuantity, setDeltaQuantity] = useState('')
-  const [reason, setReason] = useState('')
-  const [formState1, setFormState1] = useState<Record<string, unknown>>({})
-  const [formState2, setFormState2] = useState<Record<string, unknown>>({})
-
-  const updateField1 = (code: string, value: unknown) => {
-  }
-
-  const updateField2 = (code: string, value: unknown) => {
-
-  }
+  const [stockBalanceId, setStockBalanceId] = useState('');
+  const [deltaQuantity, setDeltaQuantity] = useState('');
+  const [reason, setReason] = useState('');
 
   const adjustmentMutation = useMutation({
     mutationFn: async () => {
@@ -36,25 +18,25 @@ export function RxInventoryPage() {
         stockBalanceId,
         deltaQuantity: Number(deltaQuantity),
         reason,
-      })
+      });
     },
     onSuccess: () => {
       notifications.show({
         message: 'Adjustment posted successfully.',
         color: 'green',
-      })
+      });
 
-      setStockBalanceId('')
-      setDeltaQuantity('')
-      setReason('')
+      setStockBalanceId('');
+      setDeltaQuantity('');
+      setReason('');
     },
     onError: () => {
       notifications.show({
         message: 'Failed to post adjustment.',
         color: 'red',
-      })
+      });
     },
-  })
+  });
 
   return (
     <RxPage
@@ -63,37 +45,10 @@ export function RxInventoryPage() {
     >
       <Stack gap="xl">
         {/* STOCK BALANCES */}
-        <DataPageShell
-          title="Stock Balances"
-          description="Inventory stock balances with pagination and filters."
-          endpoint="/inventory/stock-balances"
-          columns={[
-            { key: 'id', label: 'ID' },
-            { key: 'productId', label: 'Product' },
-            { key: 'locationId', label: 'Location' },
-            { key: 'quantityOnHand', label: 'On Hand' },
-          ]}
-          formState={formState1}
-          setFormState={setFormState1}
-          updateField={updateField1}
-      />
+        <DataPageShell config={stockBalancesConfig} />
 
         {/* STOCK MOVEMENTS */}
-        <DataPageShell
-          title="Stock Movements"
-          description="Inventory movement log."
-          endpoint="/inventory/stock-movements"
-          columns={[
-            { key: 'id', label: 'ID' },
-            { key: 'stockBalanceId', label: 'Stock Balance' },
-            { key: 'movementType', label: 'Type' },
-            { key: 'quantity', label: 'Quantity' },
-            { key: 'createdAt', label: 'Created' },
-          ]}
-          formState={formState2}
-          setFormState={setFormState2}
-          updateField={updateField2}
-        />
+        <DataPageShell config={stockMovementsConfig} />
 
         {/* ADJUSTMENT FORM */}
         <Card withBorder p="md">
@@ -105,8 +60,8 @@ export function RxInventoryPage() {
 
             <form
               onSubmit={(e) => {
-                e.preventDefault()
-                adjustmentMutation.mutate()
+                e.preventDefault();
+                adjustmentMutation.mutate();
               }}
             >
               <Grid>
@@ -140,10 +95,7 @@ export function RxInventoryPage() {
 
                 <Grid.Col span={12}>
                   <Group justify="flex-end">
-                    <Button
-                      type="submit"
-                      loading={adjustmentMutation.isPending}
-                    >
+                    <Button type="submit" loading={adjustmentMutation.isPending}>
                       Post Adjustment
                     </Button>
                   </Group>
@@ -154,5 +106,5 @@ export function RxInventoryPage() {
         </Card>
       </Stack>
     </RxPage>
-  )
+  );
 }

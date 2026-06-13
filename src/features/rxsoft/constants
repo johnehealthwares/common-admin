@@ -1,0 +1,4 @@
+export const bootstrapKeys = {
+  attributeDefinitions: ["bootstrap", "attribute-definitions"] as const,
+};
+

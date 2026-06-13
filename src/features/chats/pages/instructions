@@ -1,0 +1,686 @@
+import { it } from "node:test"
+
+Frontend - /Users/john/develop/rxsoft/rxsoft-admin-3
+Chat Page - (support adminmode annd user mode)/Users/john/develop/rxsoft/rxsoft-admin-3/src/features/chats/pages/chats-page.tsx
+Backend - /Users/john/develop/healthstack/conversation-engine
+Implement a production-grade realtime chat module for conversation-engine with a scalable inbox architecture, realtime presence tracking, websocket synchronization, optimized projections, pagination, and modern enterprise chat UX.
+
+# OBJECTIVE
+
+Implement a professional realtime chats module with:
+
+* Conversation inbox sidebar
+* Conversation thread/messages panel
+* Realtime updates
+* Presence tracking
+* Active thread tracking
+* Unread counts
+* Paginated messages
+* Optimistic updates
+* Scalable projection architecture
+* Websocket integration
+* TanStack Query integration
+* Mantine-based modern responsive UI
+* Mobile responsive support
+* Modular backend architecture
+
+The system must scale for:
+
+* WhatsApp
+* SMS
+* Web chat
+* AI assistants
+* Multi-agent support dashboards
+* Supervisor takeover
+* Future Redis scaling
+
+---
+
+# CREATE NEW MODULE
+
+Create a new module:
+
+src/modules/chat-ui
+
+Structure:
+
+src/modules/chat-ui/
+components/
+hooks/
+pages/
+services/
+stores/
+websocket/
+types/
+utils/
+
+---
+
+# IMPLEMENT CHAT PAGE
+
+Refactor and productionize the provided Chats component.
+
+Requirements:
+
+* Fully dynamic
+* Remove mock data
+* Integrate APIs
+* Integrate websocket updates
+* Responsive layout
+* Infinite scrolling messages
+* Optimistic message sending
+* Typing indicator support
+* Presence indicators
+* Loading skeletons
+* Empty states
+* Error states
+* Retry handling
+* Mobile sidebar collapse
+* Message grouping by date
+* Auto-scroll on new messages
+* Preserve scroll position on pagination
+* Unread badges
+* Last seen timestamps
+* Connection state indicator
+* Online/offline indicators
+* Active conversation highlighting
+
+Use:
+
+* React
+* Mantine
+* TanStack Query
+* Socket.IO client
+* Dayjs
+
+---
+
+# BACKEND ARCHITECTURE
+
+Use lightweight projection-driven inbox architecture.
+
+DO NOT load:
+
+* full workflow context
+* questions arrays
+* heavy conversation documents
+
+The inbox must be powered by projections only.
+
+---
+
+# CREATE PROJECTION DOMAIN
+
+Create:
+
+src/shared/domain/conversation-inbox-projection.ts
+
+```ts
+export type ConversationInboxProjection = {
+  id: string;
+
+  conversationId: string;
+
+  participant: Participant;
+
+  moderator?: Participant;
+
+  channelId: string;
+
+  status: ConversationStatus;
+
+  state: ConversationState;
+
+  lastMessage?: string;
+
+  lastMessageDirection?: 'inbound' | 'outbound';
+
+  lastMessageAt?: Date;
+
+  unreadCount?: number;
+
+  currentQuestionId?: string;
+
+  currentQuestionAttribute?: string;
+
+  active: boolean;
+
+  priority?: number;
+
+  externalThreadId?: string;
+
+  lastMessageId?: string;
+};
+```
+
+---
+
+# CREATE AGGREGATED DTO
+
+Create:
+
+src/modules/conversation/controllers/dto/conversation-inbox-item.dto.ts
+
+```ts
+export type ConversationInboxItem = {
+  conversationId: string;
+
+  channelId: string;
+
+  status: ConversationStatus;
+
+  state: ConversationState;
+
+  participant: Participant;
+
+  moderator?: Participant;
+
+  lastMessage?: {
+    id?: string;
+    text: string;
+    direction: 'inbound' | 'outbound';
+    createdAt: Date;
+    questionAttribute?: string;
+  };
+
+  unreadCount?: number;
+
+  lastMessageAt?: Date;
+
+  currentQuestion?: {
+    id?: string;
+    attribute?: string;
+    text?: string;
+  };
+
+  projection: {
+    id: string;
+    isPrimary: boolean;
+    active: boolean;
+    priority: number;
+    externalThreadId?: string;
+  };
+};
+```
+
+---
+
+# IMPLEMENT INBOX ENDPOINT
+
+Implement:
+
+GET /conversations/inbox
+
+Supports:
+
+* pagination
+* search
+* channelId
+* participantId
+* status
+* activeOnly
+
+Query example:
+
+GET /conversations/inbox?search=john&status=ACTIVE
+
+Requirements:
+
+* lightweight aggregation
+* indexed query
+* sorted by lastMessageAt desc
+* no N+1 queries
+* performant under large datasets
+
+Use Mongo aggregation similar to:
+
+```ts
+db.conversation_projections.aggregate([
+  {
+    $match: {
+      active: true,
+      isPrimary: true,
+    },
+  },
+
+  {
+    $lookup: {
+      from: 'conversations',
+      localField: 'conversationId',
+      foreignField: '_id',
+      as: 'conversation',
+    },
+  },
+
+  {
+    $unwind: '$conversation',
+  },
+
+  {
+    $lookup: {
+      from: 'responses',
+      let: { conversationId: '$conversationId' },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $eq: ['$conversationId', '$$conversationId'],
+            },
+          },
+        },
+        {
+          $sort: {
+            createdAt: -1,
+          },
+        },
+        {
+          $limit: 1,
+        },
+      ],
+      as: 'lastResponse',
+    },
+  },
+
+  {
+    $unwind: {
+      path: '$lastResponse',
+      preserveNullAndEmptyArrays: true,
+    },
+  },
+
+  {
+    $project: {
+      conversationId: 1,
+      participant: 1,
+      channelId: 1,
+      active: 1,
+      priority: 1,
+
+      status: '$conversation.status',
+      state: '$conversation.state',
+
+      lastMessage: '$lastResponse.value',
+      lastMessageAt: '$lastResponse.createdAt',
+    },
+  },
+
+  {
+    $sort: {
+      lastMessageAt: -1,
+    },
+  },
+]);
+```
+
+Add proper Mongo indexes for:
+
+* conversationId
+* participant.id
+* active
+* lastMessageAt
+* channelId
+
+---
+
+# IMPLEMENT SINGLE CONVERSATION ENDPOINT
+
+Implement:
+
+GET /conversations/:id
+
+Return:
+
+* lightweight conversation metadata
+* participant info
+* projection info
+* current question
+* status
+* state
+
+Do NOT return:
+
+* full workflow payloads
+* heavy nested structures
+
+---
+
+# IMPLEMENT MESSAGES ENDPOINT
+
+Implement:
+
+GET /conversations/:id/messages
+
+Use:
+src/shared/domain/exchange.domain.ts
+
+Response:
+
+```ts
+{
+  items: ConversationMessage[];
+  nextCursor?: string;
+}
+```
+
+Requirements:
+
+* cursor pagination
+* reverse chronological loading
+* infinite scrolling support
+* efficient indexes
+* stable sorting
+* supports websocket hydration
+
+Message domain:
+
+```ts
+export type ConversationMessage = {
+  id: string;
+
+  conversationId: string;
+
+  senderId: string;
+
+  receiverId?: string;
+
+  direction: 'inbound' | 'outbound';
+
+  text: string;
+
+  questionId?: string;
+
+  attribute?: string;
+
+  createdAt: Date;
+
+  status?: 'sent' | 'delivered' | 'read' | 'failed';
+};
+```
+
+---
+
+# REALTIME WEBSOCKET LAYER
+
+Implement websocket gateway.
+
+Events:
+
+* conversation.message.created
+* conversation.updated
+* conversation.read
+* conversation.opened
+* conversation.closed
+* typing.started
+* typing.stopped
+* participant.online
+* participant.offline
+
+---
+
+# CREATE REALTIME PRESENCE STORE
+
+Create interface-driven presence store.
+
+Use in-memory implementation first but abstracted for future Redis support.
+
+Example:
+
+```ts
+export type ActiveConversationView = {
+  participantId: string;
+
+  conversationId: string;
+
+  openedAt: Date;
+
+  lastSeenAt: Date;
+
+  socketId?: string;
+};
+```
+
+Create interfaces:
+
+```ts
+export interface PresenceStore {
+  setActiveConversation(...)
+  removeActiveConversation(...)
+  getActiveConversation(...)
+  isConversationOpen(...)
+}
+```
+
+Implement:
+
+* MemoryPresenceStore
+* Redis-ready abstraction
+
+---
+
+# ACTIVE THREAD TRACKING
+
+When frontend opens thread:
+
+```ts
+socket.emit('conversation.opened', {
+  conversationId,
+  participantId,
+});
+```
+
+Server stores active view.
+
+When thread closes:
+
+```ts
+socket.emit('conversation.closed', {
+  conversationId,
+});
+```
+
+Server removes active view.
+
+---
+
+# UNREAD COUNT LOGIC
+
+When new message arrives:
+
+If recipient currently viewing thread:
+
+```ts
+unreadCount = 0
+```
+
+Else:
+
+```ts
+unreadCount += 1
+```
+
+Unread counts must sync in realtime.
+
+---
+
+# FRONTEND DATA LAYER
+
+Use:
+
+* TanStack Query
+* websocket cache hydration
+
+Queries:
+
+```ts
+useQuery(['conversation-inbox'])
+```
+
+```ts
+useInfiniteQuery(['conversation-messages', conversationId])
+```
+
+Realtime updates should patch cache directly.
+
+Avoid unnecessary refetches.
+
+---
+
+# OPTIMISTIC MESSAGE SENDING
+
+When sending message:
+
+* append locally immediately
+* mark as pending
+* reconcile on server ack
+* rollback on failure
+
+Support:
+
+* retry
+* failed state
+* delivery state
+
+---
+
+# MOBILE RESPONSIVENESS
+
+Implement:
+
+* collapsible sidebar
+* mobile thread view
+* back navigation
+* adaptive layout
+* sticky message input
+* safe area support
+
+---
+
+# PROFESSIONAL UX FEATURES
+
+Add:
+
+* typing indicators
+* read receipts
+* delivered state
+* message timestamps
+* grouped date separators
+* skeleton loaders
+* empty inbox state
+* reconnect handling
+* websocket reconnect recovery
+* connection state banners
+* unread badges
+* message hover actions
+* smooth scrolling
+* keyboard shortcuts
+* accessibility support
+* dark mode support
+
+---
+
+# STATE MANAGEMENT
+
+Create:
+
+* chat store
+* active conversation state
+* websocket connection state
+* typing state
+* presence state
+
+---
+
+# PERFORMANCE REQUIREMENTS
+
+Must support:
+
+* thousands of conversations
+* paginated loading
+* virtualized message rendering
+* minimal rerenders
+* websocket batching
+* projection-driven rendering
+
+Avoid:
+
+* loading full conversations
+* loading workflow payloads
+* expensive joins during rendering
+* repeated refetching
+
+---
+
+# FILES TO CREATE
+
+Backend:
+
+* conversation-inbox-projection.ts
+* conversation-inbox-item.dto.ts
+* chat.gateway.ts
+* presence-store.interface.ts
+* memory-presence-store.ts
+* inbox aggregation repository
+* messages query repository
+
+Frontend:
+
+* chats-page.tsx
+* useConversationInbox.ts
+* useConversationMessages.ts
+* useChatSocket.ts
+* chat-store.ts
+* conversation-sidebar.tsx
+* conversation-thread.tsx
+* message-bubble.tsx
+* typing-indicator.tsx
+* chat-header.tsx
+* message-input.tsx
+
+---
+
+# UI REQUIREMENTS
+
+Maintain the provided Mantine layout structure but:
+
+* modularize components
+* remove inline styles
+* use theme-aware styling
+* improve spacing
+* improve responsiveness
+* improve accessibility
+* support realtime state transitions
+* support loading states
+* support error boundaries
+
+Use clean enterprise messaging UX similar to:
+
+* Slack
+* WhatsApp Web
+* Intercom
+* Zendesk
+* Discord
+
+---
+
+# DELIVERABLES
+
+Generate:
+
+* backend implementation
+* DTOs
+* repositories
+* websocket gateway
+* presence store
+* frontend hooks
+* TanStack Query integration
+* socket integration
+* responsive Mantine UI
+* reusable chat components
+* realtime synchronization
+* optimistic updates
+* pagination
+* production-grade architecture
+
+add appropriate unint/inntegration tests
+Create implementation plan file and update as progress is made so that another agent can easily know what's beenn done if credit finnnishes asn you cann't currently finnish it
+Make use of provided innformation so that token is used MOST efficiently

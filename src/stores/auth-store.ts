@@ -1,5 +1,4 @@
-import { create } from 'zustand'
-import { rxsoftApi } from '@/lib/rxsoft-api'
+import { create } from 'zustand';
 import {
   clearTokens,
   decodeUserFromAccessToken,
@@ -7,37 +6,49 @@ import {
   getRefreshToken,
   persistTokens,
   type AuthUser,
-} from '@/lib/auth-tokens'
+} from '@/lib/auth-tokens';
+import { rxsoftApi } from '@/lib/rxsoft-api';
+
+export type ModuleInfo = {
+  id: string;
+  name: string;
+  description: string;
+  root: string;
+};
 
 type AuthState = {
-  accessToken: string | null
-  refreshToken: string | null
-  user: AuthUser | null
-  loading: boolean
-  error: string | null
-  login: (username: string, password: string) => Promise<void>
-  logout: () => void
-  bootstrap: () => void
-}
+  accessToken: string | null;
+  refreshToken: string | null;
+  user: AuthUser | null;
+  modules: ModuleInfo[];
+  loading: boolean;
+  error: string | null;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => void;
+  bootstrap: () => void;
+  fetchModules: () => Promise<void>;
+};
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: null,
   refreshToken: null,
   user: null,
+  modules: [],
   loading: false,
   error: null,
+
   login: async (username, password) => {
-    set({ loading: true, error: null })
+    set({ loading: true, error: null });
     try {
       const response = await rxsoftApi.post<{
-        accessToken: string
-        refreshToken: string
-      }>('/auth/login', { username, password })
-      persistTokens(response.data.accessToken, response.data.refreshToken)
-      const user = decodeUserFromAccessToken(response.data.accessToken)
+        accessToken: string;
+        refreshToken: string;
+      }>('/auth/login', { username, password });
+      persistTokens(response.data.accessToken, response.data.refreshToken);
+      const user = decodeUserFromAccessToken(response.data.accessToken);
 
       if (!user) {
-        throw new Error('Invalid access token payload.')
+        throw new Error('Invalid access token payload.');
       }
 
       set({
@@ -46,34 +57,74 @@ export const useAuthStore = create<AuthState>((set) => ({
         user,
         loading: false,
         error: null,
-      })
+      });
+
+      // Fetch user modules after login
+      try {
+        const meResponse = await rxsoftApi.get<{
+          id: string;
+          username: string;
+          roles: string[];
+          permissions: string[];
+          modules: ModuleInfo[];
+        }>('/auth/me');
+        set({ modules: meResponse.data.modules });
+      } catch {
+        set({
+          modules: [
+            { id: 'rxsoft', name: 'RxSoft', description: 'Pharmacy Admin', root: '/items' },
+            { id: 'admin', name: 'Admin Console', description: 'Administration', root: '/' },
+          ],
+        });
+      }
     } catch {
-      set({ loading: false, error: 'Invalid credentials' })
+      set({ loading: false, error: 'Invalid credentials' });
     }
   },
+
   logout: () => {
-    clearTokens()
+    clearTokens();
     set({
       accessToken: null,
       refreshToken: null,
       user: null,
+      modules: [],
       loading: false,
       error: null,
-    })
+    });
   },
+
   bootstrap: () => {
-    const accessToken = getAccessToken()
-    const refreshToken = getRefreshToken()
+    const accessToken = getAccessToken();
+    const refreshToken = getRefreshToken();
 
-    if (!accessToken || !refreshToken) return
+    if (!accessToken || !refreshToken) return;
 
-    const user = decodeUserFromAccessToken(accessToken)
+    const user = decodeUserFromAccessToken(accessToken);
     if (!user) {
-      clearTokens()
-      set({ accessToken: null, refreshToken: null, user: null })
-      return
+      clearTokens();
+      set({ accessToken: null, refreshToken: null, user: null });
+      return;
     }
 
-    set({ accessToken, refreshToken, user, loading: false, error: null })
+    set({ accessToken, refreshToken, user, loading: false, error: null });
+
+    // Fetch modules in background
+    get().fetchModules();
   },
-}))
+
+  fetchModules: async () => {
+    try {
+      const meResponse = await rxsoftApi.get<{
+        id: string;
+        username: string;
+        roles: string[];
+        permissions: string[];
+        modules: ModuleInfo[];
+      }>('/auth/me');
+      set({ modules: meResponse.data.modules });
+    } catch {
+      // Silently fail - modules will be empty until fetched
+    }
+  },
+}));

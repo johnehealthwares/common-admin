@@ -1,7 +1,3 @@
-// sidebar-nav-item.tsx
-import { useMemo } from 'react'
-import { Link } from '@tanstack/react-router'
-
 import {
   Box,
   Collapse,
@@ -11,24 +7,21 @@ import {
   ThemeIcon,
   Tooltip,
   UnstyledButton,
-} from '@mantine/core'
-
-import { useDisclosure } from '@mantine/hooks'
-
-import {
-  ChevronDown,
-  ChevronRight,
-} from 'lucide-react'
-import { NavItem } from '@/layout/types'
-
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { Link } from '@tanstack/react-router';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+// sidebar-nav-item.tsx
+import { useMemo } from 'react';
+import { NavItem } from '@/layout/types';
 
 interface SidebarNavItemProps {
-  item: NavItem
-  pathname: string
-  collapsed?: boolean
-  resetExpandState: (index: number) => void
-  expanded: boolean
-  index: number
+  item: NavItem;
+  pathname: string;
+  collapsed?: boolean;
+  resetExpandState: (index: number) => void;
+  expanded: boolean;
+  index: number;
 }
 
 export function SidebarNavItem({
@@ -37,70 +30,55 @@ export function SidebarNavItem({
   collapsed = false,
   expanded = false,
   resetExpandState,
-  index
+  index,
 }: SidebarNavItemProps) {
-  const hasChildren = Boolean(item.items?.length)
+  const hasChildren = Boolean(item.items?.length);
 
   const active = useMemo(() => {
-    if (!item.url) return false
+    if (!item.url) return false;
 
     return (
       pathname === item.url ||
       pathname.startsWith(`${item.url}/`) ||
-     ((item.items || []) as unknown as any[]).some((sub: NavItem) => pathname === sub.url)
-    )
-  }, [pathname, item])
+      ((item.items || []) as unknown as any[]).some((sub: NavItem) => pathname === sub.url)
+    );
+  }, [pathname, item]);
 
   /**
    * Automatically open submenu
    * when one of the children is active
    */
-  const [opened, { toggle }] = useDisclosure(active)
+  const [opened, { toggle }] = useDisclosure(active);
 
-  const Icon = item.icon
+  const Icon = item.icon;
 
   const button = (
     <UnstyledButton
       onClick={() => {
         if (hasChildren) {
-          toggle()
-          resetExpandState(index)
+          toggle();
+          resetExpandState(index);
         }
       }}
       style={{
         width: '100%',
         borderRadius: 10,
         transition: 'all 140ms ease',
-        background: active
-          ? 'var(--mantine-color-blue-light)'
-          : 'transparent',
+        background: active ? 'var(--mantine-color-blue-light)' : 'transparent',
       }}
     >
-      <Group
-        justify="space-between"
-        wrap="nowrap"
-        px="sm"
-        py={10}
-      >
+      <Group justify="space-between" wrap="nowrap" px="sm" py={10}>
         {/* LEFT */}
         <Group gap="sm" wrap="nowrap">
           {Icon && (
-            <ThemeIcon
-              size={34}
-              radius="md"
-              variant={active ? 'filled' : 'light'}
-            >
+            <ThemeIcon size={34} radius="md" variant={active ? 'filled' : 'light'}>
               <Icon size={18} />
             </ThemeIcon>
           )}
 
           {!collapsed && (
             <Box>
-              <Text
-                size="sm"
-                fw={active ? 700 : 500}
-                c={active ? 'blue' : undefined}
-              >
+              <Text size="sm" fw={active ? 700 : 500} c={active ? 'blue' : undefined}>
                 {item.title}
               </Text>
 
@@ -115,95 +93,60 @@ export function SidebarNavItem({
 
         {/* RIGHT */}
         {!collapsed && hasChildren && (
-          <>
-            {opened ? (
-              <ChevronDown size={16} />
-            ) : (
-              <ChevronRight size={16} />
-            )}
-          </>
+          <>{opened ? <ChevronDown size={16} /> : <ChevronRight size={16} />}</>
         )}
       </Group>
     </UnstyledButton>
-  )
+  );
 
   /**
    * COLLAPSED SIDEBAR MODE
    */
   if (collapsed) {
     return (
-      <Tooltip
-        label={item.title}
-        position="right"
-        withArrow
-      >
-        <Box>
-          {item.url ? (
-            <Link to={item.url}>
-              {button}
-            </Link>
-          ) : (
-            button
-          )}
-        </Box>
+      <Tooltip label={item.title} position="right" withArrow>
+        <Box>{item.url ? <Link to={item.url}>{button}</Link> : button}</Box>
       </Tooltip>
-    )
+    );
   }
 
   return (
     <Stack gap={4}>
       {/* ROOT ITEM */}
-      {item.url ? (
-        <Link to={item.url}>
-          {button}
-        </Link>
-      ) : (
-        button
-      )}
+      {item.url ? <Link to={item.url}>{button}</Link> : button}
 
       {/* SUBMENU */}
       {hasChildren && (
         <Collapse expanded={expanded}>
           <Stack gap={2} pl={20}>
             {item.items?.map((subItem: NavItem) => {
-              const subActive =
-                pathname === subItem.url
+              const subActive = pathname === subItem.url;
 
               return (
-                <Link
-                  key={subItem.title}
-                  to={subItem.url}
-                >
+                <Link key={subItem.title} to={subItem.url}>
                   <UnstyledButton
                     style={{
                       width: '100%',
                       borderRadius: 8,
                       padding: '10px 5px',
                       transition: 'all 140ms ease',
-                      background: subActive
-                        ? 'var(--mantine-color-gray-1)'
-                        : 'transparent',
+                      background: subActive ? 'var(--mantine-color-gray-1)' : 'transparent',
                     }}
                   >
                     <Group gap="sm">
-                      {subItem.icon && (
-                        <subItem.icon size={15} />
-                      )}
+                      {subItem.icon && <subItem.icon size={15} />}
 
-                      <Text
-                        size="sm"
-                        fw={subActive ? 600 : 500}
-                      >
+                      <Text size="sm" fw={subActive ? 600 : 500}>
                         {subItem.title}
                       </Text>
                     </Group>
                   </UnstyledButton>
                 </Link>
-              )
+              );
             })}
           </Stack>
         </Collapse>
       )}
     </Stack>
-  )
+  );
 }

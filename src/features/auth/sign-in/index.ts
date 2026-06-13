@@ -1,1 +1,1 @@
-export * from './pages/sign-in-page'
+export * from './pages/sign-in-page';

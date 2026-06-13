@@ -1,6 +1,3 @@
-import { useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Search } from 'lucide-react'
 import {
   Card,
   Text,
@@ -12,25 +9,23 @@ import {
   Button,
   Title,
   Grid,
-} from '@mantine/core'
-
-import { RxPage } from '@/features/components/page/rx-page'
-import { codingConceptApi } from '@/lib/coding-concept-api'
-import {
-  ConceptSummaryCard,
-  MetadataPreview,
-  codingModuleOptions,
-} from './shared'
+} from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { RxPage } from '@/features/components/page/rx-page';
+import { codingConceptApi } from '@/lib/coding-concept-api';
+import { ConceptSummaryCard, MetadataPreview, codingModuleOptions } from './shared';
 
 export function CodingConceptSearchPage() {
-  const [module, setModule] = useState('LOINC')
-  const [term, setTerm] = useState('')
-  const [metadata, setMetadata] = useState(false)
+  const [module, setModule] = useState('LOINC');
+  const [term, setTerm] = useState('');
+  const [metadata, setMetadata] = useState(false);
   const [submitted, setSubmitted] = useState<{
-    module: string
-    term: string
-    metadata: boolean
-  } | null>(null)
+    module: string;
+    term: string;
+    metadata: boolean;
+  } | null>(null);
 
   const query = useQuery({
     queryKey: ['coding-concept', 'search', submitted],
@@ -42,15 +37,15 @@ export function CodingConceptSearchPage() {
         {
           params: submitted?.metadata ? { metadata: 'true' } : undefined,
         }
-      )
-      return response.data?.data ?? null
+      );
+      return response.data?.data ?? null;
     },
-  })
+  });
 
   const title = useMemo(() => {
-    if (!submitted?.term) return 'Search a terminology concept'
-    return `Search result for ${submitted.module}:${submitted.term}`
-  }, [submitted])
+    if (!submitted?.term) return 'Search a terminology concept';
+    return `Search result for ${submitted.module}:${submitted.term}`;
+  }, [submitted]);
 
   return (
     <RxPage
@@ -72,7 +67,7 @@ export function CodingConceptSearchPage() {
         </Button>
       }
     >
-      <Grid >
+      <Grid>
         {/* Left Panel */}
         <Grid.Col span={{ base: 12, xl: 4 }}>
           <Card withBorder radius="md" p="lg">
@@ -155,5 +150,5 @@ export function CodingConceptSearchPage() {
         </Grid.Col>
       </Grid>
     </RxPage>
-  )
+  );
 }

@@ -1,3 +1,3 @@
 export function getColSpanClass(col: number) {
-    return `md:col-span-${Math.min(col, 12)}`
+  return `md:col-span-${Math.min(col, 12)}`;
 }

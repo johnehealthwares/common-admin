@@ -1,22 +1,13 @@
-import { useState } from "react"
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  type QueryKey,
-} from "@tanstack/react-query"
+import { Badge, Button, Group, Input, Modal } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/react-query';
+import { Loader2, Plus, X } from 'lucide-react';
+import { useState } from 'react';
+import { CommunicationRow } from '@/features/communication/components/shared';
+import { getArrayPayload } from '@/features/components/utils';
+import { conversationApi } from '@/lib/conversation-api';
 
-import { Loader2, Plus, X } from "lucide-react"
-
-
-import { conversationApi } from "@/lib/conversation-api"
-import { getArrayPayload } from "@/features/components/utils"
-import { notifications } from "@mantine/notifications"
-import { Badge, Button, Group, Input, Modal } from "@mantine/core"
-import { CommunicationRow } from "@/features/communication/components/shared"
-
-
-export type ConversationRow = Record<string, unknown>
+export type ConversationRow = Record<string, unknown>;
 
 /* -----------------------------
    QUERY
@@ -27,95 +18,93 @@ export function useConversationList(
   extraParams?: Record<string, unknown>
 ) {
   return useQuery({
-    queryKey: ["conversation-engine", endpoint, search, extraParams] satisfies QueryKey,
+    queryKey: ['conversation-engine', endpoint, search, extraParams] satisfies QueryKey,
     queryFn: async () => {
       const { data } = await conversationApi.get(endpoint, {
         params: {
           ...(extraParams ?? {}),
           ...(search.trim() ? { search: search.trim() } : {}),
         },
-      })
+      });
 
-      return getArrayPayload(data)
+      return getArrayPayload(data);
     },
     staleTime: 30_000,
-  })
+  });
 }
 
 /* -----------------------------
    CRUD HOOK
 ------------------------------*/
 export function useConversationCrud(endpoint: string) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-  const baseKey = ["conversation-engine", endpoint]
+  const baseKey = ['conversation-engine', endpoint];
 
-  const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: baseKey })
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: baseKey });
 
   const createMutation = useMutation({
     mutationFn: (payload: Record<string, unknown>) =>
       conversationApi.post(endpoint, payload).then((r) => r.data),
 
     onSuccess: () => {
-      invalidate()
-      notifications.show({ message: "Record created successfully" })
+      invalidate();
+      notifications.show({ message: 'Record created successfully' });
     },
     onError: (err) => {
       notifications.show({
-        color: "red",
+        color: 'red',
         message: `Create failed - ${getErrorMessage(err)}`,
-      })
+      });
     },
-  })
+  });
 
   const updateMutation = useMutation({
     mutationFn: ({
       id,
       payload,
-      method = "patch",
+      method = 'patch',
     }: {
-      id: string
-      payload: Record<string, unknown>
-      method?: "patch" | "put"
+      id: string;
+      payload: Record<string, unknown>;
+      method?: 'patch' | 'put';
     }) =>
-      method === "put"
+      method === 'put'
         ? conversationApi.put(`${endpoint}/${id}`, payload).then((r) => r.data)
         : conversationApi.patch(`${endpoint}/${id}`, payload).then((r) => r.data),
 
     onSuccess: () => {
-      invalidate()
-      notifications.show({ message: "Record updated successfully" })
+      invalidate();
+      notifications.show({ message: 'Record updated successfully' });
     },
     onError: (err) => {
       notifications.show({
-        color: "red",
+        color: 'red',
         message: `Update failed - ${getErrorMessage(err)}`,
-      })
+      });
     },
-  })
+  });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) =>
-      conversationApi.delete(`${endpoint}/${id}`).then((r) => r.data),
+    mutationFn: (id: string) => conversationApi.delete(`${endpoint}/${id}`).then((r) => r.data),
 
     onSuccess: () => {
-      invalidate()
-      notifications.show({ message: "Record deleted successfully" })
+      invalidate();
+      notifications.show({ message: 'Record deleted successfully' });
     },
     onError: (err) => {
       notifications.show({
-        color: "red",
+        color: 'red',
         message: getErrorMessage(err),
-      })
+      });
     },
-  })
+  });
 
   return {
     createMutation,
     updateMutation,
     deleteMutation,
-  }
+  };
 }
 
 /* -----------------------------
@@ -126,22 +115,22 @@ export function getDirtyPayload(
   current: Record<string, unknown>
 ) {
   return Object.fromEntries(
-    Object.entries(current).filter(([k, v]) =>
-      JSON.stringify(original[k] ?? null) !== JSON.stringify(v ?? null)
+    Object.entries(current).filter(
+      ([k, v]) => JSON.stringify(original[k] ?? null) !== JSON.stringify(v ?? null)
     )
-  )
+  );
 }
 
 export function getErrorMessage(error: unknown) {
-  if (typeof error === "object" && error && "response" in error) {
-    const data = (error as any).response?.data
-    const msg = data?.message
-    if (Array.isArray(msg)) return msg.join(", ")
-    if (typeof msg === "string") return msg
+  if (typeof error === 'object' && error && 'response' in error) {
+    const data = (error as any).response?.data;
+    const msg = data?.message;
+    if (Array.isArray(msg)) return msg.join(', ');
+    if (typeof msg === 'string') return msg;
   }
 
-  if (error instanceof Error) return error.message
-  return "Something went wrong"
+  if (error instanceof Error) return error.message;
+  return 'Something went wrong';
 }
 
 /* -----------------------------
@@ -153,23 +142,17 @@ export function JsonPreviewDialog({
   title,
   value,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: string
-  value: unknown
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  value: unknown;
 }) {
   return (
-    <Modal
-      opened={open}
-      onClose={() => onOpenChange(false)}
-      title={title}
-    >
+    <Modal opened={open} onClose={() => onOpenChange(false)} title={title}>
       <div className="space-y-3">
         <div>
           <h2 className="text-lg font-semibold">{title}</h2>
-          <p className="text-sm text-muted-foreground">
-            Read-only JSON view
-          </p>
+          <p className="text-sm text-muted-foreground">Read-only JSON view</p>
         </div>
 
         <pre className="overflow-x-auto rounded-lg border bg-muted/30 p-4 text-xs">
@@ -177,7 +160,7 @@ export function JsonPreviewDialog({
         </pre>
       </div>
     </Modal>
-  )
+  );
 }
 
 /* -----------------------------
@@ -186,19 +169,19 @@ export function JsonPreviewDialog({
 export function TagInput({
   value,
   onChange,
-  placeholder = "Add tag and press Enter",
+  placeholder = 'Add tag and press Enter',
 }: {
-  value: string[]
-  onChange: (v: string[]) => void
-  placeholder?: string
+  value: string[];
+  onChange: (v: string[]) => void;
+  placeholder?: string;
 }) {
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState('');
 
   const addTag = (tag: string) => {
-    const t = tag.trim()
-    if (!t || value.includes(t)) return
-    onChange([...value, t])
-  }
+    const t = tag.trim();
+    if (!t || value.includes(t)) return;
+    onChange([...value, t]);
+  };
 
   return (
     <div className="space-y-3 rounded-lg border p-3">
@@ -207,10 +190,10 @@ export function TagInput({
         placeholder={placeholder}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key !== "Enter") return
-          e.preventDefault()
-          addTag(input)
-          setInput("")
+          if (e.key !== 'Enter') return;
+          e.preventDefault();
+          addTag(input);
+          setInput('');
         }}
       />
 
@@ -218,17 +201,14 @@ export function TagInput({
         {value.map((tag) => (
           <Badge key={tag} variant="secondary" className="gap-1">
             {tag}
-            <button
-              type="button"
-              onClick={() => onChange(value.filter((t) => t !== tag))}
-            >
+            <button type="button" onClick={() => onChange(value.filter((t) => t !== tag))}>
               <X className="size-3" />
             </button>
           </Badge>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 /* -----------------------------
@@ -240,10 +220,10 @@ export function DialogActions({
   loading,
   submitLabel,
 }: {
-  onCancel: () => void
-  onSubmit: () => void
-  loading?: boolean
-  submitLabel: string
+  onCancel: () => void;
+  onSubmit: () => void;
+  loading?: boolean;
+  submitLabel: string;
 }) {
   return (
     <Group justify="flex-end" mt="md">
@@ -256,7 +236,7 @@ export function DialogActions({
         {submitLabel}
       </Button>
     </Group>
-  )
+  );
 }
 
 export function InlineSection({
@@ -264,9 +244,9 @@ export function InlineSection({
   action,
   children,
 }: {
-  title: string
-  action?: React.ReactNode
-  children: React.ReactNode
+  title: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
 }) {
   return (
     <div className="space-y-3 rounded-lg border p-4">
@@ -276,56 +256,44 @@ export function InlineSection({
       </div>
       {children}
     </div>
-  )
+  );
 }
 
-export function LabelField({
-  label,
-  children,
-}: {
-  label: string
-  children: React.ReactNode
-}) {
+export function LabelField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
       {label}
       {children}
     </div>
-  )
+  );
 }
 
-export function AddRowButton({
-  label,
-  onClick,
-}: {
-  label: string
-  onClick: () => void
-}) {
+export function AddRowButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <Button variant="outline" onClick={onClick}>
       <Plus className="size-4" />
       {label}
     </Button>
-  )
+  );
 }
 
 export function getBoolean(value: unknown): boolean {
-  return typeof value === 'boolean' ? value : Boolean(value)
+  return typeof value === 'boolean' ? value : Boolean(value);
 }
 
 export function getString(value: unknown): string {
-  return typeof value === 'string' ? value : String(value ?? '')
+  return typeof value === 'string' ? value : String(value ?? '');
 }
 
 export function getObject(value: unknown): Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
     ? (value as Record<string, unknown>)
-    : {}
+    : {};
 }
 
 export function normalizeRows(rows: unknown[]): CommunicationRow[] {
   return rows.map((row, index) => ({
     id: getString((row as any)?.id ?? index),
     ...getObject(row),
-  }))
+  }));
 }

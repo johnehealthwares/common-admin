@@ -1,5 +1,3 @@
-import { useMemo, useState } from 'react'
-import { Braces, Pencil, Plus, Trash2 } from 'lucide-react'
 import {
   Button,
   Modal,
@@ -10,14 +8,15 @@ import {
   Group,
   Text,
   Switch,
-} from '@mantine/core'
-
-import { JsonEditorField } from '@/features/components/form/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
-import { RxPage } from '@/features/components/page/rx-page'
-import { SelectField } from '@/features/components/form/select'
-
-import { NOTIFICATION_TYPE_OPTIONS } from '../types/constants'
+} from '@mantine/core';
+import { Braces, Pencil, Plus, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { JsonEditorField } from '@/features/components/form/json-editor-field';
+import { SelectField } from '@/features/components/form/select';
+import { RxPage } from '@/features/components/page/rx-page';
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table';
+import { Option } from '@/features/rxsoft/types';
+import { NOTIFICATION_TYPE_OPTIONS } from '../types/constants';
 import {
   CommunicationRow,
   JsonPreviewDialog,
@@ -28,22 +27,21 @@ import {
   normalizeRows,
   useCommunicationCrud,
   useCommunicationList,
-} from './shared'
-import { Option } from '@/features/rxsoft/types'
+} from './shared';
 
 type NotificationTemplateFormState = {
-  id?: string
-  name: string
-  description: string
-  type: Option
-  title: string
-  message: string
-  actionUrl: string
-  actionText: string
-  variables: Record<string, unknown> | unknown[]
-  isActive: boolean
-  metadata: Record<string, unknown> | unknown[]
-}
+  id?: string;
+  name: string;
+  description: string;
+  type: Option;
+  title: string;
+  message: string;
+  actionUrl: string;
+  actionText: string;
+  variables: Record<string, unknown> | unknown[];
+  isActive: boolean;
+  metadata: Record<string, unknown> | unknown[];
+};
 
 const defaultFormState: NotificationTemplateFormState = {
   name: '',
@@ -56,7 +54,7 @@ const defaultFormState: NotificationTemplateFormState = {
   variables: {},
   isActive: true,
   metadata: {},
-}
+};
 
 const columns = [
   { key: 'id', label: 'ID', width: '80px' },
@@ -66,31 +64,35 @@ const columns = [
   { key: 'isActive', label: 'Active', width: '100px' },
   { key: 'createdAt', label: 'Created', width: '150px' },
   { key: 'updatedAt', label: 'Updated', width: '150px' },
-]
+];
 
 export function NotificationTemplatesPage() {
-  const [search, setSearch] = useState('')
-  const [selectedRow, setSelectedRow] = useState<CommunicationRow | null>(null)
+  const [search, setSearch] = useState('');
+  const [selectedRow, setSelectedRow] = useState<CommunicationRow | null>(null);
 
-  const [createOpen, setCreateOpen] = useState(false)
-  const [editOpen, setEditOpen] = useState(false)
-  const [jsonOpen, setJsonOpen] = useState(false)
-  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [jsonOpen, setJsonOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const [form, setForm] = useState<NotificationTemplateFormState>(defaultFormState)
+  const [form, setForm] = useState<NotificationTemplateFormState>(defaultFormState);
 
-  const { data: templates = [], isLoading } = useCommunicationList('notification-templates', search)
-  const { createMutation, updateMutation, deleteMutation } = useCommunicationCrud('notification-templates')
+  const { data: templates = [], isLoading } = useCommunicationList(
+    'notification-templates',
+    search
+  );
+  const { createMutation, updateMutation, deleteMutation } =
+    useCommunicationCrud('notification-templates');
 
-  const rows = useMemo(() => normalizeRows(templates), [templates])
+  const rows = useMemo(() => normalizeRows(templates), [templates]);
 
   function openCreate() {
-    setForm(defaultFormState)
-    setCreateOpen(true)
+    setForm(defaultFormState);
+    setCreateOpen(true);
   }
 
   function openEdit(row: CommunicationRow) {
-    setSelectedRow(row)
+    setSelectedRow(row);
     setForm({
       id: getString(row.id),
       name: getString(row.name),
@@ -103,40 +105,40 @@ export function NotificationTemplatesPage() {
       variables: getObject(row.variables),
       isActive: Boolean(row.isActive),
       metadata: getObject(row.metadata),
-    })
-    setEditOpen(true)
+    });
+    setEditOpen(true);
   }
 
   function openJson(row: CommunicationRow) {
-    setSelectedRow(row)
-    setJsonOpen(true)
+    setSelectedRow(row);
+    setJsonOpen(true);
   }
 
   function openDelete(row: CommunicationRow) {
-    setSelectedRow(row)
-    setDeleteOpen(true)
+    setSelectedRow(row);
+    setDeleteOpen(true);
   }
 
   async function handleSave() {
-    const payload = { ...form }
-    delete payload.id
+    const payload = { ...form };
+    delete payload.id;
 
     if (form.id) {
       await updateMutation.mutateAsync({
         id: form.id,
         payload: getDirtyPayload(selectedRow || {}, payload),
-      })
-      setEditOpen(false)
+      });
+      setEditOpen(false);
     } else {
-      await createMutation.mutateAsync(payload)
-      setCreateOpen(false)
+      await createMutation.mutateAsync(payload);
+      setCreateOpen(false);
     }
   }
 
   async function confirmDelete() {
     if (selectedRow?.id) {
-      await deleteMutation.mutateAsync(String(selectedRow.id))
-      setDeleteOpen(false)
+      await deleteMutation.mutateAsync(String(selectedRow.id));
+      setDeleteOpen(false);
     }
   }
 
@@ -144,7 +146,7 @@ export function NotificationTemplatesPage() {
     { label: 'View JSON', icon: Braces, onClick: openJson },
     { label: 'Edit', icon: Pencil, onClick: openEdit },
     { label: 'Delete', icon: Trash2, onClick: openDelete, variant: 'destructive' as const },
-  ]
+  ];
 
   function FormFields() {
     return (
@@ -225,7 +227,7 @@ export function NotificationTemplatesPage() {
           onChange={(v) => setForm((p) => ({ ...p, metadata: v }))}
         />
       </Stack>
-    )
+    );
   }
 
   return (
@@ -245,15 +247,24 @@ export function NotificationTemplatesPage() {
         isLoading={isLoading}
         searchValue={search}
         onSearchChange={setSearch}
-        actionCellProps={{actions}}
+        actionCellProps={{ actions }}
       />
 
       {/* Create */}
-      <Modal opened={createOpen} onClose={() => setCreateOpen(false)} title="Create Template" size="lg">
+      <Modal
+        opened={createOpen}
+        onClose={() => setCreateOpen(false)}
+        title="Create Template"
+        size="lg"
+      >
         <FormFields />
         <Group justify="flex-end" mt="md">
-          <Button variant="default" onClick={() => setCreateOpen(false)}>Cancel</Button>
-          <Button onClick={handleSave} loading={createMutation.isPending}>Save</Button>
+          <Button variant="default" onClick={() => setCreateOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} loading={createMutation.isPending}>
+            Save
+          </Button>
         </Group>
       </Modal>
 
@@ -261,8 +272,12 @@ export function NotificationTemplatesPage() {
       <Modal opened={editOpen} onClose={() => setEditOpen(false)} title="Edit Template" size="lg">
         <FormFields />
         <Group justify="flex-end" mt="md">
-          <Button variant="default" onClick={() => setEditOpen(false)}>Cancel</Button>
-          <Button onClick={handleSave} loading={updateMutation.isPending}>Save</Button>
+          <Button variant="default" onClick={() => setEditOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} loading={updateMutation.isPending}>
+            Save
+          </Button>
         </Group>
       </Modal>
 
@@ -275,18 +290,25 @@ export function NotificationTemplatesPage() {
       />
 
       {/* Delete */}
-      <Modal opened={deleteOpen} onClose={() => setDeleteOpen(false)} title="Delete Template" centered>
+      <Modal
+        opened={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        title="Delete Template"
+        centered
+      >
         <Text size="sm" c="dimmed">
           Are you sure you want to delete this template? This action cannot be undone.
         </Text>
 
         <Group justify="flex-end" mt="md">
-          <Button variant="default" onClick={() => setDeleteOpen(false)}>Cancel</Button>
+          <Button variant="default" onClick={() => setDeleteOpen(false)}>
+            Cancel
+          </Button>
           <Button color="red" loading={deleteMutation.isPending} onClick={confirmDelete}>
             Delete
           </Button>
         </Group>
       </Modal>
     </RxPage>
-  )
+  );
 }

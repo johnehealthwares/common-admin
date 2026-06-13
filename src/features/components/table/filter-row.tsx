@@ -1,12 +1,7 @@
-import {
-  Group,
-  Select,
-  TextInput,
-  ActionIcon,
-} from "@mantine/core";
-import { X } from "lucide-react";
-import { Column, ColumnFilter, FilterType } from "@/features/rxsoft/types";
-import { isNoValueFilter, isRangeFilter } from "./filters-helpers";
+import { Group, Select, TextInput, ActionIcon } from '@mantine/core';
+import { X } from 'lucide-react';
+import { Column, ColumnFilter, FilterType } from '@/features/rxsoft/types';
+import { isNoValueFilter, isRangeFilter } from './filters-helpers';
 
 export type LocalFilter = {
   id: string;
@@ -39,10 +34,10 @@ export function FilterRow({
         placeholder="Select field"
         value={filter.columnKey}
         onChange={(val) => {
-          updateFilter(filter.id, "columnKey", val);
-          updateFilter(filter.id, "selectedFilter", null);
-          updateFilter(filter.id, "value", undefined);
-          updateFilter(filter.id, "valueTo", undefined);
+          updateFilter(filter.id, 'columnKey', val);
+          updateFilter(filter.id, 'selectedFilter', null);
+          updateFilter(filter.id, 'value', undefined);
+          updateFilter(filter.id, 'valueTo', undefined);
         }}
         data={columns.map((c) => ({
           value: c.key,
@@ -56,12 +51,10 @@ export function FilterRow({
         placeholder="Select operation"
         value={type ?? null}
         onChange={(val) => {
-          const selected = availableFilters.find(
-            (f) => f.type === val
-          );
-          updateFilter(filter.id, "selectedFilter", selected || null);
-          updateFilter(filter.id, "value", undefined);
-          updateFilter(filter.id, "valueTo", undefined);
+          const selected = availableFilters.find((f) => f.type === val);
+          updateFilter(filter.id, 'selectedFilter', selected || null);
+          updateFilter(filter.id, 'value', undefined);
+          updateFilter(filter.id, 'valueTo', undefined);
         }}
         data={availableFilters.map((f) => ({
           value: f.type,
@@ -75,35 +68,25 @@ export function FilterRow({
         <>
           <TextInput
             label="From"
-            value={filter.value || ""}
-            onChange={(e) =>
-              updateFilter(filter.id, "value", e.currentTarget.value)
-            }
+            value={filter.value || ''}
+            onChange={(e) => updateFilter(filter.id, 'value', e.currentTarget.value)}
           />
           <TextInput
             label="To"
-            value={filter.valueTo || ""}
-            onChange={(e) =>
-              updateFilter(filter.id, "valueTo", e.currentTarget.value)
-            }
+            value={filter.valueTo || ''}
+            onChange={(e) => updateFilter(filter.id, 'valueTo', e.currentTarget.value)}
           />
         </>
       ) : !isNoValueFilter(type) && type ? (
         <TextInput
           label="Value"
-          value={filter.value || ""}
-          onChange={(e) =>
-            updateFilter(filter.id, "value", e.currentTarget.value)
-          }
+          value={filter.value || ''}
+          onChange={(e) => updateFilter(filter.id, 'value', e.currentTarget.value)}
         />
       ) : null}
 
       {/* Remove */}
-      <ActionIcon
-        color="red"
-        variant="light"
-        onClick={() => removeFilter(filter.id)}
-      >
+      <ActionIcon color="red" variant="light" onClick={() => removeFilter(filter.id)}>
         <X size={16} />
       </ActionIcon>
     </Group>

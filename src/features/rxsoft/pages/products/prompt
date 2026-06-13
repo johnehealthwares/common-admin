@@ -1,0 +1,399 @@
+Refactor the product pricing tab in /Users/john/develop/rxsoft/rxsoft-admin-3/src/features/rxsoft/pages/products/types/schema.ts to fully leverage the existing declarative form engine architecture, including:
+
+* `FieldGroupEngine`
+* `DataTable`
+* `RenderField`
+* effects system
+* mutation orchestration
+* declarative specs
+* inline editable table cells
+
+Avoid creating bespoke page-level pricing components. The goal is to evolve the system into a reusable ERP-grade metadata-driven matrix/table engine.
+
+---
+
+# Objective
+
+Replace the current:
+
+```ts
+render: productPriceListFieldGroups
+```
+
+implementation with a declarative pricing matrix powered by:
+
+* `FieldGroupEngine`
+* `DataTable`
+* declarative effects
+* mutation handlers
+* inline editable cells
+
+The final solution should:
+
+* load all price lists
+* load all existing product price items
+* merge both datasets into matrix rows
+* render one row per price list
+* support inline editing of unit prices
+* automatically determine create vs update mutations
+* support optimistic updates
+* remain fully spec-driven
+
+---
+
+# Existing Infrastructure To Reuse
+
+The implementation must leverage:
+
+## Existing `FieldGroupEngine(src/features/components/form/field-group-engine.tsx)`
+
+Responsibilities:
+
+* effects execution
+* dependency watching
+* mutation dispatching
+* loading state
+* local row state
+* optimistic updates
+* error handling
+
+---
+
+## Existing `DataTable(src/features/components/table/table.tsx)`
+
+Use `DataTable` as the primary renderer for matrix rows.
+
+Important existing capability:
+
+```tsx
+column.updateField
+```
+
+already supports inline editable cells through:
+
+```tsx
+<RenderField />
+```
+
+This means the pricing matrix can be implemented as:
+
+* declarative rows
+* declarative columns
+* inline editable cells
+* mutation-aware table interactions
+
+without creating custom row renderers.
+
+---
+
+# Required Architectural Enhancements
+
+## 1. Extend `FieldGroupSpec`
+
+Add renderer strategy support:
+
+```ts
+type RendererType =
+  | 'default'
+  | 'table'
+  | 'matrix'
+```
+
+Then:
+
+```ts
+renderer?: RendererType
+```
+
+Recommended:
+
+```ts
+renderer: 'matrix'
+```
+
+---
+
+## 2. Add Declarative Row Source
+
+Add support for computed rows:
+
+```ts
+rowsField?: string
+```
+
+Example:
+
+```ts
+{
+  renderer: 'matrix',
+  rowsField: 'pricingMatrixRows'
+}
+```
+
+Rows should come from:
+
+```ts
+form.getField(rowsField)
+```
+
+---
+
+## 3. Reuse Existing `Column`
+
+Use existing `Column[]` infrastructure instead of introducing a new matrix schema.
+
+Example:
+
+```ts
+columns: [
+  {
+    key: 'priceListName',
+    label: 'Price List',
+  },
+  {
+    key: 'currencyCode',
+    label: 'Currency',
+  },
+  {
+    key: 'unitPrice',
+    label: 'Unit Price',
+    updateField: (row, name, value) => {
+      // inline edit handling
+    },
+  },
+]
+```
+
+This should integrate directly with:
+
+```tsx
+renderCell()
+```
+
+and existing inline `RenderField` behavior.
+
+---
+
+# Required Pricing Flow
+
+## 1. Load All Price Lists
+
+Fetch:
+
+```http
+GET /price-lists
+```
+
+Store result:
+
+```ts
+allPriceLists
+```
+
+---
+
+## 2. Load Existing Product Price Items
+
+Fetch:
+
+```http
+GET /price-lists/items?productId={productId}
+```
+
+Store result:
+
+```ts
+productPriceItems
+```
+
+This effect should:
+
+* depend on product ID
+* refetch when product changes
+
+---
+
+## 3. Merge Into Matrix Rows
+
+Create a compute effect that merges:
+
+* all price lists
+* product price items
+
+into:
+
+```ts
+{
+  id,
+  priceListId,
+  priceListName,
+  currencyCode,
+  itemId?,
+  unitPrice?,
+  exists: boolean,
+  dirty?: boolean,
+}
+```
+
+Store result:
+
+```ts
+pricingMatrixRows
+```
+
+Every price list must always produce a row.
+
+Even missing prices should render.
+
+---
+
+# DataTable Rendering Requirements
+
+Use the existing `DataTable` renderer.
+
+The pricing matrix should:
+
+* display all price lists
+* support inline editing
+* visually indicate missing prices
+* allow inline save actions
+* support optimistic updates
+* allow row-level mutation handling
+
+Recommended:
+
+* readonly columns for:
+
+  * priceListName
+  * currencyCode
+* editable column:
+
+  * unitPrice
+
+---
+
+# Inline Editing Behavior
+
+Leverage:
+
+```ts
+column.updateField
+```
+
+for editable cells.
+
+Updating `unitPrice` should:
+
+* mutate local matrix row state
+* mark row as dirty
+* avoid immediate API calls
+
+---
+
+# Save Action Behavior
+
+Use existing `ActionCell` integration for row save actions.
+
+Example actions:
+
+* Save
+* Reset
+
+Saving should dispatch:
+
+```ts
+{
+  type: 'action',
+  action: 'save-price',
+  payload: { row }
+}
+```
+
+through:
+
+```ts
+runMutation()
+```
+
+---
+
+# Mutation Logic
+
+The mutation layer must determine:
+
+## Existing Price
+
+If:
+
+```ts
+row.exists === true
+```
+
+Call:
+
+```http
+PATCH /price-lists/:priceListId/items/:itemId
+```
+
+## Missing Price
+
+If:
+
+```ts
+row.exists === false
+```
+
+Call:
+
+```http
+POST /price-lists/items
+```
+
+Only `unitPrice` should be editable.
+
+---
+
+# Additional Manual Add Form
+
+Below the pricing matrix, render another standard `FieldGroupSpec` for manually creating a new price list item.
+
+This should:
+
+* reuse existing default renderer
+* reuse `RenderField`
+* reuse mutation system
+
+Fields:
+
+* priceList
+* currencyCode
+* unitPrice
+* hidden productId
+
+Submit through:
+
+```http
+POST /price-lists/items
+```
+
+---
+
+# Final Architectural Goal
+
+The pricing matrix should become a reusable renderer strategy powered by:
+
+* `FieldGroupEngine`
+* `DataTable`
+* declarative effects
+* declarative columns
+* mutation orchestration
+
+The architecture should later support reusable ERP-style interfaces such as:
+
+* pricing matrices
+* inventory grids
+* warehouse stock tables
+* supplier mappings
+* tax matrices
+
+without introducing bespoke page-specific React components.

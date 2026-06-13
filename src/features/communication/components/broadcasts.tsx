@@ -1,23 +1,13 @@
-import { useMemo, useState } from 'react'
-import { Plus } from 'lucide-react'
-import {
-  Button,
-  Modal,
-  TextInput,
-  Textarea,
-  Badge,
-  Stack,
-  Grid,
-} from '@mantine/core'
-
-import { ConfirmDialog } from '@/components/confirm-dialog'
-import { JsonEditorField } from '@/features/components/form/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
-import { RxPage } from '@/features/components/page/rx-page'
-import { SelectField } from '@/features/components/form/select'
-
-import { BROADCAST_STATUS_OPTIONS } from '../types/constants'
-
+import { Button, Modal, TextInput, Textarea, Badge, Stack, Grid } from '@mantine/core';
+import { Plus } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { ConfirmDialog } from '@/components/confirm-dialog';
+import { JsonEditorField } from '@/features/components/form/json-editor-field';
+import { SelectField } from '@/features/components/form/select';
+import { RxPage } from '@/features/components/page/rx-page';
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table';
+import { Option } from '@/features/rxsoft/types';
+import { BROADCAST_STATUS_OPTIONS } from '../types/constants';
 import {
   DialogActions,
   JsonPreviewDialog,
@@ -28,23 +18,22 @@ import {
   useCommunicationList,
   CommunicationRow,
   getOption,
-} from './shared'
-import { Option } from '@/features/rxsoft/types'
+} from './shared';
 
 type BroadcastFormState = {
-  id?: string
-  name: string
-  description: string
-  messageTemplateId: string
-  channelIds: string[]
-  recipientCriteria: Record<string, unknown>
-  scheduledAt: string
-  status: Option
-  totalRecipients: number
-  sentCount: number
-  failedCount: number
-  metadata: Record<string, unknown>
-}
+  id?: string;
+  name: string;
+  description: string;
+  messageTemplateId: string;
+  channelIds: string[];
+  recipientCriteria: Record<string, unknown>;
+  scheduledAt: string;
+  status: Option;
+  totalRecipients: number;
+  sentCount: number;
+  failedCount: number;
+  metadata: Record<string, unknown>;
+};
 
 const defaultFormState: BroadcastFormState = {
   name: '',
@@ -53,12 +42,12 @@ const defaultFormState: BroadcastFormState = {
   channelIds: [],
   recipientCriteria: {},
   scheduledAt: '',
-  status: {value:'draft', label:'Draft'},
+  status: { value: 'draft', label: 'Draft' },
   totalRecipients: 0,
   sentCount: 0,
   failedCount: 0,
   metadata: {},
-}
+};
 
 const columns = [
   { key: 'id', label: 'ID' },
@@ -68,35 +57,32 @@ const columns = [
   { key: 'sentCount', label: 'Sent' },
   { key: 'scheduledAt', label: 'Scheduled' },
   { key: 'createdAt', label: 'Created' },
-]
+];
 
 export function BroadcastsPage() {
-  const [search, setSearch] = useState('')
-  const [selectedRow, setSelectedRow] = useState<CommunicationRow | null>(null)
+  const [search, setSearch] = useState('');
+  const [selectedRow, setSelectedRow] = useState<CommunicationRow | null>(null);
 
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [isJsonOpen, setIsJsonOpen] = useState(false)
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isJsonOpen, setIsJsonOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const [formState, setFormState] =
-    useState<BroadcastFormState>(defaultFormState)
+  const [formState, setFormState] = useState<BroadcastFormState>(defaultFormState);
 
-  const { data: broadcasts = [], isLoading } =
-    useCommunicationList('broadcasts', search)
+  const { data: broadcasts = [], isLoading } = useCommunicationList('broadcasts', search);
 
-  const { createMutation, updateMutation, deleteMutation } =
-    useCommunicationCrud('broadcasts')
+  const { createMutation, updateMutation, deleteMutation } = useCommunicationCrud('broadcasts');
 
-  const rows = useMemo(() => normalizeRows(broadcasts), [broadcasts])
+  const rows = useMemo(() => normalizeRows(broadcasts), [broadcasts]);
 
   const openCreate = () => {
-    setFormState(defaultFormState)
-    setSelectedRow(null)
-    setIsFormOpen(true)
-  }
+    setFormState(defaultFormState);
+    setSelectedRow(null);
+    setIsFormOpen(true);
+  };
 
   const openEdit = (row: CommunicationRow) => {
-    setSelectedRow(row)
+    setSelectedRow(row);
 
     setFormState({
       id: getString(row.id),
@@ -111,43 +97,43 @@ export function BroadcastsPage() {
       sentCount: Number(row.sentCount ?? 0),
       failedCount: Number(row.failedCount ?? 0),
       metadata: (row.metadata as Record<string, unknown>) ?? {},
-    })
+    });
 
-    setIsFormOpen(true)
-  }
+    setIsFormOpen(true);
+  };
 
   const openDelete = (row: CommunicationRow) => {
-    setSelectedRow(row)
-    setIsDeleteOpen(true)
-  }
+    setSelectedRow(row);
+    setIsDeleteOpen(true);
+  };
 
   const openJson = (row: CommunicationRow) => {
-    setSelectedRow(row)
-    setIsJsonOpen(true)
-  }
+    setSelectedRow(row);
+    setIsJsonOpen(true);
+  };
 
   const handleSave = async () => {
-    const payload = { ...formState }
-    delete payload.id
+    const payload = { ...formState };
+    delete payload.id;
 
     if (formState.id) {
       await updateMutation.mutateAsync({
         id: formState.id,
         payload: getDirtyPayload(selectedRow || {}, payload),
-      })
+      });
     } else {
-      await createMutation.mutateAsync(payload)
+      await createMutation.mutateAsync(payload);
     }
 
-    setIsFormOpen(false)
-  }
+    setIsFormOpen(false);
+  };
 
   const handleDelete = async () => {
     if (selectedRow?.id) {
-      await deleteMutation.mutateAsync(String(selectedRow.id))
-      setIsDeleteOpen(false)
+      await deleteMutation.mutateAsync(String(selectedRow.id));
+      setIsDeleteOpen(false);
     }
-  }
+  };
 
   return (
     <RxPage
@@ -166,11 +152,7 @@ export function BroadcastsPage() {
           ...col,
           render:
             col.key === 'status'
-              ? (value: any) => (
-                <Badge variant="light">
-                  {getString(value)}
-                </Badge>
-              )
+              ? (value: any) => <Badge variant="light">{getString(value)}</Badge>
               : undefined,
         }))}
         isLoading={isLoading}
@@ -181,10 +163,8 @@ export function BroadcastsPage() {
             { label: 'View JSON', onClick: openJson },
             { label: 'Edit', onClick: openEdit },
             { label: 'Delete', onClick: openDelete },
-          ]
-        }
-        }
-
+          ],
+        }}
       />
 
       {/* FORM MODAL */}
@@ -199,17 +179,13 @@ export function BroadcastsPage() {
             label="Name"
             required
             value={formState.name}
-            onChange={(e) =>
-              setFormState((p) => ({ ...p, name: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, name: e.target.value }))}
           />
 
           <Textarea
             label="Description"
             value={formState.description}
-            onChange={(e) =>
-              setFormState((p) => ({ ...p, description: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, description: e.target.value }))}
           />
 
           <Grid>
@@ -231,9 +207,7 @@ export function BroadcastsPage() {
                 label="Status"
                 options={BROADCAST_STATUS_OPTIONS}
                 value={formState.status}
-                onChange={(value) =>
-                  setFormState((p: any) => ({ ...p, status: value }))
-                }
+                onChange={(value) => setFormState((p: any) => ({ ...p, status: value }))}
               />
             </Grid.Col>
           </Grid>
@@ -253,25 +227,19 @@ export function BroadcastsPage() {
           <JsonEditorField
             label="Recipient Criteria"
             value={formState.recipientCriteria}
-            onChange={(v) =>
-              setFormState((p) => ({ ...p, recipientCriteria: v }))
-            }
+            onChange={(v) => setFormState((p) => ({ ...p, recipientCriteria: v }))}
           />
 
           <JsonEditorField
             label="Metadata"
             value={formState.metadata}
-            onChange={(v) =>
-              setFormState((p) => ({ ...p, metadata: v }))
-            }
+            onChange={(v) => setFormState((p) => ({ ...p, metadata: v }))}
           />
 
           <DialogActions
             onSave={handleSave}
             onCancel={() => setIsFormOpen(false)}
-            isLoading={
-              createMutation.isPending || updateMutation.isPending
-            }
+            isLoading={createMutation.isPending || updateMutation.isPending}
           />
         </Stack>
       </Modal>
@@ -294,5 +262,5 @@ export function BroadcastsPage() {
         isLoading={deleteMutation.isPending}
       />
     </RxPage>
-  )
+  );
 }

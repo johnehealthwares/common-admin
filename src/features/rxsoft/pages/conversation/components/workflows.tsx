@@ -1,6 +1,9 @@
-import { DataPageShell } from '@/features/components/page/data-page-shell'
-import { workflowPageSchema } from './conversation-page-schemas'
+import { DataPageShell } from '@/features/components/page/data-page-shell';
+import type { ModelConfig } from '@/features/shared/model-schema';
+import { workflowPageSchema } from './conversation-page-schemas';
+
+const config: ModelConfig = workflowPageSchema;
 
 export function RxWorkflowsPage() {
-  return <DataPageShell {...workflowPageSchema} />
+  return <DataPageShell config={config} />;
 }

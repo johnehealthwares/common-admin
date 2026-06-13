@@ -4,6 +4,6 @@
  */
 
 // Module metadata
-export const adminModuleId = 'admin' as const
-export const adminModuleName = 'Admin Console'
-export const adminModuleDescription = 'Full shadcn-admin features with access to all modules'
+export const adminModuleId = 'admin' as const;
+export const adminModuleName = 'Admin Console';
+export const adminModuleDescription = 'Full shadcn-admin features with access to all modules';

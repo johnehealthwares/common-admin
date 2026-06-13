@@ -1,8 +1,7 @@
-import { Link } from '@tanstack/react-router'
-import { Paper, Stack, Title, Text } from '@mantine/core'
-
-import { AuthLayout } from '../../auth-layout'
-import { OtpForm } from '../components/otp-form'
+import { Paper, Stack, Title, Text } from '@mantine/core';
+import { Link } from '@tanstack/react-router';
+import { AuthLayout } from '../../auth-layout';
+import { OtpForm } from '../components/otp-form';
 
 export function Otp() {
   return (
@@ -11,9 +10,7 @@ export function Otp() {
         <Stack gap="md">
           {/* Header */}
           <div>
-            <Title order={4}>
-              Two-factor Authentication
-            </Title>
+            <Title order={4}>Two-factor Authentication</Title>
 
             <Text size="sm" c="dimmed" mt="xs">
               Please enter the authentication code. <br />
@@ -27,10 +24,7 @@ export function Otp() {
           {/* Footer */}
           <Text size="sm" ta="center" c="dimmed">
             Haven&apos;t received it?{' '}
-            <Link
-              to="/sign-in"
-              className="underline underline-offset-4 hover:text-primary"
-            >
+            <Link to="/sign-in" className="underline underline-offset-4 hover:text-primary">
               Resend a new code
             </Link>
             .
@@ -38,5 +32,5 @@ export function Otp() {
         </Stack>
       </Paper>
     </AuthLayout>
-  )
+  );
 }

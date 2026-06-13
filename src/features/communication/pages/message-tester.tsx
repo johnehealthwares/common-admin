@@ -1,25 +1,14 @@
-import { useMemo, useState } from 'react'
-import { RxPage } from '@/features/components/page/rx-page'
-import { communicationApi } from '@/lib/communication-api'
-import { SelectField } from '@/features/components/form/select'
-import {
-  Button,
-  Textarea,
-  Card,
-  Stack,
-  Group,
-  Text,
-  Grid,
-  ScrollArea,
-  Code,
-} from '@mantine/core'
-import { notifications } from '@mantine/notifications'
-import { AsyncSelectField } from '@/features/components/form/async-field'
-
-import { useForm, Controller } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { getOption } from '../components/shared'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Textarea, Card, Stack, Group, Text, Grid, ScrollArea, Code } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { useMemo, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { AsyncSelectField } from '@/features/components/form/async-field';
+import { SelectField } from '@/features/components/form/select';
+import { RxPage } from '@/features/components/page/rx-page';
+import { communicationApi } from '@/lib/communication-api';
+import { getOption } from '../components/shared';
 
 /* ------------------ Schema ------------------ */
 
@@ -33,34 +22,34 @@ const schema = z.object({
     .min(1, 'Payload is required')
     .refine((val) => {
       try {
-        JSON.parse(val)
-        return true
+        JSON.parse(val);
+        return true;
       } catch {
-        return false
+        return false;
       }
     }, 'Payload must be valid JSON'),
-})
+});
 
-type FormValues = z.infer<typeof schema>
+type FormValues = z.infer<typeof schema>;
 
 /* ------------------ Constants ------------------ */
 
 const messageTypes = [
   { label: 'Order', value: 'ORDER' },
   { label: 'Patient', value: 'PATIENT' },
-]
+];
 
 const messageProtocols = [
   { label: 'JSON', value: 'CUSTOM_JSON' },
   { label: 'HL7 V2', value: 'HL7_V2' },
   { label: 'FHIR R4', value: 'FHIR_R4' },
-]
+];
 
 /* ------------------ Component ------------------ */
 
 export function MessageTesterPage() {
-  const [response, setResponse] = useState<string | null>(null)
-  const [isSending, setIsSending] = useState(false)
+  const [response, setResponse] = useState<string | null>(null);
+  const [isSending, setIsSending] = useState(false);
 
   const {
     control,
@@ -77,34 +66,50 @@ export function MessageTesterPage() {
       targetAE: '',
       payload: '',
     },
-  })
+  });
 
-  const messageType = watch('messageType')
-  const messageProtocol = watch('messageProtocol')
-  const targetAE = watch('targetAE')
+  const messageType = watch('messageType');
+  const messageProtocol = watch('messageProtocol');
+  const targetAE = watch('targetAE');
 
   /* ------------------ Sample Payload ------------------ */
 
   const samplePayload = useMemo(() => {
     if (messageType === 'ORDER' && messageProtocol === 'HL7_V2') {
-      return 'MSH|^~\\&|HEALTHSTACK|HS|SWITCH|RXSOFT|202604251200||ORM^O01|123|P|2.5\rPID|1||123456^^^HOSPITAL^MR||Doe^Jane||19840501|F\rORC|NW|ORDER-123|||||R\rOBR|1|ORDER-123||RAD-CHEST^Chest X-Ray^99LOCAL|||202604251200'
+      return 'MSH|^~\\&|HEALTHSTACK|HS|SWITCH|RXSOFT|202604251200||ORM^O01|123|P|2.5\rPID|1||123456^^^HOSPITAL^MR||Doe^Jane||19840501|F\rORC|NW|ORDER-123|||||R\rOBR|1|ORDER-123||RAD-CHEST^Chest X-Ray^99LOCAL|||202604251200';
     }
 
     if (messageType === 'ORDER' && messageProtocol === 'FHIR_R4') {
-      return 'MSH|^~\\&|HEALTHSTACK|HS|SWITCH|RXSOFT|202604251200||ADT^A04|456|P|2.5\rPID|1||987654^^^HOSPITAL^MR||Smith^John||19780312|M'
+      return 'MSH|^~\\&|HEALTHSTACK|HS|SWITCH|RXSOFT|202604251200||ADT^A04|456|P|2.5\rPID|1||987654^^^HOSPITAL^MR||Smith^John||19780312|M';
     }
 
-    if (messageType === 'ORDER' && messageProtocol === 'CUSTOM_JSON') 
-    return JSON.stringify({ _id: 'order-123', documentationId: 'order-123', clientId: 'client-123', clientname: 'Jane Doe', client: { firstname: 'Jane', lastname: 'Doe', dob: '1984-05-01', gender: 'F', }, order: 'Chest X-Ray', order_code: 'RAD-CHEST', order_category: 'RADIOLOGY', targetAE, requestingdoctor_Id: 'doc-001', requestingdoctor_facilityname: 'Healthstack Hospital', }, null, 2)
-    
-    return JSON.stringify( { }, null, 2 )
-  }, [messageType, messageProtocol, targetAE])
+    if (messageType === 'ORDER' && messageProtocol === 'CUSTOM_JSON')
+      return JSON.stringify(
+        {
+          _id: 'order-123',
+          documentationId: 'order-123',
+          clientId: 'client-123',
+          clientname: 'Jane Doe',
+          client: { firstname: 'Jane', lastname: 'Doe', dob: '1984-05-01', gender: 'F' },
+          order: 'Chest X-Ray',
+          order_code: 'RAD-CHEST',
+          order_category: 'RADIOLOGY',
+          targetAE,
+          requestingdoctor_Id: 'doc-001',
+          requestingdoctor_facilityname: 'Healthstack Hospital',
+        },
+        null,
+        2
+      );
+
+    return JSON.stringify({}, null, 2);
+  }, [messageType, messageProtocol, targetAE]);
 
   /* ------------------ Submit ------------------ */
 
   const onSubmit = async (data: FormValues) => {
-    setIsSending(true)
-    setResponse(null)
+    setIsSending(true);
+    setResponse(null);
 
     try {
       const result = await communicationApi.post('/v1/flow/messages', {
@@ -112,17 +117,17 @@ export function MessageTesterPage() {
         messageType: data.messageType,
         targetAE: data.targetAE,
         sourceAE: data.sourceAE,
-      })
+      });
 
-      setResponse(JSON.stringify(result.data ?? result, null, 2))
-      notifications.show({ message: 'Payload sent successfully' })
+      setResponse(JSON.stringify(result.data ?? result, null, 2));
+      notifications.show({ message: 'Payload sent successfully' });
     } catch (error) {
-      setResponse(String(error))
-      notifications.show({ color: 'red', message: 'Failed to send payload' })
+      setResponse(String(error));
+      notifications.show({ color: 'red', message: 'Failed to send payload' });
     } finally {
-      setIsSending(false)
+      setIsSending(false);
     }
-  }
+  };
 
   /* ------------------ UI ------------------ */
 
@@ -141,26 +146,30 @@ export function MessageTesterPage() {
                 control={control}
                 render={({ field }) => (
                   <AsyncSelectField
-                    field={{ label: 'Source AE', name: 'ae', searchParam:{endpoint: '/v1/aes'} }}
+                    field={{ label: 'Source AE', name: 'ae', searchParam: { endpoint: '/v1/aes' } }}
                     value={getOption(field.value)}
                     onChange={field.onChange}
                   />
                 )}
               />
-              <Text c="red" size="xs">{errors.sourceAE?.message}</Text>
+              <Text c="red" size="xs">
+                {errors.sourceAE?.message}
+              </Text>
 
               <Controller
                 name="targetAE"
                 control={control}
                 render={({ field }) => (
                   <AsyncSelectField
-                    field={{ label: 'Target AE', name: 'ae', searchParam:{endpoint: '/v1/aes'} }}
+                    field={{ label: 'Target AE', name: 'ae', searchParam: { endpoint: '/v1/aes' } }}
                     value={getOption(field.value)}
                     onChange={field.onChange}
                   />
                 )}
               />
-              <Text c="red" size="xs">{errors.targetAE?.message}</Text>
+              <Text c="red" size="xs">
+                {errors.targetAE?.message}
+              </Text>
             </Grid.Col>
 
             {/* Message */}
@@ -177,7 +186,9 @@ export function MessageTesterPage() {
                   />
                 )}
               />
-              <Text c="red" size="xs">{errors.messageType?.message}</Text>
+              <Text c="red" size="xs">
+                {errors.messageType?.message}
+              </Text>
 
               <Controller
                 name="messageProtocol"
@@ -186,13 +197,14 @@ export function MessageTesterPage() {
                   <SelectField
                     label="Message Protocol"
                     {...field}
-                                        value={getOption(field.value)}
-
+                    value={getOption(field.value)}
                     options={messageProtocols}
                   />
                 )}
               />
-              <Text c="red" size="xs">{errors.messageProtocol?.message}</Text>
+              <Text c="red" size="xs">
+                {errors.messageProtocol?.message}
+              </Text>
             </Grid.Col>
 
             {/* Actions */}
@@ -224,7 +236,9 @@ export function MessageTesterPage() {
               />
             )}
           />
-          <Text c="red" size="xs">{errors.payload?.message}</Text>
+          <Text c="red" size="xs">
+            {errors.payload?.message}
+          </Text>
 
           {/* Submit */}
           <Group justify="flex-end">
@@ -236,7 +250,9 @@ export function MessageTesterPage() {
           {/* Response */}
           {response && (
             <Card withBorder radius="md" p="md" bg="gray.0">
-              <Text size="sm" fw={600}>Response</Text>
+              <Text size="sm" fw={600}>
+                Response
+              </Text>
               <ScrollArea h={260} mt="sm">
                 <Code block>{response}</Code>
               </ScrollArea>
@@ -245,5 +261,5 @@ export function MessageTesterPage() {
         </Stack>
       </Card>
     </RxPage>
-  )
+  );
 }

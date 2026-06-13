@@ -1,27 +1,23 @@
-import { Column, ColumnFilter, Field, FilterType, FilterValue } from "@/features/rxsoft/types"
-import { Badge, Text } from "@mantine/core"
-import dayjs from "dayjs"
-import { RenderField } from "../form/RenderField";
-
-
+import { Badge, Text } from '@mantine/core';
+import dayjs from 'dayjs';
+import { Column, ColumnFilter, Field, FilterType, FilterValue } from '@/features/rxsoft/types';
+import { RenderField } from '../form/RenderField';
 
 // ------------------------
 // AUTO FILTER RESOLVER
 // ------------------------
 
-export const resolveAutoFilterValue = (
-  filter: ColumnFilter
-): FilterValue | null => {
+export const resolveAutoFilterValue = (filter: ColumnFilter): FilterValue | null => {
   if (filter.filterValue) return filter.filterValue;
-  const now = dayjs()
+  const now = dayjs();
 
-  const startOfDay = (d: dayjs.Dayjs) => d.startOf('day')
-  const endOfDay = (d: dayjs.Dayjs) => d.endOf('day')
+  const startOfDay = (d: dayjs.Dayjs) => d.startOf('day');
+  const endOfDay = (d: dayjs.Dayjs) => d.endOf('day');
 
-  const startOfMonth = (d: dayjs.Dayjs) => d.startOf('month')
-  const endOfMonth = (d: dayjs.Dayjs) => d.endOf('month')
+  const startOfMonth = (d: dayjs.Dayjs) => d.startOf('month');
+  const endOfMonth = (d: dayjs.Dayjs) => d.endOf('month');
 
-  const toISO = (d: dayjs.Dayjs) => d.toISOString()
+  const toISO = (d: dayjs.Dayjs) => d.toISOString();
 
   switch (filter.type) {
     case FilterType.TODAY:
@@ -29,24 +25,24 @@ export const resolveAutoFilterValue = (
         filter,
         value: toISO(startOfDay(now)),
         valueTo: toISO(endOfDay(now)),
-      }
+      };
 
     case FilterType.YESTERDAY: {
-      const d = now.subtract(1, 'day')
+      const d = now.subtract(1, 'day');
       return {
         filter,
         value: toISO(startOfDay(d)),
         valueTo: toISO(endOfDay(d)),
-      }
+      };
     }
 
     case FilterType.TOMMORROW: {
-      const d = now.add(1, 'day')
+      const d = now.add(1, 'day');
       return {
         filter,
         value: toISO(startOfDay(d)),
         valueTo: toISO(endOfDay(d)),
-      }
+      };
     }
 
     case FilterType.NEXT_24_HOURS:
@@ -54,31 +50,31 @@ export const resolveAutoFilterValue = (
         filter,
         value: toISO(now),
         valueTo: toISO(now.add(24, 'hour')),
-      }
+      };
 
     case FilterType.THIS_MONTH:
       return {
         filter,
         value: toISO(startOfMonth(now)),
         valueTo: toISO(endOfMonth(now)),
-      }
+      };
 
     case FilterType.LAST_MONTH: {
-      const d = now.subtract(1, 'month')
+      const d = now.subtract(1, 'month');
       return {
         filter,
         value: toISO(startOfMonth(d)),
         valueTo: toISO(endOfMonth(d)),
-      }
+      };
     }
 
     case FilterType.NEXT_MONTH: {
-      const d = now.add(1, 'month')
+      const d = now.add(1, 'month');
       return {
         filter,
         value: toISO(startOfMonth(d)),
         valueTo: toISO(endOfMonth(d)),
-      }
+      };
     }
 
     case FilterType.THIS_YEAR:
@@ -86,49 +82,42 @@ export const resolveAutoFilterValue = (
         filter,
         value: toISO(now.startOf('year')),
         valueTo: toISO(now.endOf('year')),
-      }
+      };
 
     default:
-      return null
+      return null;
   }
-}
+};
 
-export function getValueByPath(
-  obj: Record<string, any>,
-  path: string,
-): any {
-  return path
-    .split('.')
-    .reduce(
-      (acc, key) => (acc != null ? acc[key] : undefined),
-      obj,
-    )
+export function getValueByPath(obj: Record<string, any>, path: string): any {
+  return path.split('.').reduce((acc, key) => (acc != null ? acc[key] : undefined), obj);
 }
 export function renderCell(row: Record<string, any>, column: Column) {
   const value = getValueByPath(row, column.key);
   if (column.editable && column.field?.updateField) {
-    const update = column.field?.updateField
+    const update = column.field?.updateField;
     const updateField = (name: string, value: string) => update(row, name, value);
-    return <>
-      <RenderField inTable field={column.field} value={value} updateField={updateField} />
-      {column.error?.(row) && (
-        <Text c="red" size="xs">
-          {column.error(row)}
-        </Text>
-      )}</>
+    return (
+      <>
+        <RenderField inTable field={column.field} value={value} updateField={updateField} />
+        {column.error?.(row) && (
+          <Text c="red" size="xs">
+            {column.error(row)}
+          </Text>
+        )}
+      </>
+    );
   }
-  return renderCellValue(value)
+  return renderCellValue(value);
 }
 
 export function renderCellValue(value: unknown) {
-
-
   if (typeof value === 'boolean') {
     return (
       <Badge color={value ? 'blue' : 'gray'} variant="light">
         {String(value)}
       </Badge>
-    )
+    );
   }
 
   if (value == null || value === '') {
@@ -136,7 +125,7 @@ export function renderCellValue(value: unknown) {
       <Text c="dimmed" size="sm">
         -
       </Text>
-    )
+    );
   }
 
   if (typeof value === 'object') {
@@ -144,8 +133,8 @@ export function renderCellValue(value: unknown) {
       <Text size="xs" ff="monospace">
         {JSON.stringify(value)}
       </Text>
-    )
+    );
   }
 
-  return <Text size="sm">{String(value)}</Text>
+  return <Text size="sm">{String(value)}</Text>;
 }

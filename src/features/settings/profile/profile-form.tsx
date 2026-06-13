@@ -1,4 +1,3 @@
-import { useForm } from '@mantine/form'
 import {
   TextInput,
   Textarea,
@@ -9,27 +8,24 @@ import {
   Text,
   Anchor,
   Divider,
-} from '@mantine/core'
-
-import { Link } from '@tanstack/react-router'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { Link } from '@tanstack/react-router';
+import { showSubmittedData } from '@/lib/show-submitted-data';
 
 type ProfileFormValues = {
-  username: string
-  email: string
-  bio: string
-  urls: { value: string }[]
-}
+  username: string;
+  email: string;
+  bio: string;
+  urls: { value: string }[];
+};
 
 const defaultValues: ProfileFormValues = {
   username: '',
   email: '',
   bio: 'I own a computer.',
-  urls: [
-    { value: 'https://shadcn.com' },
-    { value: 'http://twitter.com/shadcn' },
-  ],
-}
+  urls: [{ value: 'https://shadcn.com' }, { value: 'http://twitter.com/shadcn' }],
+};
 
 export function ProfileForm() {
   const form = useForm<ProfileFormValues>({
@@ -37,46 +33,42 @@ export function ProfileForm() {
 
     validate: {
       username: (value) => {
-        if (!value) return 'Please enter your username.'
-        if (value.length < 2)
-          return 'Username must be at least 2 characters.'
-        if (value.length > 30)
-          return 'Username must not be longer than 30 characters.'
-        return null
+        if (!value) return 'Please enter your username.';
+        if (value.length < 2) return 'Username must be at least 2 characters.';
+        if (value.length > 30) return 'Username must not be longer than 30 characters.';
+        return null;
       },
 
       email: (value) => {
-        if (!value) return 'Please select an email to display.'
-        const ok = /^\S+@\S+\.\S+$/.test(value)
-        if (!ok) return 'Invalid email'
-        return null
+        if (!value) return 'Please select an email to display.';
+        const ok = /^\S+@\S+\.\S+$/.test(value);
+        if (!ok) return 'Invalid email';
+        return null;
       },
 
       bio: (value) => {
-        if (!value) return 'Bio is required'
-        if (value.length < 4) return 'Bio must be at least 4 characters'
-        if (value.length > 160) return 'Bio must be under 160 characters'
-        return null
+        if (!value) return 'Bio is required';
+        if (value.length < 4) return 'Bio must be at least 4 characters';
+        if (value.length > 160) return 'Bio must be under 160 characters';
+        return null;
       },
 
       urls: {
         value: (value) => {
-          if (!value) return 'URL is required'
+          if (!value) return 'URL is required';
           try {
-            new URL(value)
-            return null
+            new URL(value);
+            return null;
           } catch {
-            return 'Please enter a valid URL.'
+            return 'Please enter a valid URL.';
           }
         },
       },
     },
-  })
+  });
 
   return (
-    <form
-      onSubmit={form.onSubmit((data) => showSubmittedData(data))}
-    >
+    <form onSubmit={form.onSubmit((data) => showSubmittedData(data))}>
       <Stack gap="md">
         {/* ===== Username ===== */}
         <TextInput
@@ -134,9 +126,7 @@ export function ProfileForm() {
           <Button
             variant="outline"
             size="xs"
-            onClick={() =>
-              form.insertListItem('urls', { value: '' })
-            }
+            onClick={() => form.insertListItem('urls', { value: '' })}
           >
             Add URL
           </Button>
@@ -146,11 +136,9 @@ export function ProfileForm() {
 
         {/* ===== Submit ===== */}
         <Group justify="flex-end">
-          <Button type="submit">
-            Update profile
-          </Button>
+          <Button type="submit">Update profile</Button>
         </Group>
       </Stack>
     </form>
-  )
+  );
 }

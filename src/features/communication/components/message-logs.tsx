@@ -1,15 +1,18 @@
-import { useMemo, useState } from 'react'
-import { Search } from 'lucide-react'
-import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
-import { RxPage } from '@/features/components/page/rx-page'
-import { SelectField } from '@/features/components/form/select'
+import { Badge } from '@mantine/core';
+import { Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { SelectField } from '@/features/components/form/select';
+import { RxPage } from '@/features/components/page/rx-page';
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table';
+import { Option } from '@/features/rxsoft/types';
+import { MESSAGE_STATUS_OPTIONS, MESSAGE_TYPE_OPTIONS } from '../types/constants';
 import {
-  MESSAGE_STATUS_OPTIONS,
-  MESSAGE_TYPE_OPTIONS,
-} from '../types/constants'
-import { JsonPreviewDialog, getOption, getString, normalizeRows, useCommunicationList } from './shared'
-import { Badge } from '@mantine/core'
-import { Option } from '@/features/rxsoft/types'
+  JsonPreviewDialog,
+  getOption,
+  getString,
+  normalizeRows,
+  useCommunicationList,
+} from './shared';
 
 const columns = [
   { key: 'id', label: 'ID', width: '80px' },
@@ -19,25 +22,25 @@ const columns = [
   { key: 'status', label: 'Status', width: '120px' },
   { key: 'sentAt', label: 'Sent At', width: '150px' },
   { key: 'deliveredAt', label: 'Delivered At', width: '150px' },
-]
+];
 
 export function MessageLogsPage() {
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<Option>(getOption(''))
-  const [typeFilter, setTypeFilter] = useState<Option>(getOption(''))
-  const [selectedRow] = useState<any>(null)
-  const [isJsonDialogOpen, setIsJsonDialogOpen] = useState(false)
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<Option>(getOption(''));
+  const [typeFilter, setTypeFilter] = useState<Option>(getOption(''));
+  const [selectedRow] = useState<any>(null);
+  const [isJsonDialogOpen, setIsJsonDialogOpen] = useState(false);
 
   const extraParams = useMemo(() => {
-    const params: Record<string, unknown> = {}
-    if (statusFilter) params.status = statusFilter
-    if (typeFilter) params.messageType = typeFilter
-    return params
-  }, [statusFilter, typeFilter])
+    const params: Record<string, unknown> = {};
+    if (statusFilter) params.status = statusFilter;
+    if (typeFilter) params.messageType = typeFilter;
+    return params;
+  }, [statusFilter, typeFilter]);
 
-  const { data: logs = [], isLoading } = useCommunicationList('message-logs', search, extraParams)
+  const { data: logs = [], isLoading } = useCommunicationList('message-logs', search, extraParams);
 
-  const normalizedRows = useMemo(() => normalizeRows(logs), [logs])
+  const normalizedRows = useMemo(() => normalizeRows(logs), [logs]);
 
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {
@@ -48,15 +51,12 @@ export function MessageLogsPage() {
       cancelled: 'bg-gray-100 text-gray-800',
       scheduled: 'bg-yellow-100 text-yellow-800',
       sending: 'bg-orange-100 text-orange-800',
-    }
-    return statusColors[status] || 'bg-gray-100 text-gray-800'
-  }
+    };
+    return statusColors[status] || 'bg-gray-100 text-gray-800';
+  };
 
   return (
-    <RxPage
-      title="Message Logs"
-      description="View sent messages and delivery status"
-    >
+    <RxPage title="Message Logs" description="View sent messages and delivery status">
       {/* Filters */}
       <div className="flex gap-4 mb-6">
         <div className="flex-1">
@@ -93,15 +93,14 @@ export function MessageLogsPage() {
 
       <PaginatedDataTable
         rows={normalizedRows}
-        columns={columns.map(col => ({
+        columns={columns.map((col) => ({
           ...col,
-          render: col.key === 'status'
-            ? (value: any) => (
-                <Badge className={getStatusBadge(getString(value))}>
-                  {getString(value)}
-                </Badge>
-              )
-            : undefined
+          render:
+            col.key === 'status'
+              ? (value: any) => (
+                  <Badge className={getStatusBadge(getString(value))}>{getString(value)}</Badge>
+                )
+              : undefined,
         }))}
         isLoading={isLoading}
       />
@@ -114,5 +113,5 @@ export function MessageLogsPage() {
         onOpenChange={setIsJsonDialogOpen}
       />
     </RxPage>
-  )
+  );
 }

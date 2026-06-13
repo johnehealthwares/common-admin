@@ -1,1 +1,1 @@
-export * from './pages/settings-page'
+export * from './pages/settings-page';

@@ -1,17 +1,13 @@
-import { ReactNode } from 'react'
-import { Box, Divider, Stack, Text, Title } from '@mantine/core'
+import { Box, Divider, Stack, Text, Title } from '@mantine/core';
+import { ReactNode } from 'react';
 
 type ContentSectionProps = {
-  title: string
-  desc: string
-  children: ReactNode
-}
+  title: string;
+  desc: string;
+  children: ReactNode;
+};
 
-export function ContentSection({
-  title,
-  desc,
-  children,
-}: ContentSectionProps) {
+export function ContentSection({ title, desc, children }: ContentSectionProps) {
   return (
     <Stack h="100%" flex={1} gap={0}>
       <Box>
@@ -47,5 +43,5 @@ export function ContentSection({
         </Box>
       </Box>
     </Stack>
-  )
+  );
 }

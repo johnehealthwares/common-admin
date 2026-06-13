@@ -1,14 +1,5 @@
-import {
-  Card,
-  Text,
-  Title,
-  SimpleGrid,
-  Stack,
-  Group,
-  Progress,
-} from '@mantine/core'
-
-import { AnalyticsChart } from './analytics-chart'
+import { Card, Text, Title, SimpleGrid, Stack, Group, Progress } from '@mantine/core';
+import { AnalyticsChart } from './analytics-chart';
 
 export function Analytics() {
   return (
@@ -108,5 +99,5 @@ export function Analytics() {
         </Card>
       </SimpleGrid>
     </Stack>
-  )
+  );
 }

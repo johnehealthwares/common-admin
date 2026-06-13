@@ -1,1 +1,1 @@
-export * from './pages/otp-page'
+export * from './pages/otp-page';

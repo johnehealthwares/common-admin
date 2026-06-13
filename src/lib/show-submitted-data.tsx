@@ -1,15 +1,15 @@
-import { notifications } from "@mantine/notifications";
+import { notifications } from '@mantine/notifications';
 
 export function showSubmittedData(
-  data: unknown,
+  data: any,
   title: string = 'You submitted the following values:'
 ) {
-  notifications.show({title, 
+  notifications.show({
+    title,
     message: (
-      // w-[340px]
-      <pre className='mt-2 w-full overflow-x-auto rounded-md bg-slate-950 p-4'>
-        <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
+      <pre className="mt-2 w-full overflow-x-auto rounded-md bg-slate-950 p-4">
+        <code className="text-white">{JSON.stringify(data, null, 2)}</code>
       </pre>
     ),
-  })
+  });
 }

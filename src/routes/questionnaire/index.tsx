@@ -1,50 +1,44 @@
-import { useEffect, useMemo, useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-
-import { Questionnaire, type QuestionnaireQuestion } from '@/features/conversation/components/questionnaire'
-import { useDebouncedValue, getArrayPayload } from '@/features/components/utils'
-import { conversationApi } from '@/lib/conversation-api'
-
-import type {
-  ConversationSession,
-  EntryMode,
-  AnswerValue,
-} from './-types'
-
+import { notifications } from '@mantine/notifications';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
+import { useEffect, useMemo, useState } from 'react';
+import { useDebouncedValue, getArrayPayload } from '@/features/components/utils';
+import {
+  Questionnaire,
+  type QuestionnaireQuestion,
+} from '@/features/conversation/components/questionnaire';
+import { Option } from '@/features/rxsoft/types';
+import { conversationApi } from '@/lib/conversation-api';
+import { ConversationLoader } from '../../features/questionnnaire/components/ConversationLoader';
+import { CreateConversationForm } from '../../features/questionnnaire/components/CreateConversationForm';
+import { EntryModeTabs } from '../../features/questionnnaire/components/EntryModeTabs';
+import { ParticipantSearch } from '../../features/questionnnaire/components/ParticipantSearch';
+import type { ConversationSession, EntryMode, AnswerValue } from './-types';
 import {
   stringifyAnswer,
   resolveQuestions,
   decorateConversations,
   buildSummaryMessage,
-} from './-utils'
-
-import { EntryModeTabs } from '../../features/questionnnaire/components/EntryModeTabs'
-import { ParticipantSearch } from '../../features/questionnnaire/components/ParticipantSearch'
-import { ConversationLoader } from '../../features/questionnnaire/components/ConversationLoader'
-import { CreateConversationForm } from '../../features/questionnnaire/components/CreateConversationForm'
-import { notifications } from '@mantine/notifications'
-import { set } from 'zod'
-import { Option } from '@/features/rxsoft/types'
+} from './-utils';
 
 /* ================= PAGE ================= */
 
 function PublicQuestionnairePage() {
-  const [entryMode, setEntryMode] = useState<EntryMode>('participant-phone')
+  const [entryMode, setEntryMode] = useState<EntryMode>('participant-phone');
 
-  const [phoneSearch, setPhoneSearch] = useState('')
-  const [questionnaire, setQuestionnaire] = useState<Option | null>()
-  const [channel, setChannel] = useState<Option | null>()
+  const [phoneSearch, setPhoneSearch] = useState('');
+  const [questionnaire, setQuestionnaire] = useState<Option | null>();
+  const [channel, setChannel] = useState<Option | null>();
 
-  const [selectedParticipantId, setSelectedParticipantId] = useState<string | null>('')
+  const [selectedParticipantId, setSelectedParticipantId] = useState<string | null>('');
 
-  const [conversationId, setConversationId] = useState('')
-  const [session, setSession] = useState<ConversationSession | null>(null)
-  const [questions, setQuestions] = useState<QuestionnaireQuestion[]>([])
+  const [conversationId, setConversationId] = useState('');
+  const [session, setSession] = useState<ConversationSession | null>(null);
+  const [questions, setQuestions] = useState<QuestionnaireQuestion[]>([]);
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
-  const debouncedPhone = useDebouncedValue(phoneSearch, 300)
+  const debouncedPhone = useDebouncedValue(phoneSearch, 300);
 
   /* ================= QUERIES ================= */
 
@@ -53,187 +47,182 @@ function PublicQuestionnairePage() {
     queryFn: async () => {
       const res = await conversationApi.get('/participants', {
         params: { search: debouncedPhone, attribute: 'phone' },
-      })
-      return getArrayPayload(res.data)
+      });
+      return getArrayPayload(res.data);
     },
     enabled: !session && debouncedPhone.length >= 3,
-  })
+  });
 
   const conversationsQuery = useQuery({
     queryKey: ['participant-conversations', selectedParticipantId],
     queryFn: async () => {
-      const res = await conversationApi.get(
-        `/participants/${selectedParticipantId}/conversations`
-      )
-      return decorateConversations(getArrayPayload(res.data) as ConversationSession[])
+      const res = await conversationApi.get(`/participants/${selectedParticipantId}/conversations`);
+      return decorateConversations(getArrayPayload(res.data) as ConversationSession[]);
     },
     enabled: !!selectedParticipantId && !session,
-  })
+  });
 
   /* ================= HELPERS ================= */
 
   async function hydrateSession(next: ConversationSession) {
-    const resolved = await resolveQuestions(next)
-    setSession(next)
-    setQuestions(resolved)
-    setConversationId(next.id)
+    const resolved = await resolveQuestions(next);
+    setSession(next);
+    setQuestions(resolved);
+    setConversationId(next.id);
   }
 
   async function loadConversationById(id = conversationId) {
-    if (!id) return
+    if (!id) return;
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await conversationApi.get(`/conversations/${id}`)
-      await hydrateSession(res.data)
-      notifications.show({message: 'Conversation loaded', color: 'green'})
+      const res = await conversationApi.get(`/conversations/${id}`);
+      await hydrateSession(res.data);
+      notifications.show({ message: 'Conversation loaded', color: 'green' });
     } catch {
-      notifications.show({message: 'Conversation not found', color: 'red'})
+      notifications.show({ message: 'Conversation not found', color: 'red' });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   async function startConversation(payload: {
-    phone: string
-    questionnaireId?: string
-    channelId?: string
+    phone: string;
+    questionnaireId?: string;
+    channelId?: string;
   }) {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await conversationApi.post('/conversations', payload)
-      await hydrateSession(res.data)
-      notifications.show({message: 'Conversation created', color: 'green'})
+      const res = await conversationApi.post('/conversations', payload);
+      await hydrateSession(res.data);
+      notifications.show({ message: 'Conversation created', color: 'green' });
     } catch {
-      notifications.show({message: 'Failed to create conversation', color: 'red'})
+      notifications.show({ message: 'Failed to create conversation', color: 'red' });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   /* ================= DERIVED ================= */
-  const participants = getArrayPayload(participantQuery.data ?? [])
-  const conversations = conversationsQuery.data ?? []
+  const participants = getArrayPayload(participantQuery.data ?? []);
+  const conversations = conversationsQuery.data ?? [];
 
   const initialAnswers = useMemo(() => {
-    return (session?.context?.answers as Record<string, AnswerValue>) ?? {}
-  }, [session])
+    return (session?.context?.answers as Record<string, AnswerValue>) ?? {};
+  }, [session]);
 
   /* ================= EFFECTS ================= */
 
   useEffect(() => {
-    if (session) return
+    if (session) return;
 
-    const match = participants.find(
-      (p) => String(p.phone) === phoneSearch
-    )
+    const match = participants.find((p) => String(p.phone) === phoneSearch);
 
     if (match) {
-      setSelectedParticipantId(String(match.id))
+      setSelectedParticipantId(String(match.id));
     }
-  }, [participants, phoneSearch, session])
+  }, [participants, phoneSearch, session]);
 
+  async function processAnswer(payload: {
+    question: QuestionnaireQuestion;
+    answer: AnswerValue;
+    answers: Record<string, AnswerValue>;
+    currentIndex: number;
+    questions: QuestionnaireQuestion[];
+  }) {
+    if (!session?.id) {
+      return {
+        advance: true,
+      };
+    }
 
+    try {
+      const response = await conversationApi.post(`/conversations/${session.id}/process-response`, {
+        message: stringifyAnswer(payload.answer),
+        sender: session.participantId || '',
+      });
 
-    async function processAnswer(payload: {
-      question: QuestionnaireQuestion
-      answer: AnswerValue
-      answers: Record<string, AnswerValue>
-      currentIndex: number
-      questions: QuestionnaireQuestion[]
-    }) {
-      if (!session?.id) {
-        return {
-          advance: true,
-        }
-      }
-  
-      try {
-        const response = await conversationApi.post(`/conversations/${session.id}/process-response`, {
-          message: stringifyAnswer(payload.answer),
-        })
-  
-        const latestConversationResponse = await conversationApi.get(`/conversations/${session.id}`)
-        const latestSession = latestConversationResponse.data as ConversationSession
-        await hydrateSession(latestSession)
-  
-        const reason = String(response.data?.reason ?? '')
-        const action = String(response.data?.action ?? '')
-  
-        if (reason === 'VALIDATION_ERROR') {
-          return {
-            advance: false,
-            errorMessage: String(response.data?.message || 'This answer could not be processed.'),
-          }
-        }
-  
-        if (action === 'COMPLETED_CONVERSATION' || latestSession.status === 'COMPLETED') {
-          return {
-            complete: true,
-          }
-        }
-  
-        return {
-          advance: true,
-          nextQuestionId: latestSession.currentQuestionId,
-          answers: payload.answers,
-        }
-      } catch (error: any) {
+      const latestConversationResponse = await conversationApi.get(`/conversations/${session.id}`);
+      const latestSession = latestConversationResponse.data as ConversationSession;
+      await hydrateSession(latestSession);
+
+      const reason = String(response.data?.reason ?? '');
+      const action = String(response.data?.action ?? '');
+
+      if (reason === 'VALIDATION_ERROR') {
         return {
           advance: false,
-          errorMessage: error?.response?.data?.message || 'Unable to process this answer right now.',
-        }
+          errorMessage: String(response.data?.message || 'This answer could not be processed.'),
+        };
       }
+
+      if (action === 'COMPLETED_CONVERSATION' || latestSession.status === 'COMPLETED') {
+        return {
+          complete: true,
+        };
+      }
+
+      return {
+        advance: true,
+        nextQuestionId: latestSession.currentQuestionId,
+        answers: payload.answers,
+      };
+    } catch (error: any) {
+      return {
+        advance: false,
+        errorMessage: error?.response?.data?.message || 'Unable to process this answer right now.',
+      };
     }
+  }
 
-      async function saveProgress(payload: {
-        answers: Record<string, AnswerValue>
-        currentIndex: number
-        progress: number
-      }) {
-        if (!session?.id) return
-        const nextQuestion = questions[payload.currentIndex]
-        await conversationApi.patch(`/conversations/${session.id}`, {
-          currentQuestionId: nextQuestion?.id,
-          context: {
-            ...(session.context ?? {}),
-            answers: payload.answers,
-            progress: payload.progress,
-          },
-        })
-      }
+  async function saveProgress(payload: {
+    answers: Record<string, AnswerValue>;
+    currentIndex: number;
+    progress: number;
+  }) {
+    if (!session?.id) return;
+    const nextQuestion = questions[payload.currentIndex];
+    await conversationApi.patch(`/conversations/${session.id}`, {
+      currentQuestionId: nextQuestion?.id,
+      context: {
+        ...(session.context ?? {}),
+        answers: payload.answers,
+        progress: payload.progress,
+      },
+    });
+  }
 
-      async function completeQuestionnaire(payload: {
-          answers: Record<string, AnswerValue>
-          questions: QuestionnaireQuestion[]
-        }) {
-          if (!session?.id) return
-      
-          const summary = buildSummaryMessage(payload.answers, payload.questions)
-      
-          await conversationApi.patch(`/conversations/${session.id}`, {
-            status: 'COMPLETED',
-            state: 'COMPLETED',
-            endedAt: new Date().toISOString(),
-            context: {
-              ...(session.context ?? {}),
-              answers: payload.answers,
-              progress: 100,
-              summary,
-            },
-          })
-      
-          if (session.channelId && phoneSearch.trim()) {
-            await conversationApi.post('/channels/send-message', {
-              channelId: session.channelId,
-              phone: phoneSearch.trim(),
-              email: '',
-              title: 'Questionnaire complete',
-              previewLink: false,
-              message: summary,
-            })
-          }
-        }
+  async function completeQuestionnaire(payload: {
+    answers: Record<string, AnswerValue>;
+    questions: QuestionnaireQuestion[];
+  }) {
+    if (!session?.id) return;
+
+    const summary = buildSummaryMessage(payload.answers, payload.questions);
+
+    await conversationApi.patch(`/conversations/${session.id}`, {
+      status: 'COMPLETED',
+      state: 'COMPLETED',
+      endedAt: new Date().toISOString(),
+      context: {
+        ...(session.context ?? {}),
+        answers: payload.answers,
+        progress: 100,
+        summary,
+      },
+    });
+
+    if (session.channelId && phoneSearch.trim()) {
+      await conversationApi.post('/channels/send-message', {
+        channelId: session.channelId,
+        phone: phoneSearch.trim(),
+        email: '',
+        title: 'Questionnaire complete',
+        previewLink: false,
+        message: summary,
+      });
+    }
+  }
   /* ================= UI ================= */
 
   return (
@@ -291,11 +280,11 @@ function PublicQuestionnairePage() {
         />
       )}
     </div>
-  )
+  );
 }
 
 /* ================= ROUTE ================= */
 
 export const Route = createFileRoute('/questionnaire/')({
   component: PublicQuestionnairePage,
-})
+});

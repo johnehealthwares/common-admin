@@ -1,20 +1,20 @@
-import { Link } from '@tanstack/react-router'
-import { Burger } from '@mantine/core'
-import { Drawer, Group, Stack, UnstyledButton } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import React from 'react'
+import { Burger } from '@mantine/core';
+import { Drawer, Group, Stack, UnstyledButton } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { Link } from '@tanstack/react-router';
+import React from 'react';
 
 type TopNavProps = React.HTMLAttributes<HTMLElement> & {
   links: {
-    title: string
-    href: string
-    isActive: boolean
-    disabled?: boolean
-  }[]
-}
+    title: string;
+    href: string;
+    isActive: boolean;
+    disabled?: boolean;
+  }[];
+};
 
-export function TopNav({  links, ...props }: TopNavProps) {
-  const [opened, { toggle, close }] = useDisclosure(false)
+export function TopNav({ links, ...props }: TopNavProps) {
+  const [opened, { toggle, close }] = useDisclosure(false);
 
   return (
     <>
@@ -22,16 +22,10 @@ export function TopNav({  links, ...props }: TopNavProps) {
       <Group className="lg:hidden" justify="space-between">
         <Burger opened={opened} onClick={toggle} aria-label="Toggle navigation" />
 
-        <Drawer
-          opened={opened}
-          onClose={close}
-          title="Navigation"
-          padding="md"
-          size="sm"
-        >
+        <Drawer opened={opened} onClose={close} title="Navigation" padding="md" size="sm">
           <Stack gap="sm">
             {links.map((link) => {
-              const disabled = !!link.disabled
+              const disabled = !!link.disabled;
 
               return (
                 <UnstyledButton
@@ -55,20 +49,16 @@ export function TopNav({  links, ...props }: TopNavProps) {
                     {link.title}
                   </Link>
                 </UnstyledButton>
-              )
+              );
             })}
           </Stack>
         </Drawer>
       </Group>
 
       {/* DESKTOP */}
-      <Group
-        className={['hidden lg:flex'].filter(Boolean).join(' ')}
-        {...props}
-        gap="md"
-      >
+      <Group className={['hidden lg:flex'].filter(Boolean).join(' ')} {...props} gap="md">
         {links.map((link) => {
-          const disabled = !!link.disabled
+          const disabled = !!link.disabled;
 
           return (
             <Link
@@ -81,8 +71,8 @@ export function TopNav({  links, ...props }: TopNavProps) {
                 color: disabled
                   ? 'var(--mantine-color-gray-5)'
                   : link.isActive
-                  ? 'var(--mantine-color-primary-6)'
-                  : 'var(--mantine-color-gray-7)',
+                    ? 'var(--mantine-color-primary-6)'
+                    : 'var(--mantine-color-gray-7)',
                 pointerEvents: disabled ? 'none' : 'auto',
                 opacity: disabled ? 0.5 : 1,
                 transition: 'color 0.2s ease',
@@ -90,9 +80,9 @@ export function TopNav({  links, ...props }: TopNavProps) {
             >
               {link.title}
             </Link>
-          )
+          );
         })}
       </Group>
     </>
-  )
+  );
 }

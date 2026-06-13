@@ -17,7 +17,8 @@ export const compactUI = {
     container: 'border border-border rounded-sm',
     row: 'h-[28px] hover:bg-accent/50 data-[selected]:bg-accent',
     cell: 'px-3 py-1 text-xs leading-tight align-middle truncate',
-    header: 'h-7 px-3 py-1 bg-muted/50 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground',
+    header:
+      'h-7 px-3 py-1 bg-muted/50 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground',
     checkbox: 'size-4 max-sm:size-3.5',
   },
 
@@ -53,7 +54,7 @@ export const compactUI = {
 
   /* Badge & status indicators (compact) */
   badge: 'inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-[11px] font-medium',
-}
+};
 
 export const compactClasses = {
   /* Data table */
@@ -71,4 +72,4 @@ export const compactClasses = {
 
   /* Keyboard hint */
   shortcutHint: 'text-[10px] font-mono text-muted-foreground/60 tracking-wide',
-}
+};

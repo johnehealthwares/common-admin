@@ -1,6 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { CodingConceptMatchPage } from '@/features/coding-concept/pages'
+import { createFileRoute } from '@tanstack/react-router';
+import { CodingConceptMatchPage } from '@/features/coding-concept/pages';
 
 export const Route = createFileRoute('/_authenticated/coding-concepts/match')({
   component: CodingConceptMatchPage,
-})
+});

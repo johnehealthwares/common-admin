@@ -1,13 +1,13 @@
-import { useMemo, useState } from 'react'
-import { Plus } from 'lucide-react'
-import { Button, Modal, TextInput, Textarea, Stack, Grid, Checkbox, Group } from '@mantine/core'
-
-import { ConfirmDialog } from '@/components/confirm-dialog'
-import { JsonEditorField } from '@/features/components/form/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
-import { RxPage } from '@/features/components/page/rx-page'
-import { SelectField } from '@/features/components/form/select'
-import { CHANNEL_TYPE_OPTIONS } from '../types/constants'
+import { Button, Modal, TextInput, Textarea, Stack, Grid, Checkbox, Group } from '@mantine/core';
+import { Plus } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { ConfirmDialog } from '@/components/confirm-dialog';
+import { JsonEditorField } from '@/features/components/form/json-editor-field';
+import { SelectField } from '@/features/components/form/select';
+import { RxPage } from '@/features/components/page/rx-page';
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table';
+import { Option } from '@/features/rxsoft/types';
+import { CHANNEL_TYPE_OPTIONS } from '../types/constants';
 import {
   DialogActions,
   JsonPreviewDialog,
@@ -18,21 +18,20 @@ import {
   useCommunicationList,
   CommunicationRow,
   getOption,
-} from './shared'
-import { Option } from '@/features/rxsoft/types'
+} from './shared';
 
 type CommunicationChannelFormState = {
-  id?: string
-  name: string
-  description: string
-  type: Option
-  provider: string
-  config: Record<string, unknown>
-  isActive: boolean
-  priority: number
-  rateLimit: number
-  metadata: Record<string, unknown>
-}
+  id?: string;
+  name: string;
+  description: string;
+  type: Option;
+  provider: string;
+  config: Record<string, unknown>;
+  isActive: boolean;
+  priority: number;
+  rateLimit: number;
+  metadata: Record<string, unknown>;
+};
 
 const defaultFormState: CommunicationChannelFormState = {
   name: '',
@@ -44,7 +43,7 @@ const defaultFormState: CommunicationChannelFormState = {
   priority: 1,
   rateLimit: 100,
   metadata: {},
-}
+};
 
 const columns = [
   { key: 'id', label: 'ID', width: '80px' },
@@ -54,36 +53,34 @@ const columns = [
   { key: 'isActive', label: 'Active', width: '100px' },
   { key: 'priority', label: 'Priority', width: '100px' },
   { key: 'createdAt', label: 'Created', width: '150px' },
-]
+];
 
 export function CommunicationChannelsPage() {
-  const [search, setSearch] = useState('')
-  const [selectedRow, setSelectedRow] = useState<CommunicationRow | null>(null)
+  const [search, setSearch] = useState('');
+  const [selectedRow, setSelectedRow] = useState<CommunicationRow | null>(null);
 
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [isEditOpen, setIsEditOpen] = useState(false)
-  const [isJsonOpen, setIsJsonOpen] = useState(false)
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isJsonOpen, setIsJsonOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const [formState, setFormState] =
-    useState<CommunicationChannelFormState>(defaultFormState)
+  const [formState, setFormState] = useState<CommunicationChannelFormState>(defaultFormState);
 
-  const { data: channels = [], isLoading } =
-    useCommunicationList('communication-channels', search)
+  const { data: channels = [], isLoading } = useCommunicationList('communication-channels', search);
 
   const { createMutation, updateMutation, deleteMutation } =
-    useCommunicationCrud('communication-channels')
+    useCommunicationCrud('communication-channels');
 
-  const rows = useMemo(() => normalizeRows(channels), [channels])
+  const rows = useMemo(() => normalizeRows(channels), [channels]);
 
   function openCreate() {
-    setSelectedRow(null)
-    setFormState(defaultFormState)
-    setIsCreateOpen(true)
+    setSelectedRow(null);
+    setFormState(defaultFormState);
+    setIsCreateOpen(true);
   }
 
   function openEdit(row: CommunicationRow) {
-    setSelectedRow(row)
+    setSelectedRow(row);
     setFormState({
       id: String(row.id),
       name: String(row.name ?? ''),
@@ -95,31 +92,31 @@ export function CommunicationChannelsPage() {
       priority: Number(row.priority ?? 1),
       rateLimit: Number(row.rateLimit ?? 100),
       metadata: (row.metadata as Record<string, unknown>) ?? {},
-    })
-    setIsEditOpen(true)
+    });
+    setIsEditOpen(true);
   }
 
   async function handleSave() {
-    const payload = { ...formState }
-    delete payload.id
+    const payload = { ...formState };
+    delete payload.id;
 
     if (formState.id) {
       await updateMutation.mutateAsync({
         id: formState.id,
         payload: getDirtyPayload(selectedRow || {}, payload),
-      })
+      });
     } else {
-      await createMutation.mutateAsync(payload)
+      await createMutation.mutateAsync(payload);
     }
 
-    setIsCreateOpen(false)
-    setIsEditOpen(false)
+    setIsCreateOpen(false);
+    setIsEditOpen(false);
   }
 
   async function handleDelete() {
-    if (!selectedRow?.id) return
-    await deleteMutation.mutateAsync(String(selectedRow.id))
-    setIsDeleteOpen(false)
+    if (!selectedRow?.id) return;
+    await deleteMutation.mutateAsync(String(selectedRow.id));
+    setIsDeleteOpen(false);
   }
 
   return (
@@ -145,8 +142,8 @@ export function CommunicationChannelsPage() {
       <Modal
         opened={isCreateOpen || isEditOpen}
         onClose={() => {
-          setIsCreateOpen(false)
-          setIsEditOpen(false)
+          setIsCreateOpen(false);
+          setIsEditOpen(false);
         }}
         title={isEditOpen ? 'Edit Channel' : 'Create Channel'}
         size="lg"
@@ -157,9 +154,7 @@ export function CommunicationChannelsPage() {
               <TextInput
                 label="Name"
                 value={formState.name}
-                onChange={(e) =>
-                  setFormState(p => ({ ...p, name: e.target.value }))
-                }
+                onChange={(e) => setFormState((p) => ({ ...p, name: e.target.value }))}
               />
             </Grid.Col>
 
@@ -168,9 +163,7 @@ export function CommunicationChannelsPage() {
                 label="Type"
                 options={CHANNEL_TYPE_OPTIONS}
                 value={formState.type}
-                onChange={(value: any) =>
-                  setFormState(p => ({ ...p, type: value }))
-                }
+                onChange={(value: any) => setFormState((p) => ({ ...p, type: value }))}
               />
             </Grid.Col>
           </Grid>
@@ -178,9 +171,7 @@ export function CommunicationChannelsPage() {
           <Textarea
             label="Description"
             value={formState.description}
-            onChange={(e) =>
-              setFormState(p => ({ ...p, description: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, description: e.target.value }))}
           />
 
           <Grid>
@@ -188,9 +179,7 @@ export function CommunicationChannelsPage() {
               <TextInput
                 label="Provider"
                 value={formState.provider}
-                onChange={(e) =>
-                  setFormState(p => ({ ...p, provider: e.target.value }))
-                }
+                onChange={(e) => setFormState((p) => ({ ...p, provider: e.target.value }))}
               />
             </Grid.Col>
 
@@ -199,7 +188,7 @@ export function CommunicationChannelsPage() {
                 label="Active"
                 checked={formState.isActive}
                 onChange={(e) =>
-                  setFormState(p => ({
+                  setFormState((p) => ({
                     ...p,
                     isActive: e.currentTarget.checked,
                   }))
@@ -215,7 +204,7 @@ export function CommunicationChannelsPage() {
                 type="number"
                 value={formState.priority}
                 onChange={(e) =>
-                  setFormState(p => ({
+                  setFormState((p) => ({
                     ...p,
                     priority: Number(e.target.value) || 1,
                   }))
@@ -229,7 +218,7 @@ export function CommunicationChannelsPage() {
                 type="number"
                 value={formState.rateLimit}
                 onChange={(e) =>
-                  setFormState(p => ({
+                  setFormState((p) => ({
                     ...p,
                     rateLimit: Number(e.target.value) || 100,
                   }))
@@ -241,25 +230,21 @@ export function CommunicationChannelsPage() {
           <JsonEditorField
             label="Config"
             value={formState.config}
-            onChange={(value) =>
-              setFormState(p => ({ ...p, config: value as any }))
-            }
+            onChange={(value) => setFormState((p) => ({ ...p, config: value as any }))}
           />
 
           <JsonEditorField
             label="Metadata"
             value={formState.metadata}
-            onChange={(value) =>
-              setFormState(p => ({ ...p, metadata: value as any }))
-            }
+            onChange={(value) => setFormState((p) => ({ ...p, metadata: value as any }))}
           />
 
           <Group justify="flex-end">
             <Button
               variant="default"
               onClick={() => {
-                setIsCreateOpen(false)
-                setIsEditOpen(false)
+                setIsCreateOpen(false);
+                setIsEditOpen(false);
               }}
             >
               Cancel
@@ -293,5 +278,5 @@ export function CommunicationChannelsPage() {
         isLoading={deleteMutation.isPending}
       />
     </RxPage>
-  )
+  );
 }

@@ -1,5 +1,3 @@
-import { useMemo, useState } from 'react'
-import { Plus } from 'lucide-react'
 import {
   Button,
   Modal,
@@ -12,18 +10,20 @@ import {
   Checkbox,
   Text,
   Title,
-} from '@mantine/core'
-
-import { ConfirmDialog } from '@/components/confirm-dialog'
-import { JsonEditorField } from '@/features/components/form/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
-import { RxPage } from '@/features/components/page/rx-page'
-import { SelectField } from '@/features/components/form/select'
+} from '@mantine/core';
+import { Plus } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { ConfirmDialog } from '@/components/confirm-dialog';
+import { JsonEditorField } from '@/features/components/form/json-editor-field';
+import { SelectField } from '@/features/components/form/select';
+import { RxPage } from '@/features/components/page/rx-page';
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table';
+import { Option } from '@/features/rxsoft/types';
 import {
   MESSAGE_TYPE_OPTIONS,
   MESSAGE_STATUS_OPTIONS,
   MESSAGE_PRIORITY_OPTIONS,
-} from '../types/constants'
+} from '../types/constants';
 import {
   DialogActions,
   JsonPreviewDialog,
@@ -34,24 +34,23 @@ import {
   useCommunicationList,
   CommunicationRow,
   getOption,
-} from './shared'
-import { Option } from '@/features/rxsoft/types'
+} from './shared';
 
 type MessageFormState = {
-  id?: string
-  recipientId: string
-  recipientEmail: string
-  recipientPhone: string
-  channelId: string
-  templateId: string
-  messageType: Option
-  subject: string
-  content: string
-  priority: Option
-  status: string
-  scheduledAt: string
-  metadata: Record<string, unknown>
-}
+  id?: string;
+  recipientId: string;
+  recipientEmail: string;
+  recipientPhone: string;
+  channelId: string;
+  templateId: string;
+  messageType: Option;
+  subject: string;
+  content: string;
+  priority: Option;
+  status: string;
+  scheduledAt: string;
+  metadata: Record<string, unknown>;
+};
 
 const defaultFormState: MessageFormState = {
   recipientId: '',
@@ -66,7 +65,7 @@ const defaultFormState: MessageFormState = {
   status: 'draft',
   scheduledAt: '',
   metadata: {},
-}
+};
 
 const columns = [
   { key: 'id', label: 'ID', width: '80px' },
@@ -76,55 +75,52 @@ const columns = [
   { key: 'priority', label: 'Priority', width: '100px' },
   { key: 'status', label: 'Status', width: '100px' },
   { key: 'createdAt', label: 'Created', width: '150px' },
-]
+];
 
 export function MessagesPage() {
-  const [search, setSearch] = useState('')
-  const [selectedRow] = useState<CommunicationRow | null>(null)
+  const [search, setSearch] = useState('');
+  const [selectedRow] = useState<CommunicationRow | null>(null);
 
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [isEditOpen, setIsEditOpen] = useState(false)
-  const [isJsonOpen, setIsJsonOpen] = useState(false)
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isJsonOpen, setIsJsonOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const [formState, setFormState] =
-    useState<MessageFormState>(defaultFormState)
+  const [formState, setFormState] = useState<MessageFormState>(defaultFormState);
 
-  const { data: messages = [], isLoading } =
-    useCommunicationList('messages', search)
+  const { data: messages = [], isLoading } = useCommunicationList('messages', search);
 
-  const { createMutation, updateMutation, deleteMutation } =
-    useCommunicationCrud('messages')
+  const { createMutation, updateMutation, deleteMutation } = useCommunicationCrud('messages');
 
-  const rows = useMemo(() => normalizeRows(messages), [messages])
+  const rows = useMemo(() => normalizeRows(messages), [messages]);
 
   const handleCreate = () => {
-    setFormState(defaultFormState)
-    setIsCreateOpen(true)
-  }
+    setFormState(defaultFormState);
+    setIsCreateOpen(true);
+  };
 
   const handleSave = async () => {
-    const payload = { ...formState }
-    delete payload.id
+    const payload = { ...formState };
+    delete payload.id;
 
     if (formState.id) {
       await updateMutation.mutateAsync({
         id: formState.id,
         payload: getDirtyPayload(selectedRow || {}, payload),
-      })
+      });
     } else {
-      await createMutation.mutateAsync(payload)
+      await createMutation.mutateAsync(payload);
     }
 
-    setIsCreateOpen(false)
-    setIsEditOpen(false)
-  }
+    setIsCreateOpen(false);
+    setIsEditOpen(false);
+  };
 
   const handleDelete = async () => {
-    if (!selectedRow?.id) return
-    await deleteMutation.mutateAsync(String(selectedRow.id))
-    setIsDeleteOpen(false)
-  }
+    if (!selectedRow?.id) return;
+    await deleteMutation.mutateAsync(String(selectedRow.id));
+    setIsDeleteOpen(false);
+  };
 
   return (
     <RxPage
@@ -186,9 +182,7 @@ export function MessagesPage() {
                 label="Message Type"
                 options={MESSAGE_TYPE_OPTIONS}
                 value={formState.messageType}
-                onChange={(v) =>
-                  setFormState((p: any) => ({ ...p, messageType: v }))
-                }
+                onChange={(v) => setFormState((p: any) => ({ ...p, messageType: v }))}
               />
             </Grid.Col>
 
@@ -197,9 +191,7 @@ export function MessagesPage() {
                 label="Priority"
                 options={MESSAGE_PRIORITY_OPTIONS}
                 value={formState.priority}
-                onChange={(v) =>
-                  setFormState((p: any) => ({ ...p, priority: v }))
-                }
+                onChange={(v) => setFormState((p: any) => ({ ...p, priority: v }))}
               />
             </Grid.Col>
           </Grid>
@@ -207,18 +199,14 @@ export function MessagesPage() {
           <TextInput
             label="Subject"
             value={formState.subject}
-            onChange={(e) =>
-              setFormState((p) => ({ ...p, subject: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, subject: e.target.value }))}
           />
 
           <Textarea
             label="Content"
             minRows={4}
             value={formState.content}
-            onChange={(e) =>
-              setFormState((p) => ({ ...p, content: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, content: e.target.value }))}
           />
 
           <TextInput
@@ -248,10 +236,7 @@ export function MessagesPage() {
             <Button variant="default" onClick={() => setIsCreateOpen(false)}>
               Cancel
             </Button>
-            <Button
-              onClick={handleSave}
-              loading={createMutation.isPending}
-            >
+            <Button onClick={handleSave} loading={createMutation.isPending}>
               Save
             </Button>
           </Group>
@@ -280,28 +265,21 @@ export function MessagesPage() {
           <TextInput
             label="Subject"
             value={formState.subject}
-            onChange={(e) =>
-              setFormState((p) => ({ ...p, subject: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, subject: e.target.value }))}
           />
 
           <Textarea
             label="Content"
             minRows={4}
             value={formState.content}
-            onChange={(e) =>
-              setFormState((p) => ({ ...p, content: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, content: e.target.value }))}
           />
 
           <Group justify="flex-end">
             <Button variant="default" onClick={() => setIsEditOpen(false)}>
               Cancel
             </Button>
-            <Button
-              onClick={handleSave}
-              loading={updateMutation.isPending}
-            >
+            <Button onClick={handleSave} loading={updateMutation.isPending}>
               Save
             </Button>
           </Group>
@@ -325,5 +303,5 @@ export function MessagesPage() {
         isLoading={deleteMutation.isPending}
       />
     </RxPage>
-  )
+  );
 }

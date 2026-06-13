@@ -1,42 +1,74 @@
-import * as React from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { Menu, UnstyledButton, Group, Stack, Text, Box, Loader } from '@mantine/core';
+import { useNavigate } from '@tanstack/react-router';
 import {
-  Menu,
-  UnstyledButton,
-  Group,
-  Stack,
-  Text,
-  Box,
-} from '@mantine/core'
-import { ChevronsUpDown, Plus } from 'lucide-react'
+  ChevronsUpDown,
+  Command,
+  AudioWaveform,
+  MessageSquare,
+  Boxes,
+  Microscope,
+  Shield,
+} from 'lucide-react';
+import { useEffect } from 'react';
+import { useModuleId, useSetSelectedModule } from '@/context/module-context';
+import type { ModuleId } from '@/features/shared/module-data';
+import { getModuleDashboard } from '@/lib/module-routing';
+import { useAuthStore, type ModuleInfo } from '@/stores/auth-store';
 
-import { getModuleDashboard } from '@/lib/module-routing'
-import type { ModuleId } from '@/features/shared/module-data'
-import { useModuleId, useSetSelectedModule } from '@/context/module-context'
+const moduleIcons: Record<string, React.ElementType> = {
+  rxsoft: Command,
+  communication: AudioWaveform,
+  conversation: MessageSquare,
+  'coding-concept': Boxes,
+  lis: Microscope,
+  admin: Shield,
+};
 
-type TeamSwitcherProps = {
-  teams: {
-    name: string
-    logo: React.ElementType
-    plan: string
-    moduleId: ModuleId
-  }[]
+const modulePlans: Record<string, string> = {
+  rxsoft: 'Pharmacy Admin',
+  communication: 'Messaging & Routing',
+  conversation: 'Workflow Chat',
+  'coding-concept': 'Terminology',
+  lis: 'Laboratory',
+  admin: 'Administration',
+};
+
+function toTeams(modules: ModuleInfo[]) {
+  return modules.map((mod) => ({
+    name: mod.name,
+    logo: moduleIcons[mod.id] || Shield,
+    plan: modulePlans[mod.id] || mod.description,
+    moduleId: mod.id as ModuleId,
+  }));
 }
 
-export function TeamSwitcher({ teams }: TeamSwitcherProps) {
-  const navigate = useNavigate()
-  const moduleId = useModuleId()
-  const setSelectedModuleId = useSetSelectedModule()
-  const activeTeam =
-    teams.find((t) => t.moduleId === moduleId) ?? teams[0]
+export function TeamSwitcher() {
+  const navigate = useNavigate();
+  const moduleId = useModuleId();
+  const setSelectedModuleId = useSetSelectedModule();
+  const storeModules = useAuthStore((state) => state.modules);
+  const fetchModules = useAuthStore((state) => state.fetchModules);
+  const user = useAuthStore((state) => state.user);
+
+  useEffect(() => {
+    if (user && storeModules.length === 0) {
+      fetchModules();
+    }
+  }, [user, storeModules.length, fetchModules]);
+
+  const teams = toTeams(storeModules);
+  const activeTeam = teams.find((t) => t.moduleId === moduleId) ?? teams[0];
+  console.log({teams,storeModules })
+  if (teams.length === 0) {
+    return (
+      <Box p="sm">
+        <Loader size="sm" />
+      </Box>
+    );
+  }
 
   return (
-    <Menu
-      width={220}
-      position="right-start"
-      offset={6}
-    >
-      {/* 🔹 Trigger (Sidebar button) */}
+    <Menu width={220} position="right-start" offset={6}>
       <Menu.Target>
         <UnstyledButton
           style={{
@@ -46,7 +78,6 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
           }}
         >
           <Group gap="sm">
-            {/* Logo */}
             <Box
               style={{
                 width: 32,
@@ -59,16 +90,15 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
                 color: 'white',
               }}
             >
-              <activeTeam.logo size={16} />
+              {activeTeam && <activeTeam.logo size={16} />}
             </Box>
 
-            {/* Text */}
             <Stack gap={0} style={{ flex: 1 }}>
               <Text size="sm" fw={600} truncate>
-                {activeTeam.name}
+                {activeTeam?.name ?? 'Select Module'}
               </Text>
               <Text size="xs" c="dimmed" truncate>
-                {activeTeam.plan}
+                {activeTeam?.plan ?? ''}
               </Text>
             </Stack>
 
@@ -77,16 +107,15 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
         </UnstyledButton>
       </Menu.Target>
 
-      {/* 🔹 Dropdown */}
       <Menu.Dropdown>
         <Menu.Label>Teams</Menu.Label>
 
         {teams.map((team, index) => (
           <Menu.Item
-            key={team.name}
+            key={team.moduleId}
             onClick={() => {
-              setSelectedModuleId(team.moduleId)
-              navigate({ to: getModuleDashboard(team.moduleId) })
+              setSelectedModuleId(team.moduleId);
+              navigate({ to: getModuleDashboard(team.moduleId) });
             }}
             leftSection={<team.logo size={14} />}
             rightSection={
@@ -98,16 +127,7 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
             {team.name}
           </Menu.Item>
         ))}
-
-        <Menu.Divider />
-
-        <Menu.Item
-          leftSection={<Plus size={14} />}
-          c="dimmed"
-        >
-          Add team
-        </Menu.Item>
       </Menu.Dropdown>
     </Menu>
-  )
+  );
 }

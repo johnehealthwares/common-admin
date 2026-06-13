@@ -1,9 +1,3 @@
-import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
-import { FileUp, Upload } from 'lucide-react'
-import { RxPage } from '@/features/components/page/rx-page'
-import { codingConceptApi } from '@/lib/coding-concept-api'
-import { notifications } from '@mantine/notifications'
 import {
   Tabs,
   Card,
@@ -15,7 +9,13 @@ import {
   Title,
   Paper,
   FileInput,
-} from '@mantine/core'
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { useMutation } from '@tanstack/react-query';
+import { FileUp, Upload } from 'lucide-react';
+import { useState } from 'react';
+import { RxPage } from '@/features/components/page/rx-page';
+import { codingConceptApi } from '@/lib/coding-concept-api';
 
 const codeSample = JSON.stringify(
   [
@@ -30,7 +30,7 @@ const codeSample = JSON.stringify(
   ],
   null,
   2
-)
+);
 
 const conceptValueSample = JSON.stringify(
   [
@@ -45,54 +45,48 @@ const conceptValueSample = JSON.stringify(
   ],
   null,
   2
-)
+);
 
 function readFile(file: File) {
   return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(String(reader.result || ''))
-    reader.onerror = () => reject(new Error('Unable to read file'))
-    reader.readAsText(file)
-  })
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('Unable to read file'));
+    reader.readAsText(file);
+  });
 }
 
 export function CodingConceptUploadPage() {
-  const [codesPayload, setCodesPayload] = useState(codeSample)
-  const [valuesPayload, setValuesPayload] = useState(conceptValueSample)
+  const [codesPayload, setCodesPayload] = useState(codeSample);
+  const [valuesPayload, setValuesPayload] = useState(conceptValueSample);
 
   const codesUpload = useMutation({
     mutationFn: async () => {
-      const parsed = JSON.parse(codesPayload)
-      const res = await codingConceptApi.post('/concepts/upload/codes', parsed)
-      return res.data
+      const parsed = JSON.parse(codesPayload);
+      const res = await codingConceptApi.post('/concepts/upload/codes', parsed);
+      return res.data;
     },
-    onSuccess: () =>
-      notifications.show({ message: 'Concept codes uploaded', color: 'green' }),
+    onSuccess: () => notifications.show({ message: 'Concept codes uploaded', color: 'green' }),
     onError: (error: any) =>
       notifications.show({
         color: 'red',
-        message:
-          error?.response?.data?.message ||
-          'Failed to upload concept codes',
+        message: error?.response?.data?.message || 'Failed to upload concept codes',
       }),
-  })
+  });
 
   const valuesUpload = useMutation({
     mutationFn: async () => {
-      const parsed = JSON.parse(valuesPayload)
-      const res = await codingConceptApi.post('/concepts/upload/values', parsed)
-      return res.data
+      const parsed = JSON.parse(valuesPayload);
+      const res = await codingConceptApi.post('/concepts/upload/values', parsed);
+      return res.data;
     },
-    onSuccess: () =>
-      notifications.show({ message: 'Concept values uploaded', color: 'green' }),
+    onSuccess: () => notifications.show({ message: 'Concept values uploaded', color: 'green' }),
     onError: (error: any) =>
       notifications.show({
         color: 'red',
-        message:
-          error?.response?.data?.message ||
-          'Failed to upload concept values',
+        message: error?.response?.data?.message || 'Failed to upload concept values',
       }),
-  })
+  });
 
   return (
     <RxPage
@@ -130,7 +124,7 @@ export function CodingConceptUploadPage() {
         </Tabs.Panel>
       </Tabs>
     </RxPage>
-  )
+  );
 }
 
 function UploadPanel({
@@ -142,13 +136,13 @@ function UploadPanel({
   onSubmit,
   isPending,
 }: {
-  title: string
-  description: string
-  value: string
-  sample: string
-  onChange: (value: string) => void
-  onSubmit: () => void
-  isPending: boolean
+  title: string;
+  description: string;
+  value: string;
+  sample: string;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
+  isPending: boolean;
 }) {
   return (
     <Card withBorder radius="md" p="lg">
@@ -174,9 +168,9 @@ function UploadPanel({
             leftSection={<Upload size={16} />}
             placeholder="Load file"
             onChange={async (file) => {
-              if (!file) return
-              const contents = await readFile(file)
-              onChange(contents)
+              if (!file) return;
+              const contents = await readFile(file);
+              onChange(contents);
             }}
           />
         </Group>
@@ -194,5 +188,5 @@ function UploadPanel({
         </Button>
       </Stack>
     </Card>
-  )
+  );
 }

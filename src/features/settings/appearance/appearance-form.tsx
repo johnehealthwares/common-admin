@@ -1,7 +1,4 @@
-import { z } from 'zod'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Select,
   Radio,
@@ -10,43 +7,42 @@ import {
   Text,
   Button,
   Card,
-} from '@mantine/core'
-
-import { fonts } from '@/config/fonts'
-import { useTheme } from '@/context/theme-provider'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { useFont } from '@/context/font-provider'
+  useMantineColorScheme,
+  MantineColorScheme,
+} from '@mantine/core';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { fonts } from '@/config/fonts';
+import { useFont } from '@/context/font-provider';
+import { useTheme } from '@/context/theme-provider';
+import { showSubmittedData } from '@/lib/show-submitted-data';
 
 const appearanceFormSchema = z.object({
   theme: z.enum(['light', 'dark']),
   font: z.enum(fonts),
-})
+});
 
-type AppearanceFormValues = z.infer<typeof appearanceFormSchema>
+type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
 
 export function AppearanceForm() {
-  const { font, setFont } = useFont()
-  const { theme, setTheme } = useTheme()
+  const { colorScheme, setColorScheme, toggleColorScheme } = useMantineColorScheme();
 
   const form = useForm<AppearanceFormValues>({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues: {
-      theme: theme as 'light' | 'dark',
-      font,
+      theme: colorScheme as 'light' | 'dark',
+      font: fonts[0],
     },
-  })
+  });
 
   function onSubmit(data: AppearanceFormValues) {
-    if (data.font !== font) setFont(data.font)
-    if (data.theme !== theme) setTheme(data.theme)
-
-    showSubmittedData(data)
+    if (data.theme !== colorScheme) setColorScheme(data.theme);
+    showSubmittedData(data);
   }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <Stack gap="xl">
-
         {/* FONT */}
         <Controller
           name="font"
@@ -74,13 +70,8 @@ export function AppearanceForm() {
                 Select the theme for the dashboard.
               </Text>
 
-              <Radio.Group
-                value={field.value}
-                onChange={field.onChange}
-                mt="md"
-              >
+              <Radio.Group value={field.value} onChange={field.onChange} mt="md">
                 <Group align="flex-start">
-
                   {/* LIGHT */}
                   <Card
                     withBorder
@@ -134,18 +125,14 @@ export function AppearanceForm() {
                       </div>
                     </Stack>
                   </Card>
-
                 </Group>
               </Radio.Group>
             </div>
           )}
         />
 
-        <Button type="submit">
-          Update preferences
-        </Button>
-
+        <Button type="submit">Update preferences</Button>
       </Stack>
     </form>
-  )
+  );
 }

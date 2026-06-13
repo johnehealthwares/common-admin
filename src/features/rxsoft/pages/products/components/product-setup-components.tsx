@@ -1,47 +1,37 @@
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Minus, Plus, Search } from 'lucide-react'
-import {
-  Card,
-  Text,
-  Stack,
-  Group,
-  Grid,
-  Button,
-  TextInput,
-  Select,
-} from '@mantine/core'
+import { Card, Text, Stack, Group, Grid, Button, TextInput, Select } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { Minus, Plus, Search } from 'lucide-react';
+import { useState } from 'react';
+import { Option } from '@/features/rxsoft/types';
+import { rxsoftApi } from '@/lib/rxsoft-api';
 
-import { rxsoftApi } from '@/lib/rxsoft-api'
-import { Option } from '@/features/rxsoft/types'
-
-type ProductLookup = {
-  id: string
-  code: string
-  name: string
-}
+type ItemLookup = {
+  id: string;
+  code: string;
+  name: string;
+};
 
 type SimpleLookup = {
-  id: string
-  code?: string | null
-  name: string
-}
+  id: string;
+  code?: string | null;
+  name: string;
+};
 
 export type PendingPriceListEntry = {
-  productId?: string
-  locationId?: string
-  priceList: Option
-  currencyCode: string
-  unitPrice: number
-  modified: '' | 'created' | 'edited' | 'deleted'
-}
+  itemId?: string;
+  locationId?: string;
+  priceList: Option;
+  currencyCode: string;
+  unitPrice: number;
+  modified: '' | 'created' | 'edited' | 'deleted';
+};
 
 export type PendingStockEntry = {
-  productId?: string
-  locationId?: string
-  uomId?: string
-  quantity: string
-}
+  itemId?: string;
+  locationId?: string;
+  uomId?: string;
+  quantity: string;
+};
 
 /* ----------------------------- LOOKUPS ----------------------------- */
 
@@ -51,68 +41,68 @@ function useLookups() {
     queryFn: async () => {
       const res = await rxsoftApi.get('/price-lists', {
         params: { page: 1, limit: 100 },
-      })
-      return (res.data.data ?? []) as SimpleLookup[]
+      });
+      return (res.data.data ?? []) as SimpleLookup[];
     },
     staleTime: 30_000,
-  })
+  });
 
   const locations = useQuery({
     queryKey: ['rxsoft-stock-locations-lookup'],
     queryFn: async () => {
       const res = await rxsoftApi.get('/stock-locations', {
         params: { page: 1, limit: 100 },
-      })
-      return (res.data.data ?? []) as SimpleLookup[]
+      });
+      return (res.data.data ?? []) as SimpleLookup[];
     },
     staleTime: 30_000,
-  })
+  });
 
   const uoms = useQuery({
     queryKey: ['rxsoft-uoms-lookup'],
     queryFn: async () => {
-      const res = await rxsoftApi.get('/products/dependencies/uoms', {
+      const res = await rxsoftApi.get('/items/dependencies/uoms', {
         params: { page: 1, limit: 100 },
-      })
-      return (res.data.data ?? []) as SimpleLookup[]
+      });
+      return (res.data.data ?? []) as SimpleLookup[];
     },
     staleTime: 30_000,
-  })
+  });
 
   return {
     priceLists: priceLists.data ?? [],
     locations: locations.data ?? [],
     uoms: uoms.data ?? [],
-  }
+  };
 }
 
-/* -------------------------- PRODUCT LOOKUP ------------------------- */
+/* -------------------------- ITEM LOOKUP ------------------------- */
 
-function ProductLookupInput({
+function ItemLookupInput({
   value,
   onChange,
 }: {
-  value?: string
-  onChange: (value?: string) => void
+  value?: string;
+  onChange: (value?: string) => void;
 }) {
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState('');
 
-  const products = useQuery({
-    queryKey: ['rxsoft-product-lookup', search],
+  const items = useQuery({
+    queryKey: ['rxsoft-item-lookup', search],
     queryFn: async () => {
-      const res = await rxsoftApi.get('/products', {
+      const res = await rxsoftApi.get('/items', {
         params: { page: 1, limit: 20, search },
-      })
-      return (res.data.data ?? []) as ProductLookup[]
+      });
+      return (res.data.data ?? []) as ItemLookup[];
     },
     enabled: search.trim().length >= 2,
     staleTime: 15_000,
-  })
+  });
 
   return (
     <Stack gap="xs">
       <TextInput
-        placeholder="Search product override..."
+        placeholder="Search item override..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         leftSection={<Search size={14} />}
@@ -120,19 +110,17 @@ function ProductLookupInput({
 
       <Select
         value={value ?? '__created__'}
-        onChange={(val: any) =>
-          onChange(val === '__created__' ? null : val)
-        }
+        onChange={(val: any) => onChange(val === '__created__' ? null : val)}
         data={[
-          { value: '__created__', label: 'Use created product' },
-          ...(products.data ?? []).map((p) => ({
+          { value: '__created__', label: 'Use created item' },
+          ...(items.data ?? []).map((p) => ({
             value: p.id,
             label: `${p.name} (${p.code})`,
           })),
         ]}
       />
     </Stack>
-  )
+  );
 }
 
 /* ---------------------- PRICE LIST UPDATER ------------------------- */
@@ -141,13 +129,10 @@ function usePriceListUpdater(
   priceListItems: PendingPriceListEntry[],
   onChange: (value: PendingPriceListEntry[]) => void
 ) {
-  const updateEntry = (
-    priceListId: string,
-    patch: Partial<PendingPriceListEntry>
-  ) => {
-    const exists = priceListItems.find((p) => p.priceList.value === priceListId)
+  const updateEntry = (priceListId: string, patch: Partial<PendingPriceListEntry>) => {
+    const exists = priceListItems.find((p) => p.priceList.value === priceListId);
 
-    let updated: PendingPriceListEntry[]
+    let updated: PendingPriceListEntry[];
 
     if (exists) {
       updated = priceListItems.map((item) =>
@@ -158,7 +143,7 @@ function usePriceListUpdater(
               modified: item.modified === 'created' ? 'created' : 'edited',
             }
           : item
-      )
+      );
     } else {
       updated = [
         ...priceListItems,
@@ -172,11 +157,11 @@ function usePriceListUpdater(
           modified: 'created',
           ...patch,
         },
-      ]
+      ];
     }
 
-    onChange(updated)
-  }
+    onChange(updated);
+  };
 
   const removeEntry = (priceListId: string) => {
     const updated = priceListItems
@@ -188,42 +173,39 @@ function usePriceListUpdater(
             }
           : item
       )
-      .filter((item) => item.modified !== '')
+      .filter((item) => item.modified !== '');
 
-    onChange(updated as any)
-  }
+    onChange(updated as any);
+  };
 
-  return { updateEntry, removeEntry }
+  return { updateEntry, removeEntry };
 }
 
 /* ------------------- PRICE LIST SETUP UI -------------------------- */
 
-export function ProductPriceListSetup({
+export function ItemPriceListSetup({
   priceListItems,
   existigPriceLists,
   onChange,
 }: {
-  priceListItems?: PendingPriceListEntry[]
-  existigPriceLists?: PendingPriceListEntry[]
-  onChange: (value: PendingPriceListEntry[]) => void
+  priceListItems?: PendingPriceListEntry[];
+  existigPriceLists?: PendingPriceListEntry[];
+  onChange: (value: PendingPriceListEntry[]) => void;
 }) {
-  const resolved = priceListItems ?? existigPriceLists ?? []
-  const { priceLists } = useLookups()
-  const { updateEntry, removeEntry } =
-    usePriceListUpdater(resolved, onChange)
+  const resolved = priceListItems ?? existigPriceLists ?? [];
+  const { priceLists } = useLookups();
+  const { updateEntry, removeEntry } = usePriceListUpdater(resolved, onChange);
 
-  const [showAll, setShowAll] = useState(true)
-  const [selected, setSelected] = useState('')
+  const [showAll, setShowAll] = useState(true);
+  const [selected, setSelected] = useState('');
 
-  const missing = priceLists.filter(
-    (pl) => !resolved.some((x) => x.priceList.value === pl.id)
-  )
+  const missing = priceLists.filter((pl) => !resolved.some((x) => x.priceList.value === pl.id));
 
   const handleAdd = () => {
-    if (!selected) return
-    updateEntry(selected, {})
-    setSelected('')
-  }
+    if (!selected) return;
+    updateEntry(selected, {});
+    setSelected('');
+  };
 
   return (
     <Card withBorder p="md">
@@ -243,34 +225,24 @@ export function ProductPriceListSetup({
 
         {showAll &&
           priceLists
-            .filter((pl) =>
-              resolved.some((x) => x.priceList.value === pl.id)
-            )
+            .filter((pl) => resolved.some((x) => x.priceList.value === pl.id))
             .map((pl) => {
-              const item = resolved.find(
-                (x) => x.priceList.value === pl.id
-              )
+              const item = resolved.find((x) => x.priceList.value === pl.id);
 
-              if (!item || item.modified === 'deleted') return null
+              if (!item || item.modified === 'deleted') return null;
 
               return (
                 <Card key={pl.id} withBorder p="sm">
                   <Grid>
                     <Grid.Col span={4}>
-                      <ProductLookupInput
-                        value={item.productId}
-                        onChange={(v) =>
-                          updateEntry(pl.id, { productId: v })
-                        }
+                      <ItemLookupInput
+                        value={item.itemId}
+                        onChange={(v) => updateEntry(pl.id, { itemId: v })}
                       />
                     </Grid.Col>
 
                     <Grid.Col span={3}>
-                      <TextInput
-                        label="Currency"
-                        value={item.currencyCode}
-                        disabled
-                      />
+                      <TextInput label="Currency" value={item.currencyCode} disabled />
                     </Grid.Col>
 
                     <Grid.Col span={3}>
@@ -287,17 +259,13 @@ export function ProductPriceListSetup({
                     </Grid.Col>
 
                     <Grid.Col span={2}>
-                      <Button
-                        color="red"
-                        variant="light"
-                        onClick={() => removeEntry(pl.id)}
-                      >
+                      <Button color="red" variant="light" onClick={() => removeEntry(pl.id)}>
                         <Minus size={16} />
                       </Button>
                     </Grid.Col>
                   </Grid>
                 </Card>
-              )
+              );
             })}
 
         {missing.length > 0 && (
@@ -320,25 +288,23 @@ export function ProductPriceListSetup({
         )}
       </Stack>
     </Card>
-  )
+  );
 }
 
 /* ------------------- STOCK SETUP UI -------------------------- */
 
-export function ProductStockQuantitySetup({
+export function ItemStockQuantitySetup({
   value,
   onChange,
 }: {
-  value: PendingStockEntry[]
-  onChange: (value: PendingStockEntry[]) => void
+  value: PendingStockEntry[];
+  onChange: (value: PendingStockEntry[]) => void;
 }) {
-  const { locations, uoms } = useLookups()
-  const entries = value.length ? value : [{ quantity: '' }]
+  const { locations, uoms } = useLookups();
+  const entries = value.length ? value : [{ quantity: '' }];
 
   function update(index: number, patch: Partial<PendingStockEntry>) {
-    onChange(
-      entries.map((e, i) => (i === index ? { ...e, ...patch } : e))
-    )
+    onChange(entries.map((e, i) => (i === index ? { ...e, ...patch } : e)));
   }
 
   return (
@@ -350,21 +316,14 @@ export function ProductStockQuantitySetup({
           <Card key={i} withBorder p="sm">
             <Grid>
               <Grid.Col span={4}>
-                <ProductLookupInput
-                  value={entry.productId}
-                  onChange={(v) =>
-                    update(i, { productId: v })
-                  }
-                />
+                <ItemLookupInput value={entry.itemId} onChange={(v) => update(i, { itemId: v })} />
               </Grid.Col>
 
               <Grid.Col span={3}>
                 <Select
                   label="Location"
                   value={entry.locationId ?? ''}
-                  onChange={(v) =>
-                    update(i, { locationId: v ?? undefined })
-                  }
+                  onChange={(v) => update(i, { locationId: v ?? undefined })}
                   data={locations.map((l) => ({
                     value: l.id,
                     label: l.name,
@@ -376,9 +335,7 @@ export function ProductStockQuantitySetup({
                 <Select
                   label="UOM"
                   value={entry.uomId ?? ''}
-                  onChange={(v) =>
-                    update(i, { uomId: v ?? undefined })
-                  }
+                  onChange={(v) => update(i, { uomId: v ?? undefined })}
                   data={uoms.map((u) => ({
                     value: u.id,
                     label: u.name,
@@ -390,25 +347,18 @@ export function ProductStockQuantitySetup({
                 <TextInput
                   label="Qty"
                   value={entry.quantity}
-                  onChange={(e) =>
-                    update(i, { quantity: e.target.value })
-                  }
+                  onChange={(e) => update(i, { quantity: e.target.value })}
                 />
               </Grid.Col>
             </Grid>
           </Card>
         ))}
 
-        <Button
-          variant="light"
-          onClick={() =>
-            onChange([...entries, { quantity: '' }])
-          }
-        >
+        <Button variant="light" onClick={() => onChange([...entries, { quantity: '' }])}>
           <Plus size={16} />
           Add Entry
         </Button>
       </Stack>
     </Card>
-  )
+  );
 }

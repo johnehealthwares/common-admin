@@ -1,36 +1,22 @@
-import { useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import {
-  Card,
-  Text,
-  Stack,
-  Grid,
-  Button,
-  Loader,
-  Center,
-} from '@mantine/core'
-
-import { downloadBlob, rxsoftApi } from '@/lib/rxsoft-api'
-import { RxPage } from '../../../components/page/rx-page'
-import { ReportsTable } from './components/table'
-
-import type {
-  DailySale,
-  InventoryValuation,
-  TopProduct,
-} from '../../types'
+import { Card, Text, Stack, Grid, Button, Loader, Center } from '@mantine/core';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { downloadBlob, rxsoftApi } from '@/lib/rxsoft-api';
+import { RxPage } from '../../../components/page/rx-page';
+import type { DailySale, InventoryValuation, TopProduct } from '../../types';
+import { ReportsTable } from './components/table';
 
 export function RxReportsPage() {
-  const [error, setError] = useState<string | null>(null)
-    const [formState, setFormState] = useState<Record<string, unknown>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [formState, setFormState] = useState<Record<string, unknown>>({});
 
   const updateField = (name: string, value: unknown) => {
     setFormState((current) => ({
       ...current,
       [name]: value,
-    }))
-    console.log({ formState })
-  }
+    }));
+    console.log({ formState });
+  };
 
   const reportsQuery = useQuery({
     queryKey: ['rxsoft-reports'],
@@ -39,38 +25,31 @@ export function RxReportsPage() {
         rxsoftApi.get<DailySale[]>('/reports/daily-sales'),
         rxsoftApi.get<InventoryValuation>('/reports/inventory-valuation'),
         rxsoftApi.get<TopProduct[]>('/reports/top-selling-products'),
-      ])
+      ]);
 
       return {
         dailySales: dailySales.data,
         inventory: inventory.data,
         topProducts: topProducts.data,
-      }
+      };
     },
-  })
+  });
 
   const exportMutation = useMutation({
     mutationFn: async () => {
-      await downloadBlob(
-        { method: 'GET', url: '/reports/export' },
-        'reports_summary.csv'
-      )
+      await downloadBlob({ method: 'GET', url: '/reports/export' }, 'reports_summary.csv');
     },
-    onError: () =>
-      setError('Failed to export report summary.'),
-  })
+    onError: () => setError('Failed to export report summary.'),
+  });
 
-  const data = reportsQuery.data
+  const data = reportsQuery.data;
 
   return (
     <RxPage
       title="Reports"
       description="Daily/monthly analytics and export-ready operational reports."
       actions={
-        <Button
-          onClick={() => exportMutation.mutate()}
-          loading={exportMutation.isPending}
-        >
+        <Button onClick={() => exportMutation.mutate()} loading={exportMutation.isPending}>
           Export Summary
         </Button>
       }
@@ -152,5 +131,5 @@ export function RxReportsPage() {
         </Stack>
       )}
     </RxPage>
-  )
+  );
 }

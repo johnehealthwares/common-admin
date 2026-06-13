@@ -1,39 +1,25 @@
-import { useState } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from '@tanstack/react-router'
-import { LogIn } from 'lucide-react'
-
-import { useAuthStore } from '@/stores/auth-store'
-
-import {
-  TextInput,
-  PasswordInput,
-  Button,
-  Stack,
-  Text,
-  Group,
-  Divider,
-} from '@mantine/core'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { TextInput, PasswordInput, Button, Stack, Text, Group, Divider } from '@mantine/core';
+import { Link } from '@tanstack/react-router';
+import { LogIn } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { useAuthStore } from '@/stores/auth-store';
 
 const formSchema = z.object({
   username: z.string().min(1, 'Please enter your username'),
   password: z.string().min(1, 'Please enter your password'),
-})
+});
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  redirectTo?: string
+  redirectTo?: string;
 }
 
-export function UserAuthForm({
-  className,
-  redirectTo,
-  ...props
-}: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const login = useAuthStore((state) => state.login)
-  const error = useAuthStore((state) => state.error)
+export function UserAuthForm({ className, redirectTo, ...props }: UserAuthFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const login = useAuthStore((state) => state.login);
+  const error = useAuthStore((state) => state.error);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,26 +27,22 @@ export function UserAuthForm({
       username: 'admin',
       password: 'test',
     },
-  })
+  });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    setIsLoading(true)
+    setIsLoading(true);
 
-    await login(data.username, data.password)
+    await login(data.username, data.password);
 
-    setIsLoading(false)
+    setIsLoading(false);
 
     if (useAuthStore.getState().user) {
-      window.location.href = redirectTo || '/'
+      window.location.href = redirectTo || '/';
     }
   }
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className={className}
-      {...props}
-    >
+    <form onSubmit={form.handleSubmit(onSubmit)} className={className} {...props}>
       <Stack gap="sm">
         {/* Username */}
         <TextInput
@@ -94,14 +76,14 @@ export function UserAuthForm({
         </div>
 
         {/* Error */}
-        {error && <Text c="red" size="sm">{error}</Text>}
+        {error && (
+          <Text c="red" size="sm">
+            {error}
+          </Text>
+        )}
 
         {/* Submit */}
-        <Button
-          type="submit"
-          loading={isLoading}
-          leftSection={<LogIn size={16} />}
-        >
+        <Button type="submit" loading={isLoading} leftSection={<LogIn size={16} />}>
           Sign in
         </Button>
 
@@ -110,15 +92,11 @@ export function UserAuthForm({
 
         {/* Social login */}
         <Group grow>
-          <Button variant="outline" >
-            GitHub
-          </Button>
+          <Button variant="outline">GitHub</Button>
 
-          <Button variant="outline" >
-            Facebook
-          </Button>
+          <Button variant="outline">Facebook</Button>
         </Group>
       </Stack>
     </form>
-  )
+  );
 }

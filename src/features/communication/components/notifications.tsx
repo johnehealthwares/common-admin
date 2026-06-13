@@ -1,15 +1,11 @@
-import { useMemo, useState } from 'react'
-import { Braces, Pencil, Plus, Trash2 } from 'lucide-react'
-import { Button, Modal, TextInput, Textarea, Group, Stack, Checkbox, Select } from '@mantine/core'
-
-import { ConfirmDialog } from '@/components/confirm-dialog'
-import { JsonEditorField } from '@/features/components/form/json-editor-field'
-import { PaginatedDataTable } from '@/features/components/table/paginated-data-table'
-import { RxPage } from '@/features/components/page/rx-page'
-import {
-  NOTIFICATION_TYPE_OPTIONS,
-} from '../types/constants'
-
+import { Button, Modal, TextInput, Textarea, Group, Stack, Checkbox, Select } from '@mantine/core';
+import { Braces, Pencil, Plus, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { ConfirmDialog } from '@/components/confirm-dialog';
+import { JsonEditorField } from '@/features/components/form/json-editor-field';
+import { RxPage } from '@/features/components/page/rx-page';
+import { PaginatedDataTable } from '@/features/components/table/paginated-data-table';
+import { NOTIFICATION_TYPE_OPTIONS } from '../types/constants';
 import {
   CommunicationRow,
   DialogActions,
@@ -21,20 +17,20 @@ import {
   normalizeRows,
   useCommunicationCrud,
   useCommunicationList,
-} from './shared'
+} from './shared';
 
 type NotificationFormState = {
-  id?: string
-  title: string
-  message: string
-  type: string
-  recipientIds: string[]
-  isBroadcast: boolean
-  scheduledAt: string
-  expiresAt: string
-  priority: string
-  metadata: Record<string, unknown>
-}
+  id?: string;
+  title: string;
+  message: string;
+  type: string;
+  recipientIds: string[];
+  isBroadcast: boolean;
+  scheduledAt: string;
+  expiresAt: string;
+  priority: string;
+  metadata: Record<string, unknown>;
+};
 
 const defaultFormState: NotificationFormState = {
   title: '',
@@ -46,7 +42,7 @@ const defaultFormState: NotificationFormState = {
   expiresAt: '',
   priority: 'normal',
   metadata: {},
-}
+};
 
 const columns = [
   { key: 'id', label: 'ID', width: '80px' },
@@ -56,90 +52,82 @@ const columns = [
   { key: 'priority', label: 'Priority', width: '100px' },
   { key: 'createdAt', label: 'Created', width: '150px' },
   { key: 'scheduledAt', label: 'Scheduled', width: '150px' },
-]
+];
 
 export function NotificationsPage() {
-  const [search, setSearch] = useState('')
-  const [selectedRow, setSelectedRow] = useState<CommunicationRow | null>(null)
+  const [search, setSearch] = useState('');
+  const [selectedRow, setSelectedRow] = useState<CommunicationRow | null>(null);
 
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [isEditOpen, setIsEditOpen] = useState(false)
-  const [isJsonOpen, setIsJsonOpen] = useState(false)
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isJsonOpen, setIsJsonOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const [formState, setFormState] =
-    useState<NotificationFormState>(defaultFormState)
+  const [formState, setFormState] = useState<NotificationFormState>(defaultFormState);
 
-  const { data: notifications = [], isLoading } =
-    useCommunicationList('notifications', search)
+  const { data: notifications = [], isLoading } = useCommunicationList('notifications', search);
 
-  const { createMutation, updateMutation, deleteMutation } =
-    useCommunicationCrud('notifications')
+  const { createMutation, updateMutation, deleteMutation } = useCommunicationCrud('notifications');
 
-  const normalizedRows = useMemo(
-    () => normalizeRows(notifications),
-    [notifications]
-  )
+  const normalizedRows = useMemo(() => normalizeRows(notifications), [notifications]);
 
   const handleCreate = () => {
-    setFormState(defaultFormState)
-    setIsCreateOpen(true)
-  }
+    setFormState(defaultFormState);
+    setIsCreateOpen(true);
+  };
 
   const handleEdit = (row: CommunicationRow) => {
-    setSelectedRow(row)
+    setSelectedRow(row);
 
     setFormState({
       id: getString(row.id),
       title: getString(row.title),
       message: getString(row.message),
       type: getString(row.type),
-      recipientIds: Array.isArray(row.recipientIds)
-        ? row.recipientIds.map(String)
-        : [],
+      recipientIds: Array.isArray(row.recipientIds) ? row.recipientIds.map(String) : [],
       isBroadcast: Boolean(row.isBroadcast),
       scheduledAt: getString(row.scheduledAt),
       expiresAt: getString(row.expiresAt),
       priority: getString(row.priority),
       metadata: getObject(row.metadata),
-    })
+    });
 
-    setIsEditOpen(true)
-  }
+    setIsEditOpen(true);
+  };
 
   const handleViewJson = (row: CommunicationRow) => {
-    setSelectedRow(row)
-    setIsJsonOpen(true)
-  }
+    setSelectedRow(row);
+    setIsJsonOpen(true);
+  };
 
   const handleDelete = (row: CommunicationRow) => {
-    setSelectedRow(row)
-    setIsDeleteOpen(true)
-  }
+    setSelectedRow(row);
+    setIsDeleteOpen(true);
+  };
 
   const handleSave = async () => {
-    const payload: any = { ...formState }
-    delete payload.id
+    const payload: any = { ...formState };
+    delete payload.id;
 
     if (formState.id) {
       await updateMutation.mutateAsync({
         id: formState.id,
         payload: getDirtyPayload(selectedRow || {}, payload),
-      })
+      });
     } else {
-      await createMutation.mutateAsync(payload)
+      await createMutation.mutateAsync(payload);
     }
 
-    setIsCreateOpen(false)
-    setIsEditOpen(false)
-  }
+    setIsCreateOpen(false);
+    setIsEditOpen(false);
+  };
 
   const handleConfirmDelete = async () => {
     if (selectedRow?.id) {
-      await deleteMutation.mutateAsync(String(selectedRow.id))
-      setIsDeleteOpen(false)
+      await deleteMutation.mutateAsync(String(selectedRow.id));
+      setIsDeleteOpen(false);
     }
-  }
+  };
 
   const actions = [
     { label: 'View JSON', icon: Braces, onClick: handleViewJson },
@@ -150,7 +138,7 @@ export function NotificationsPage() {
       onClick: handleDelete,
       variant: 'destructive' as const,
     },
-  ]
+  ];
 
   return (
     <RxPage
@@ -174,22 +162,23 @@ export function NotificationsPage() {
       />
 
       {/* CREATE MODAL */}
-      <Modal opened={isCreateOpen} onClose={() => setIsCreateOpen(false)} title="Create Notification" size="lg">
+      <Modal
+        opened={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        title="Create Notification"
+        size="lg"
+      >
         <Stack gap="md">
           <TextInput
             label="Title"
             value={formState.title}
-            onChange={(e) =>
-              setFormState((p) => ({ ...p, title: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, title: e.target.value }))}
           />
 
           <Textarea
             label="Message"
             value={formState.message}
-            onChange={(e) =>
-              setFormState((p) => ({ ...p, message: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, message: e.target.value }))}
           />
 
           <Group grow>
@@ -197,9 +186,7 @@ export function NotificationsPage() {
               label="Type"
               data={NOTIFICATION_TYPE_OPTIONS}
               value={formState.type}
-              onChange={(v) =>
-                setFormState((p) => ({ ...p, type: v || 'info' }))
-              }
+              onChange={(v) => setFormState((p) => ({ ...p, type: v || 'info' }))}
             />
 
             <Select
@@ -211,9 +198,7 @@ export function NotificationsPage() {
                 { value: 'urgent', label: 'Urgent' },
               ]}
               value={formState.priority}
-              onChange={(v) =>
-                setFormState((p) => ({ ...p, priority: v || 'normal' }))
-              }
+              onChange={(v) => setFormState((p) => ({ ...p, priority: v || 'normal' }))}
             />
           </Group>
 
@@ -277,22 +262,23 @@ export function NotificationsPage() {
       </Modal>
 
       {/* EDIT MODAL */}
-      <Modal opened={isEditOpen} onClose={() => setIsEditOpen(false)} title="Edit Notification" size="lg">
+      <Modal
+        opened={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        title="Edit Notification"
+        size="lg"
+      >
         <Stack gap="md">
           <TextInput
             label="Title"
             value={formState.title}
-            onChange={(e) =>
-              setFormState((p) => ({ ...p, title: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, title: e.target.value }))}
           />
 
           <Textarea
             label="Message"
             value={formState.message}
-            onChange={(e) =>
-              setFormState((p) => ({ ...p, message: e.target.value }))
-            }
+            onChange={(e) => setFormState((p) => ({ ...p, message: e.target.value }))}
           />
 
           <Group grow>
@@ -300,9 +286,7 @@ export function NotificationsPage() {
               label="Type"
               data={NOTIFICATION_TYPE_OPTIONS}
               value={formState.type}
-              onChange={(v) =>
-                setFormState((p) => ({ ...p, type: v || 'info' }))
-              }
+              onChange={(v) => setFormState((p) => ({ ...p, type: v || 'info' }))}
             />
 
             <Select
@@ -314,9 +298,7 @@ export function NotificationsPage() {
                 { value: 'urgent', label: 'Urgent' },
               ]}
               value={formState.priority}
-              onChange={(v) =>
-                setFormState((p) => ({ ...p, priority: v || 'normal' }))
-              }
+              onChange={(v) => setFormState((p) => ({ ...p, priority: v || 'normal' }))}
             />
           </Group>
 
@@ -397,5 +379,5 @@ export function NotificationsPage() {
         isLoading={deleteMutation.isPending}
       />
     </RxPage>
-  )
+  );
 }

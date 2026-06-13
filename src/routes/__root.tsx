@@ -1,13 +1,13 @@
-import { type QueryClient } from '@tanstack/react-query'
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { NavigationProgress } from '@/components/navigation-progress'
-import { GeneralError } from '@/features/errors/general-error'
-import { NotFoundError } from '@/features/errors/not-found-error'
-import { Notifications } from '@mantine/notifications'
+import { Notifications } from '@mantine/notifications';
+import { type QueryClient } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import { NavigationProgress } from '@/components/navigation-progress';
+import { GeneralError } from '@/features/errors/general-error';
+import { NotFoundError } from '@/features/errors/not-found-error';
 
 export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient
+  queryClient: QueryClient;
 }>()({
   component: () => {
     return (
@@ -17,13 +17,13 @@ export const Route = createRootRouteWithContext<{
         <Notifications />
         {import.meta.env.MODE === 'development' && (
           <>
-            <ReactQueryDevtools buttonPosition='bottom-right' />
+            <ReactQueryDevtools buttonPosition="bottom-right" />
             {/* <TanStackRouterDevtools position='bottom-right' /> */}
           </>
         )}
       </>
-    )
+    );
   },
   notFoundComponent: NotFoundError,
   errorComponent: GeneralError,
-})
+});

@@ -1,4 +1,4 @@
-import { Card, Table, Text, Stack } from '@mantine/core'
+import { Card, Table, Text, Stack } from '@mantine/core';
 
 export function ReportsTable({
   title,
@@ -6,10 +6,10 @@ export function ReportsTable({
   columns,
   rows,
 }: {
-  title: string
-  description: string
-  columns: string[]
-  rows: React.ReactNode
+  title: string;
+  description: string;
+  columns: string[];
+  rows: React.ReactNode;
 }) {
   return (
     <Card withBorder p="md">
@@ -43,5 +43,5 @@ export function ReportsTable({
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
     </Card>
-  )
+  );
 }

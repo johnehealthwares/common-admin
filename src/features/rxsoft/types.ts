@@ -1,4 +1,4 @@
-
+import type { AxiosInstance } from 'axios';
 import {
   Equal,
   EqualNot,
@@ -11,31 +11,30 @@ import {
   CalendarDays,
   CalendarClock,
   CalendarRange,
-} from 'lucide-react'
-import { ComponentType, SVGProps } from 'react'
-import type { AxiosInstance } from 'axios'
-import { ActionCellProps } from '../components/table/action-cell'
+} from 'lucide-react';
+import { ComponentType, SVGProps } from 'react';
+import { ActionCellProps } from '../components/table/action-cell';
 
-export type SearchControlType = 'autocomplete' | 'select'
+export type SearchControlType = 'autocomplete' | 'select';
 
 export type SearchConfig = {
-  param?: string
-  placeholder?: string
-  debounceMs?: number
-  endpoint?: string
-  queryParam?: string
+  param?: string;
+  placeholder?: string;
+  debounceMs?: number;
+  endpoint?: string;
+  queryParam?: string;
   filter?: {
-    type?:string,
-    field?: string
-  }
-  minChars?: number
-  valueKey?: string
-  labelKey?: string
-  staticParams?: Record<string, string | number | boolean>
-  operator?: FilterType,
-  staticFilters?: FilterValue[]
-}
-type IconType = ComponentType<SVGProps<SVGSVGElement>>
+    type?: string;
+    field?: string;
+  };
+  minChars?: number;
+  valueKey?: string;
+  labelKey?: string;
+  staticParams?: Record<string, string | number | boolean>;
+  operator?: FilterType;
+  staticFilters?: FilterValue[];
+};
+type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 export enum FilterType {
   EQUALS = 'EQUALS',
   NOT_EQUALS = 'NOT_EQUALS',
@@ -58,12 +57,12 @@ export enum FilterType {
 }
 
 export type ColumnFilter = {
-  name: string,
-  icon?: IconType,
-  type: FilterType,
-  filterValue?: FilterValue
-  options?: Option[]
-}
+  name: string;
+  icon?: IconType;
+  type: FilterType;
+  filterValue?: FilterValue;
+  options?: Option[];
+};
 
 export const FILTERS: Record<string, ColumnFilter> = {
   EQUALS: {
@@ -160,230 +159,278 @@ export const FILTERS: Record<string, ColumnFilter> = {
     icon: Calendar,
     type: FilterType.THIS_YEAR,
   },
-} as const
+} as const;
 
-export const ColumnTypeFilters: Record<string, ColumnFilter[]>={
-  STRING: [
-    FILTERS.EQUALS, 
-    FILTERS.NOT_EQUALS, 
-    FILTERS.FUZZY_MATCH, 
-    FILTERS.CONTAINS
-  ],
+export const ColumnTypeFilters: Record<string, ColumnFilter[]> = {
+  STRING: [FILTERS.EQUALS, FILTERS.NOT_EQUALS, FILTERS.FUZZY_MATCH, FILTERS.CONTAINS],
   DATE: [
-    FILTERS.EQUALS, 
-    FILTERS.NOT_EQUALS, 
-    FILTERS.GREATER_THAN, 
-    FILTERS.GREATER_THAN_OR_EQUAL, 
-    FILTERS.LESS_THAN, 
-    FILTERS.LESS_THAN_OR_EQUAL, 
-    FILTERS.TODAY, 
-    FILTERS.TOMMORROW, 
-    FILTERS.YESTERDAY, 
-    FILTERS.NEXT_24_HOURS, 
-    FILTERS.LAST_MONTH, 
-    FILTERS.THIS_MONTH, 
-    FILTERS.NEXT_MONTH, 
+    FILTERS.EQUALS,
+    FILTERS.NOT_EQUALS,
+    FILTERS.GREATER_THAN,
+    FILTERS.GREATER_THAN_OR_EQUAL,
+    FILTERS.LESS_THAN,
+    FILTERS.LESS_THAN_OR_EQUAL,
+    FILTERS.TODAY,
+    FILTERS.TOMMORROW,
+    FILTERS.YESTERDAY,
+    FILTERS.NEXT_24_HOURS,
+    FILTERS.LAST_MONTH,
+    FILTERS.THIS_MONTH,
+    FILTERS.NEXT_MONTH,
     FILTERS.THIS_YEAR,
-    FILTERS.BETWEEN
+    FILTERS.BETWEEN,
   ],
   NUMBER: [
-    FILTERS.EQUALS, 
-    FILTERS.NOT_EQUALS, 
-    FILTERS.GREATER_THAN, 
-    FILTERS.GREATER_THAN_OR_EQUAL, 
-    FILTERS.LESS_THAN, 
-    FILTERS.LESS_THAN_OR_EQUAL
+    FILTERS.EQUALS,
+    FILTERS.NOT_EQUALS,
+    FILTERS.GREATER_THAN,
+    FILTERS.GREATER_THAN_OR_EQUAL,
+    FILTERS.LESS_THAN,
+    FILTERS.LESS_THAN_OR_EQUAL,
   ],
-  BOOLEAN: [
-    FILTERS.EQUALS, 
-    FILTERS.NOT_EQUALS
-  ]
-}
+  BOOLEAN: [FILTERS.EQUALS, FILTERS.NOT_EQUALS],
+};
 
 export enum ColumnDataType {
   STRING,
   DATE,
   DATETIME,
   NUMBER,
-  BOOLEAN
+  BOOLEAN,
 }
 export type Column = {
-  key: string
-  label: string
-  render?: (row: Record<string, unknown>, actionCellProps?: ActionCellProps) => React.ReactNode
-  dataType?: ColumnDataType
-  filters?: ColumnFilter[]
-  field?: Field
-  editable?: boolean
-  error?: (row: Record<string, unknown>) => string | undefined
-}
+  key: string;
+  label: string;
+  render?: (row: Record<string, unknown>, actionCellProps?: ActionCellProps) => React.ReactNode;
+  dataType?: ColumnDataType;
+  filters?: ColumnFilter[];
+  field?: Field;
+  editable?: boolean;
+  error?: (row: Record<string, unknown>) => string | undefined;
+};
 
-export type RendererType = 'default' | 'table' | 'matrix'
+export type RendererType = 'default' | 'table' | 'matrix';
 
 export type RowAction = {
-  label: string
-  action: string
-  validate?: (row: Record<string, unknown>) => boolean
-}
-
+  label: string;
+  action: string;
+  validate?: (row: Record<string, unknown>) => boolean;
+};
 
 export type FilterValue = {
-  filter: ColumnFilter
-  value?: any
-  valueTo?: any // for BETWEEN
-}
-
+  filter: ColumnFilter;
+  value?: any;
+  valueTo?: any; // for BETWEEN
+};
 
 export type Field = {
-  name: string
-  label: string
+  name: string;
+  label: string;
   type?:
-  | 'text'
-  | 'password'
-  | 'switch'
-  | 'async-select'
-  | 'multi-async-select'
-  | 'select'
-  | 'number'
-  | 'email'
-  | 'hidden'
-  | 'checkbox'
-  | 'date'
-  | 'datetime'
-  | 'daterange'
-  | 'json'
-  | 'multi-check'
-  | 'multi-pick'
-  | 'remote-select'
-  | 'textarea'
-  disabled?: boolean
-  placeholder?: string
-  searchParam?: SearchConfig
-  required?: boolean
-  min?: number
-  max?: number
-  step?: number
-  col?: number
-  defaultValue?: unknown
-  value?: string | { formKey: string, paramKey: string } // value to be passed back during submission
-  options?: Option[]
-  validate?: (value: unknown) => boolean | string
-  updateField?: (row: Record<string, unknown>, name: string, value: unknown) => void
-}
+    | 'text'
+    | 'password'
+    | 'switch'
+    | 'async-select'
+    | 'multi-async-select'
+    | 'select'
+    | 'number'
+    | 'email'
+    | 'hidden'
+    | 'checkbox'
+    | 'date'
+    | 'datetime'
+    | 'daterange'
+    | 'json'
+    | 'multi-check'
+    | 'multi-pick'
+    | 'remote-select'
+    | 'textarea';
+  hidden?: boolean;
+  disabled?: boolean;
+  placeholder?: string;
+  searchParam?: SearchConfig;
+  required?: boolean;
+  min?: number;
+  max?: number;
+  step?: number;
+  col?: number;
+  defaultValue?: unknown;
+  value?: string | { formKey: string; paramKey: string }; // value to be passed back during submission
+  options?: Option[];
+  validate?: (value: unknown) => boolean | string;
+  updateField?: (row: Record<string, unknown>, name: string, value: unknown) => void;
+};
 
 export type FieldGroup = {
-  title?: string
+  title?: string;
   endpoint?: {
-    url: string
-    method: 'get' | 'post'
-    query: {formKey: string, paramKey: string}[]
-  }
-  formStateField?: string
-  mergeRowToSaved?: (saved: any, row: any) => any
-  parentId?: string
-  description?: string
-  mutationMode?:  'row' | 'cell' | 'collection' | 'field'
-  renderer?: RendererType
-  rowsField?: string
-  defaultState?: Record<string, unknown>
-  rowActions?: RowAction[]
-  fields: Field[]
-  columns?: Column[]
+    url: string;
+    method: 'get' | 'post';
+    query: { formKey: string; paramKey: string }[];
+  };
+  formStateField?: string;
+  mergeRowToSaved?: (saved: any, row: any) => any;
+  parentId?: string;
+  description?: string;
+  mutationMode?: 'row' | 'cell' | 'collection' | 'field';
+  renderer?: RendererType;
+  rowsField?: string;
+  defaultState?: Record<string, unknown>;
+  rowActions?: RowAction[];
+  fields: Field[];
+  columns?: Column[];
   matrix?: any;
-  buildPayload?: (values: Record<string, unknown>) => Record<string, unknown>
-}
+  buildPayload?: (values: Record<string, unknown>) => Record<string, unknown>;
+};
 
 export type Option = {
-  value: string
-  label: string
-}
+  value: string;
+  label: string;
+};
 
-export type SearchOption = Option
+export type SearchOption = Option;
 
 export type TabGroup = {
-  value: string
-  description?: string,
-  disabledToolTip?: string,
-  title: string
-  fields?: Field[]
-  fieldGroups?: FieldGroup[]
+  value: string;
+  description?: string;
+  disabledToolTip?: string;
+  title: string;
+  fields?: Field[];
+  fieldGroups?: FieldGroup[];
   render?: (args: {
-    formState: any
-    updateField: (name: string, value: unknown) => void
-  }) => React.ReactNode
-  rootField?: string
-  maxRows?: number
-  fetchRows?: () => { id: string | number } & Record<string, unknown>[]
-  addRow?: () => { id: string | number } & Record<string, unknown>
-  removeRow?: (row: { id: string | number } & Record<string, unknown>) => void
-  waitFor?: string
-}
+    formState: any;
+    updateField: (name: string, value: unknown) => void;
+  }) => React.ReactNode;
+  rootField?: string;
+  maxRows?: number;
+  fetchRows?: () => { id: string | number } & Record<string, unknown>[];
+  addRow?: () => { id: string | number } & Record<string, unknown>;
+  removeRow?: (row: { id: string | number } & Record<string, unknown>) => void;
+  waitFor?: string | ((formState: Record<string, unknown>) => boolean);
+};
 
 export type Pagination = {
-  pageIndex: number
-  pageSize: number
-  total: number
-}
+  pageIndex: number;
+  pageSize: number;
+  total: number;
+};
 
 export type DataPageShellProps = {
-  title: string
-  description?: string
-  endpoint: string
-  columns: Column[]
-  modalTitle?: string
-  createFields?: Field[]
-  createFieldGroups?: FieldGroup[]
-  tabGroups?: TabGroup[]
-  formState?: Record<string, unknown>
-  defaultState?: Record<string, unknown>
-  buildFormState?: (values: Record<string, unknown>) => Record<string, unknown>
-  updateField?: (name: string, value: unknown) => void
-  setFormState?: (state: Record<string, unknown>) => void
-  buildCreatePayload?: (values: Record<string, unknown>) => unknown
-  buildUpdatePayload?: (
-    values: Record<string, unknown>,
-    row: Record<string, unknown>
-  ) => unknown
-  canArchive?: boolean
-  canDelete?: boolean
-  canExport?: boolean
-  csvEndpoint?: string
-  detailPathBuilder?: (row: Record<string, unknown>) => string
-  editPathBuilder?: (row: Record<string, unknown>) => string
-  deletePathBuilder?: (row: Record<string, unknown>) => string
-  embedded?: boolean
-  apiProvider?: AxiosInstance
+  title: string;
+  description?: string;
+  endpoint: string;
+  columns: Column[];
+  modalTitle?: string;
+  createFields?: Field[];
+  createFieldGroups?: FieldGroup[];
+  tabGroups?: TabGroup[];
+  formState?: Record<string, unknown>;
+  defaultState?: Record<string, unknown>;
+  buildFormState?: (values: Record<string, unknown>) => Record<string, unknown>;
+  updateField?: (name: string, value: unknown) => void;
+  setFormState?: (state: Record<string, unknown>) => void;
+  buildCreatePayload?: (values: Record<string, unknown>) => unknown;
+  buildUpdatePayload?: (values: Record<string, unknown>, row: Record<string, unknown>) => unknown;
+  canArchive?: boolean;
+  canDelete?: boolean;
+  canExport?: boolean;
+  csvEndpoint?: string;
+  detailPathBuilder?: (row: Record<string, unknown>) => string;
+  editPathBuilder?: (row: Record<string, unknown>) => string;
+  deletePathBuilder?: (row: Record<string, unknown>) => string;
+  embedded?: boolean;
+  apiProvider?: AxiosInstance;
   renderCreateExtras?: (args: {
-    formState: Record<string, unknown>
-    updateField: (name: string, value: unknown) => void
-  }) => React.ReactNode
+    formState: Record<string, unknown>;
+    updateField: (name: string, value: unknown) => void;
+  }) => React.ReactNode;
   renderHeaderActions?: (args: {
-    rows: Record<string, unknown>[]
-    refresh: () => void
-  }) => React.ReactNode
-  onViewJson?: (row: Record<string, unknown>) => void
-  viewJson?: boolean
-  transformRows?: (rows: Record<string, unknown>[]) => Record<string, unknown>[]
+    rows: Record<string, unknown>[];
+    refresh: () => void;
+  }) => React.ReactNode;
+  onViewJson?: (row: Record<string, unknown>) => void;
+  viewJson?: boolean;
+  transformRows?: (rows: Record<string, unknown>[]) => Record<string, unknown>[];
   onCreateSuccess?: (
     created: Record<string, unknown>,
     values: Record<string, unknown>
-  ) => Promise<void> | void
-  allowDelete?: boolean
-}
+  ) => Promise<void> | void;
+  allowDelete?: boolean;
+};
 
 export type DailySale = {
-  day: string
-  salesCount: number
-  totalAmount: number
-}
+  day: string;
+  salesCount: number;
+  totalAmount: number;
+};
 
 export type InventoryValuation = {
-  itemsCount: number
-  totalQuantity: number
-}
+  itemsCount: number;
+  totalQuantity: number;
+};
 
 export type TopProduct = {
-  productCode: string
-  quantitySold: number
-  revenue: number
-}
+  productCode: string;
+  quantitySold: number;
+  revenue: number;
+};
+
+// types/view.ts
+import { ReactNode } from 'react';
+export type ViewRelationField<T> = {
+  key: keyof T & string;
+  label: string;
+  col?: number;
+  type: 'relation';
+  render: (items: any[], item: T) => ReactNode;
+};
+
+export type ViewField<T> =
+  | {
+      key: keyof T | string;
+      label: string;
+      col?: number;
+      type?: 'field';
+      render?: (value: any, item: T) => ReactNode;
+    }
+  | ViewRelationField<T>;
+
+export type ViewFieldGroup<T> = {
+  title?: string;
+  fields: ViewField<T>[];
+};
+
+export type ViewListColumn<T> = {
+  key: keyof T | string;
+  label: string;
+  render?: (value: any, row: any) => ReactNode;
+};
+
+export type ViewList<T> = {
+  key: keyof T | string;
+  title: string;
+  columns: ViewListColumn<any>[];
+  footer?: (rows: any[]) => ReactNode;
+};
+
+export type View<T> = {
+  endpoint: string;
+  title?: string;
+
+  // top level fields
+  fields?: ViewField<T>[];
+
+  // grouped sections
+  fieldGroups?: ViewFieldGroup<T>[];
+
+  // table sections
+  lists?: ViewList<T>[];
+};
+export const EQUALS_WITH_OPTIONS = (options: Option[]) => [
+  {
+    name: 'Equals',
+    icon: Equal,
+    type: FilterType.EQUALS,
+    options,
+  },
+];

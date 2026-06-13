@@ -1,0 +1,199 @@
+UI/UX DESIGN PROMPT — Mapping Builder + Testing Workspace
+🎯 Objective
+
+Design a visual data mapping editor + execution testing environment that allows users to define, reorder, validate, and test transformation pipelines between a canonical schema (target) and source data with full step-level visibility and debugging.
+
+The system is split into:
+
+Upper Pane → Mapping Design Workspace
+Lower Pane → Testing & Execution Workspace
+🧱 1. PAGE LAYOUT
+🔷 Upper Pane (Design Definition Section)
+
+Split into 2 main regions:
+
+🟦 Left Panel → Visual Mapping Builder (Tree + DnD Canvas)
+
+This is a hierarchical drag-and-drop tree-based mapping editor.
+
+🧩 Structure per Mapping Step (Node Group)
+
+Each step is a composite draggable node containing 3 linked sections:
+
+1. 🎯 Target (Canonical Schema Node)
+Displays known canonical schema field
+Rendered as a read-only node
+Hierarchical tree structure (supports nested JSON paths)
+Expand/collapse children
+2. 🔁 Mapping Block (Core Logic Node)
+
+Contains 3 clickable sub-elements:
+
+Pre-Validation Name
+Transformer Name
+Post-Validation Name
+
+Behavior:
+
+Clicking each highlights corresponding configuration section in right panel
+Hover shows tooltip preview of logic
+Active state syncs with configuration form
+3. 🎯 Target Field Node
+Destination field path
+Editable only in last active/new step
+Must align with canonical schema structure
+🧠 Node Behavior (IMPORTANT)
+Entire step is a drag-and-drop unit
+Dragging a parent node:
+moves all children automatically
+Supports:
+collapse/expand subtree
+tree indentation for hierarchy
+Visual connectors show parent-child relationships
+➕ Actions on each Step
+➕ Add Mapping (adds new row at bottom)
+🗑 Remove Step (with confirmation)
+✏️ Only last step is editable in-place (others locked unless selected)
+🔄 Duplicate step
+⚠️ Highlight duplicate mappings (same source → target)
+🔁 Sorting / DnD Rules
+Drag reorder within same level
+Drag across hierarchy to re-parent nodes
+Auto-adjust child indentation
+Maintain schema consistency on drop
+🧠 Visual Enhancements
+Tree-style indentation lines
+Highlight active node (selected step)
+Highlight invalid mappings in red
+Highlight duplicate mappings in orange
+Valid mapping = neutral/green border
+🟨 Right Panel → Dynamic Configuration Form
+
+This panel updates based on selected mapping step.
+
+🧾 Fields
+1. Mapping Type
+dropdown:
+field-map
+transform
+conditional
+lookup
+custom-js
+aggregate
+2. Source Field (Path Selector)
+searchable dropdown
+supports JSON tree expansion
+autocomplete with fuzzy search
+breadcrumb path display
+3. Transformer
+dropdown:
+uppercase
+lowercase
+regex
+concat
+split
+API lookup
+custom
+▶️ Play button:
+executes transformation using sample input from Testing Pane
+shows inline result preview
+4. Target Field (Path Selector)
+same behavior as source field
+validates against canonical schema
+highlights mismatches
+5. Pre-Validation Script
+dropdown OR custom script editor
+supports validation logic before transformation
+6. Post-Validation Script
+runs after transformation
+validates output shape/value
+7. Fallback Value
+used if transformation fails or validation fails
+8. Preview Section
+displays:
+[source value] → [target value]
+shows real-time evaluation based on Testing Pane input
+🧠 Dynamic Behavior Rules
+Changing any field updates preview instantly
+Transformer selection dynamically changes available inputs
+API lookup triggers async preview
+Errors displayed inline under fields
+🧪 2. LOWER PANE → TESTING WORKSPACE
+
+Split into 2 panels:
+
+🟦 Left → Source Input Data
+JSON editor (editable)
+supports:
+schema validation
+sample datasets
+paste/upload JSON
+optional saved test cases
+🟩 Right → Target Output Data
+Read-only JSON viewer
+reflects execution result of mapping engine
+🎯 Execution Behavior
+“Run Mapping” triggers full pipeline execution
+Step-by-step execution trace available
+Each step shows:
+input
+output
+status (success/fail)
+🟢 Highlighting Rules
+When "Play" is clicked on transformer:
+affected target field turns green
+successful transformation highlights path
+Failed transformation:
+red highlight + error tooltip
+⚠️ Validation Feedback
+Inline errors per step
+Aggregate error summary panel
+Missing fields flagged immediately
+🔁 DnD in Testing Pane
+Optional: reorder test cases
+Optional: swap source/target views
+🧠 3. CROSS-PANE BEHAVIOR (CRITICAL)
+🔗 Sync rules
+Selecting step (upper) → updates right config form
+Running test (lower) → updates upper highlights
+Clicking field in config → highlights node in tree
+⚡ Live Execution Modes
+Manual run (button)
+Auto-run toggle
+Step-level run (play per transformer)
+🧪 Debug Mode
+
+Must include:
+
+step execution timeline
+intermediate outputs per step
+performance timing per node
+🧩 4. ADVANCED REQUIREMENTS (MISSING BUT IMPORTANT)
+🧠 Schema Intelligence
+Auto-flatten JSON schema → path list
+Smart path suggestions
+Detect mismatched types
+🔁 Versioning
+Mapping version history
+ability to compare mappings
+🧬 Reusability
+Save step templates
+reuse transformer blocks
+shared lookup configs
+🧪 Test Case Management
+Save multiple test inputs
+Run regression across all mappings
+Expected vs actual comparison (optional but powerful)
+⚙️ Performance Considerations
+debounce live preview
+memoize schema parsing
+cache API lookup responses
+🧭 
+Linear / tree-based list UI
+Nested draggable components (e.g. dnd-kit)
+Simple expand/collapse hierarchy
+Right-side configuration panel
+
+
+types defined in
+/Users/john/develop/rxsoft/rxsoft-admin-3/src/features/communication/types/mapping.model.ts

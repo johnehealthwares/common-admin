@@ -1,17 +1,8 @@
-import { z } from 'zod'
-import { Controller, useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-
-import {
-  Box,
-  Button,
-  Checkbox,
-  Group,
-  Stack,
-  Text,
-} from '@mantine/core'
-
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Box, Button, Checkbox, Group, Stack, Text } from '@mantine/core';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { showSubmittedData } from '@/lib/show-submitted-data';
 
 const items = [
   {
@@ -38,43 +29,34 @@ const items = [
     id: 'documents',
     label: 'Documents',
   },
-] as const
+] as const;
 
 const displayFormSchema = z.object({
-  items: z
-    .array(z.string())
-    .refine((value) => value.some((item) => item), {
-      message: 'You have to select at least one item.',
-    }),
-})
+  items: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: 'You have to select at least one item.',
+  }),
+});
 
-type DisplayFormValues = z.infer<
-  typeof displayFormSchema
->
+type DisplayFormValues = z.infer<typeof displayFormSchema>;
 
 const defaultValues: Partial<DisplayFormValues> = {
   items: ['recents', 'home'],
-}
+};
 
 export function DisplayForm() {
   const form = useForm<DisplayFormValues>({
     resolver: zodResolver(displayFormSchema),
     defaultValues,
-  })
+  });
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = form
+  } = form;
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit((data) =>
-        showSubmittedData(data)
-      )}
-    >
+    <Box component="form" onSubmit={handleSubmit((data) => showSubmittedData(data))}>
       <Stack gap="xl">
         <Box>
           <Text fw={500} size="md">
@@ -82,8 +64,7 @@ export function DisplayForm() {
           </Text>
 
           <Text size="sm" c="dimmed" mb="md">
-            Select the items you want to display in the
-            sidebar.
+            Select the items you want to display in the sidebar.
           </Text>
 
           <Controller
@@ -95,25 +76,14 @@ export function DisplayForm() {
                   <Checkbox
                     key={item.id}
                     label={item.label}
-                    checked={field.value?.includes(
-                      item.id
-                    )}
+                    checked={field.value?.includes(item.id)}
                     onChange={(event) => {
-                      const checked =
-                        event.currentTarget.checked
+                      const checked = event.currentTarget.checked;
 
                       if (checked) {
-                        field.onChange([
-                          ...(field.value || []),
-                          item.id,
-                        ])
+                        field.onChange([...(field.value || []), item.id]);
                       } else {
-                        field.onChange(
-                          field.value?.filter(
-                            (value) =>
-                              value !== item.id
-                          )
-                        )
+                        field.onChange(field.value?.filter((value) => value !== item.id));
                       }
                     }}
                   />
@@ -130,11 +100,9 @@ export function DisplayForm() {
         </Box>
 
         <Group>
-          <Button type="submit">
-            Update display
-          </Button>
+          <Button type="submit">Update display</Button>
         </Group>
       </Stack>
     </Box>
-  )
+  );
 }
