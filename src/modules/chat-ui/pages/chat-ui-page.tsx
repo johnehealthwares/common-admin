@@ -46,7 +46,7 @@ import {
   useSendConversationMessage,
 } from '../hooks/use-chat-queries';
 import { useChatSocket } from '../hooks/use-chat-socket';
-import type { ChatMode, ConversationInboxItem } from '../types';
+import type { ChatMode, ConversationInboxItem, ExchangeMessage } from '../types';
 import { getParticipantInitials, getParticipantName } from '../utils/participants';
 import { parseQuestionOptions } from '../utils/parse-options';
 

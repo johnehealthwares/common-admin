@@ -45,13 +45,13 @@ interface AccountDrawerProps {
 }
 
 const DASHBOARD_LINKS = [
-  { label: 'My Orders', icon: Receipt, path: '/damorex/account/orders' },
-  { label: 'Prescriptions', icon: Pill, path: '/damorex/account/prescriptions' },
-  { label: 'Saved Medicines', icon: Heart, path: '/damorex/account/saved' },
-  { label: 'Consultation History', icon: Stethoscope, path: '/damorex/account/consultations' },
-  { label: 'Rewards & Points', icon: Gift, path: '/damorex/account/rewards' },
-  { label: 'Addresses', icon: MapPin, path: '/damorex/account/addresses' },
-  { label: 'Payment Methods', icon: CreditCard, path: '/damorex/account/payments' },
+  { label: 'My Orders', icon: Receipt, path: '/damorex/orders' },
+  { label: 'Prescriptions', icon: Pill, path: '/damorex/my-prescriptions' },
+  { label: 'Saved Medicines', icon: Heart, path: '/damorex/dashboard' },
+  { label: 'Consultation History', icon: Stethoscope, path: '/damorex/consultations' },
+  { label: 'Rewards & Points', icon: Gift, path: '/damorex/rewards' },
+  { label: 'Addresses', icon: MapPin, path: '/damorex/dashboard' },
+  { label: 'Payment Methods', icon: CreditCard, path: '/damorex/dashboard' },
 ];
 
 function LoggedOutView({ onSuccess, onClose }: { onSuccess: () => void; onClose: () => void }) {

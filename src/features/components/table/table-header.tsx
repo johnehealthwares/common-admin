@@ -89,7 +89,7 @@ export const TableHeader = ({
                     value={filter.filterValue?.value}
                     field={{ name: filter.name, value: filter.filterValue?.value, searchParam: filter.async_option_config, label: '' }}
                     onChange={(value) =>
-                      handleFiltering({ ...filter, filterValue: { filter, value } })
+                      handleFiltering({ ...filter, filterValue: { filter, value: value?.value } })
                     } />
                   : (
                     <Menu.Item key={filter.type} onClick={() => handleFiltering(filter)}>

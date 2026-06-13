@@ -58,7 +58,6 @@ export function TeamSwitcher() {
 
   const teams = toTeams(storeModules);
   const activeTeam = teams.find((t) => t.moduleId === moduleId) ?? teams[0];
-  console.log({teams,storeModules })
   if (teams.length === 0) {
     return (
       <Box p="sm">

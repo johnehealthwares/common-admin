@@ -91,7 +91,6 @@ function PublicQuestionnairePage() {
       displaySubtitle,
     })
     setEntryMode(nextEntryMode)
-    console.log('Resolved mode:', nextEntryMode)
   }, [])
 
   useEffect(() => {

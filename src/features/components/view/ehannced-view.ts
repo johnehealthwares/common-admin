@@ -22,7 +22,6 @@ export function useEnhancedCodingConceptView<T>(view: View<T>, moduleId: string,
       0,
       attributeGroup
     );
-    console.log({ fieldGroups });
     return {
       ...view,
       fieldGroups,

@@ -15,7 +15,6 @@ export function RxReportsPage() {
       ...current,
       [name]: value,
     }));
-    console.log({ formState });
   };
 
   const reportsQuery = useQuery({

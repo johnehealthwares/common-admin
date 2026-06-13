@@ -8,7 +8,6 @@ import { Values } from './components/values';
 export function CodingConceptRegistryPage() {
   const [formState, setFormState] = useState<any>({});
   const updateField = (name: string, value: unknown) => {
-    console.log({ name, value });
     setFormState((prev: any) => ({
       ...prev,
       [name]: value,

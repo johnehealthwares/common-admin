@@ -66,6 +66,7 @@ import {
   QUESTIONNAIRE_CODES,
 } from './website/hl7-prescription';
 import { websiteApi } from './website/api';
+import type { WebsiteProduct } from './website/types';
 import { useCartStore } from './website/cart-store';
 import { SectionHeading, PrimaryButton, OutlineButton, Logo } from './website/components';
 import {
@@ -865,7 +866,7 @@ export default function DamorexPage() {
                       styles={buttonStyles}
                       onClick={() => {
                         const hl7 = toHL7Prescription(
-                          { product: item, quantity: 1 },
+                          { product: item as unknown as WebsiteProduct, quantity: 1 },//TODO
                           { questionnaireCode: QUESTIONNAIRE_CODES.PRODUCT_INQUIRY, customerName: item.name },
                         );
                         window.open(
@@ -884,7 +885,7 @@ export default function DamorexPage() {
                       styles={buttonStyles}
                       onClick={() => {
                         const hl7 = toHL7Prescription(
-                          { product: item, quantity: 1 },
+                          { product: item as unknown as WebsiteProduct, quantity: 1 },
                           { questionnaireCode: QUESTIONNAIRE_CODES.PRODUCT_INQUIRY, customerName: item.name },
                         );
                         useChatbotStore.getState().openWith(hl7, QUESTIONNAIRE_CODES.PRODUCT_INQUIRY);

@@ -109,7 +109,6 @@ export function useChatbotSession(senderPhone: string) {
       ]);
 
       setSending(true);
-      console.log('hello....')
       try {
         const body: Record<string, any> = {
           channelId: MOCK_CHANNEL_ID,

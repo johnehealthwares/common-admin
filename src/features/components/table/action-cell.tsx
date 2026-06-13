@@ -98,7 +98,6 @@ export const ActionCell = ({
           loading={savingRowIndex === row.id}
           disabled={!row.dirty || savingRowIndex !== null}
           onClick={() => {
-            console.log({ row });
             saveRow(row);
           }}
         >

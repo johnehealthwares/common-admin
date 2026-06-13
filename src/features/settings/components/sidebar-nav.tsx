@@ -19,7 +19,7 @@ interface SidebarNavItemProps {
   item: NavItem;
   pathname: string;
   collapsed?: boolean;
-  resetExpandState: (index: number) => void;
+  resetExpandState: (index: number, expanded: boolean) => void;
   expanded: boolean;
   index: number;
 }
@@ -57,7 +57,7 @@ export function SidebarNavItem({
       onClick={() => {
         if (hasChildren) {
           toggle();
-          resetExpandState(index);
+          resetExpandState(index, expanded);
         }
       }}
       style={{

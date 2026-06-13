@@ -9,7 +9,6 @@ export function GeneralError({ minimal = false, ...props }: GeneralErrorProps) {
   const navigate = useNavigate();
   const { history } = useRouter();
 
-  console.log({ props });
   return (
     <Center style={{ height: '100vh', width: '100%' }}>
       <Stack align="center" gap="xs">

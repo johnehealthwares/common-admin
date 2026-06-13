@@ -31,7 +31,7 @@ function UomCategoryFormContent({ uomCategoryId }: { uomCategoryId: string }) {
         message: 'UOM updated successfully.',
         color: 'green',
       });
-      navigate({ to: '/uomCategory/$id', params: { uomCategoryId } });
+      // navigate({ to: '/uom-category/$id', params: { id: uomCategoryId } });
     },
     onError: (error) => {
       notifications.show({

@@ -1,10 +1,15 @@
 import { Column, ColumnTypeFilters, FieldGroup, FilterType } from '../../types';
+import { InlinePriceCell } from './inline-price-cell';
 
 export const columns: Column[] = [
   { key: 'item.name', label: 'Product', filters: ColumnTypeFilters.STRING },
   { key: 'priceList.name', label: 'PriceList', filters: ColumnTypeFilters.STRING },
   { key: 'currencyCode', label: 'Currency' },
-  { key: 'unitPrice', label: 'Price' },
+  {
+    key: 'unitPrice',
+    label: 'Price',
+    render: (row) => <InlinePriceCell row={row} />,
+  },
 ];
 
 export const fieldGroups: FieldGroup[] = [

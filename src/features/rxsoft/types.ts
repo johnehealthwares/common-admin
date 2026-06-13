@@ -62,6 +62,7 @@ export type ColumnFilter = {
   type: FilterType;
   filterValue?: FilterValue;
   options?: Option[];
+  async_option_config?: SearchConfig;
 };
 
 export const FILTERS: Record<string, ColumnFilter> = {
@@ -426,6 +427,15 @@ export type View<T> = {
   // table sections
   lists?: ViewList<T>[];
 };
+export const RELATION_FILTER = (searchParam: SearchConfig): ColumnFilter[] => [
+  {
+    name: 'Equals',
+    icon: Equal,
+    type: FilterType.EQUALS,
+    async_option_config: searchParam,
+  },
+];
+
 export const EQUALS_WITH_OPTIONS = (options: Option[]) => [
   {
     name: 'Equals',

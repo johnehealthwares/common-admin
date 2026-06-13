@@ -18,7 +18,6 @@ export function ProductEntryTable({ session, onAddToCart }: Props) {
   const { data: priceListItems = [] } = usePriceListItems(session.priceListId);
 
   const productOptions = useMemo(() => {
-    console.log({ productOptions: priceListItems.map((o) => o.item.id) });
     return (Array.isArray(priceListItems) ? priceListItems : []).map((pli: any) => ({
       value: pli.item?.id || pli.id,
       label: `${pli.item?.code || ''} - ${pli.item?.name || ''}`,

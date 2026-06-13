@@ -22,7 +22,6 @@ export const paymentMethodKeys = {
 
 export async function createSale(payload: CreateSaleDto) {
   const { data } = await rxsoftApi.post('/sales', payload);
-  console.log({ data });
   return data;
 }
 

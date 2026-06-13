@@ -15,8 +15,11 @@ export function AppSidebar() {
   const navGroups = filterNavGroupsByModule(sidebarData.navGroups, moduleId);
   const [expandState, setExpandState] = useState<boolean[]>(sidebarData.navGroups.map(() => false));
 
-  const resetExpandState = (index: number) => {
-    setExpandState(sidebarData.navGroups.map((_, inde) => (inde === index ? true : false)));
+  const resetExpandState = (index: number, espanded: boolean) => {
+    setExpandState(sidebarData.navGroups.map((_, inde) => {
+     const unespanded =  inde === index ? !espanded : false
+     return unespanded
+    }));
   };
 
   return (

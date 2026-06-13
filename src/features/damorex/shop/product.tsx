@@ -53,7 +53,6 @@ import {
 import { PageLoader } from '../website/loaders';
 
 export default function ProductDetailPage() {
-  console.log('here');
   const { slug } = useParams({ from: '/damorex/shop_/$slug' });
   const { data, isLoading } = useProduct(slug);
   const addItem = useCartStore((s) => s.addItem);
@@ -62,9 +61,6 @@ export default function ProductDetailPage() {
   const product = data?.product;
   const gp = product?.genericProduct;
   const pharm = gp?.pharmaceutics;
-
-  console.log({ product, gp, pharm });
-
   return (
     <WebsiteLayout>
       <Container size="xl" py={{ base: 28, md: 48 }}>

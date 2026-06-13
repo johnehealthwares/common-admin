@@ -1,7 +1,7 @@
 import { Text } from '@mantine/core';
 import { AxiosInstance } from 'axios';
 import type {} from '@/features/components/page/rx-page';
-import { EQUALS_WITH_OPTIONS, FieldGroup, FilterType, TabGroup } from '@/features/rxsoft/types';
+import { EQUALS_WITH_OPTIONS, FieldGroup, FilterType, RELATION_FILTER, TabGroup, View } from '@/features/rxsoft/types';
 import { rxsoftApi } from '@/lib/rxsoft-api';
 import { buildPayload as buildPriceListPayload } from '../../price-list-items/schema';
 import { ProductImagesTab } from '../components/product-images-tab';
@@ -204,7 +204,6 @@ const itemPriceListFieldGroups: FieldGroup[] = [
           col: 3,
           required: true,
           updateField: (row, name, value) => {
-            console.log({ row, name, value });
           }, //updateMatrixRow(row, name, value)
         },
       },
@@ -275,7 +274,6 @@ const itemPriceListFieldGroups: FieldGroup[] = [
       },
 
       save: async (row: PricingMatrixRow & { itemId: string }) => {
-        console.log({ row });
         if (row.exists) {
           return rxsoftApi.patch(
             `/price-lists/${row.priceListId}/items/${row.id}`,
@@ -460,7 +458,17 @@ function ToggleActive({ row, onToggle }: { row: Record<string, unknown>; onToggl
 }
 
 export const itemColumns: Column[] = [
-  { key: 'category.name', label: 'Category' },
+  {
+    key: 'category.name',
+    label: 'Category',
+    filters: RELATION_FILTER({
+      endpoint: '/categories',
+      valueKey: 'name',
+      labelKey: 'name',
+      queryParam: 'search',
+      minChars: 3,
+    }),
+  },
   { key: 'name', label: 'Item Name', filters: ColumnTypeFilters.STRING },
   { key: 'code', label: 'Code' },
   { key: 'barcode', label: 'Barcode' },
@@ -475,6 +483,101 @@ export const itemColumns: Column[] = [
   },
 ];
 
+export const itemsView: View<any> = {
+  endpoint: '/items/:id',
+  title: 'Item Details',
+  fieldGroups: [
+    {
+      title: 'Basic Information',
+      fields: [
+        { key: 'name', label: 'Item Name', col: 6 },
+        { key: 'code', label: 'Code', col: 3 },
+        { key: 'barcode', label: 'Barcode', col: 3 },
+        {
+          key: 'category',
+          label: 'Category',
+          col: 4,
+          render: (_, data) => data.category?.name ?? '-',
+        },
+        {
+          key: 'genericProduct',
+          label: 'Generic Product',
+          col: 4,
+          render: (_, data) => data.genericProduct?.name ?? '-',
+        },
+      ],
+    },
+    {
+      title: 'Units of Measure',
+      fields: [
+        {
+          key: 'baseUom',
+          label: 'Base UOM',
+          col: 4,
+          render: (_, data) => data.baseUom?.name ?? '-',
+        },
+        {
+          key: 'purchaseUom',
+          label: 'Purchase UOM',
+          col: 4,
+          render: (_, data) => data.purchaseUom?.name ?? '-',
+        },
+        {
+          key: 'saleUom',
+          label: 'Sale UOM',
+          col: 4,
+          render: (_, data) => data.saleUom?.name ?? '-',
+        },
+      ],
+    },
+    {
+      title: 'Status',
+      fields: [
+        {
+          key: 'isActive',
+          label: 'Active',
+          col: 3,
+          render: (value) => (value ? 'Yes' : 'No'),
+        },
+        {
+          key: 'trackExpiry',
+          label: 'Track Expiry',
+          col: 3,
+          render: (value) => (value ? 'Yes' : 'No'),
+        },
+      ],
+    },
+  ],
+  lists: [
+    {
+      key: 'priceListItems',
+      title: 'Price List Entries',
+      columns: [
+        { key: 'priceListName', label: 'Price List' },
+        { key: 'currencyCode', label: 'Currency' },
+        { key: 'unitPrice', label: 'Unit Price' },
+      ],
+    },
+    {
+      key: 'stockItems',
+      title: 'Stock Entries',
+      columns: [
+        {
+          key: 'location',
+          label: 'Location',
+          render: (_, row) => row.location?.name ?? '-',
+        },
+        {
+          key: 'uom',
+          label: 'UOM',
+          render: (_, row) => row.uom?.name ?? '-',
+        },
+        { key: 'quantity', label: 'Quantity' },
+      ],
+    },
+  ],
+};
+
 export const itemsConfig: ModelConfig = {
   id: 'items',
   title: 'Items',
@@ -488,6 +591,7 @@ export const itemsConfig: ModelConfig = {
   buildFormState,
   createPathBuilder: () => '/items/create',
   detailPathBuilder: (row) => `/items/${String(row.id)}`,
+  view: itemsView,
 };
 
 export function buildItemPayload(values: Record<string, any>) {

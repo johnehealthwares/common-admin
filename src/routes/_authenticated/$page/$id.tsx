@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
+import { codingConceptApi } from '@/lib/coding-concept-api';
 import { codingConceptView } from '@/features/coding-concept/schema/view';
+import { deriveView } from '@/features/components/view/derive-view';
 import { GenericViewComponent } from '@/features/components/view';
 import { useEnhancedCodingConceptView } from '@/features/components/view/ehannced-view';
 import { getModelConfig } from '@/features/registry';
@@ -25,12 +27,12 @@ function GenericViewPage() {
     getModelConfig(page).then(setModelConfig);
   }, [page]);
 
-  const view = modelConfig?.view;
+  const view = modelConfig ? deriveView(modelConfig) : null;
   const apiProvider = modelConfig?.apiProvider ?? findModuleForResource(page)?.apiProvider;
 
   const detailQuery = useQuery({
     queryKey: [page, id],
-    enabled: !!view && !!apiProvider,
+    enabled: !!view && !!apiProvider && page !== 'coding-concepts',
     queryFn: async () => {
       const endpoint = view!.endpoint.replace(':id', id);
       return apiProvider!.get(endpoint);
@@ -39,10 +41,11 @@ function GenericViewPage() {
 
   const data = detailQuery.data?.data?.data ?? detailQuery.data?.data;
 
+  if (page === 'coding-concepts') {
+    return <CodingConceptDetailView id={id} />;
+  }
+
   if (!view) {
-    if (page === 'coding-concepts') {
-      return <CodingConceptDetailView id={id} />;
-    }
     return <div>Invalid page configuration</div>;
   }
 
@@ -58,10 +61,7 @@ function CodingConceptDetailView({ id }: { id: string }) {
   const detailQuery = useQuery({
     queryKey: ['coding-concepts', id],
     enabled: true,
-    queryFn: async () => {
-      const { codingConceptApi } = await import('@/lib/coding-concept-api');
-      return codingConceptApi.get(view!.endpoint.replace(':id', id));
-    },
+    queryFn: () => codingConceptApi.get(view!.endpoint.replace(':id', id)),
   });
 
   const data = detailQuery.data?.data?.data;

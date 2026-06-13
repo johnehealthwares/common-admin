@@ -23,7 +23,6 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
     [fieldGroup.parentId || '']: parentId,
   });
 
-  console.log({ localFormState });
 
   const syncRows = useCallback(
     (nextRows: Record<string, unknown>[], nextOriginalRows?: Record<string, unknown>[]) => {
@@ -151,7 +150,6 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
         color: 'green',
       });
     } catch (err: any) {
-      console.log({ err });
       const message =
         err?.response?.data?.message ??
         err?.response?.data?.error?.message ??

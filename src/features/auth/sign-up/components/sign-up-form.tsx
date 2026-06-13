@@ -42,7 +42,6 @@ export function SignUpForm(props: React.HTMLAttributes<HTMLFormElement>) {
     setIsLoading(true);
 
     // eslint-disable-next-line no-console
-    console.log(values);
 
     setTimeout(() => {
       setIsLoading(false);

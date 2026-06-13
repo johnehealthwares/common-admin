@@ -46,7 +46,6 @@ export function useSendConversationMessage() {
     onMutate: async (input) => {
       const queryKey = chatKeys.messages(input.conversationId);
       await queryClient.cancelQueries({ queryKey });
-      console.log({input})
       const optimisticMessage: ExchangeMessage = {
         id: `optimistic-${Date.now()}`,
         conversationId: input.conversationId,

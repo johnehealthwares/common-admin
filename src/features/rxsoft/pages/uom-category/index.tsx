@@ -11,4 +11,3 @@ export function RxUomCategoryPage() {
 }
 
 export { RxUomEditPage } from './create';
-export { RxUomDetailsPage } from './detail';
