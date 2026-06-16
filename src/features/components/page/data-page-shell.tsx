@@ -1,9 +1,11 @@
 import { useQuery, useQueryClient, type QueryKey } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useMemo, useState } from 'react';
+import { Select } from '@mantine/core';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { ModuleContext, useModuleContext } from '@/context/module-context';
 import type { ModelConfig } from '@/features/shared/model-schema';
+import { useAuthStore } from '@/stores/auth-store';
 import { JsonPreviewDialog } from '../../rxsoft';
 import type { FilterValue } from '../../rxsoft/types';
 import { useFormContext } from '../form/form-context';
@@ -15,6 +17,7 @@ import {
   useUpdateMutation,
 } from '../form/mutations';
 import { HeaderBar } from '../table/HeaderBar';
+import { MetricsBar } from '../table/MetricsBar';
 import { Pagination } from '../table/pagination';
 import { DataTable } from '../table/table';
 import { getArrayPayload } from '../utils';
@@ -67,6 +70,10 @@ export function DataPageShell(props: DataPageShellProps) {
     canExport,
     defaultState,
     apiProvider: configApiProvider,
+    minSearchLength,
+    debounceMs,
+    metricsEndpoint,
+    superAdminOrgFilter,
   } = config;
   const moduleContext = useModuleContext();
   const apiProvider = configApiProvider ?? moduleContext.apiProvider;
@@ -138,8 +145,23 @@ export function DataPageShell(props: DataPageShellProps) {
     }));
   };
 
+  const currentUser = useAuthStore((s) => s.user);
+  const isSuperAdmin = currentUser?.roles?.includes('super_admin') ?? false;
+  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
+
+  const { data: orgs = [] } = useQuery({
+    queryKey: ['organizations', 'list'],
+    queryFn: async () => {
+      const res = await apiProvider.get('/organizations', { params: { limit: 100 } });
+      return res.data?.data ?? [];
+    },
+    enabled: isSuperAdmin && !!superAdminOrgFilter,
+    staleTime: 120_000,
+  });
+
   const hasCreate = Boolean(tabGroups || createFields || createFieldGroups);
   const hasInlineEdit = hasCreate && !editPathBuilder;
+  const hasFilterableColumns = columns.some((c) => c.filters && c.filters.length > 0);
 
   const fieldGroups = createFieldGroups ?? (createFields ? [{ fields: createFields }] : []);
 
@@ -165,11 +187,15 @@ export function DataPageShell(props: DataPageShellProps) {
       params.search = search.trim();
     }
 
+    if (isSuperAdmin && superAdminOrgFilter && selectedOrgId) {
+      params.organizationId = selectedOrgId;
+    }
+
     params.page = pageIndex;
     params.limit = pageSize;
 
     return params;
-  }, [search, searchBy, appliedFilters, pageIndex, pageSize]);
+  }, [search, searchBy, appliedFilters, pageIndex, pageSize, isSuperAdmin, superAdminOrgFilter, selectedOrgId]);
 
   useEffect(() => {
     setPageIndex(1);
@@ -254,6 +280,22 @@ export function DataPageShell(props: DataPageShellProps) {
 
   const content = (
     <>
+      {isSuperAdmin && superAdminOrgFilter && (
+        <Select
+          placeholder="Filter by organization"
+          data={(Array.isArray(orgs) ? orgs : []).map((o: any) => ({
+            value: o.id,
+            label: `${o.code} - ${o.name}`,
+          }))}
+          value={selectedOrgId}
+          onChange={setSelectedOrgId}
+          clearable
+          searchable
+          size="xs"
+          mb="xs"
+        />
+      )}
+      {metricsEndpoint && <MetricsBar endpoint={metricsEndpoint} />}
       <HeaderBar
         open={filtersModalOpened}
         setOpen={setFiltersModalOpened}
@@ -274,9 +316,11 @@ export function DataPageShell(props: DataPageShellProps) {
             query.refetch();
           },
         })}
-        onExport={() => {
-          exportMutation.mutate();
-        }}
+        onExport={canExport && csvEndpoint ? () => exportMutation.mutate() : undefined}
+        onDelete={canDelete || deletePathBuilder ? () => setIsDeleteOpen(true) : undefined}
+        hasFilterableColumns={hasFilterableColumns}
+        minSearchLength={minSearchLength}
+        debounceMs={debounceMs}
         onCreate={
           hasCreate
             ? () => {

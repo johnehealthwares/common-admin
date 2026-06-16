@@ -34,4 +34,8 @@ export type ModelConfig<T = any> = {
   defaultState?: Record<string, unknown>;
   view?: View<T>;
   apiProvider?: AxiosInstance;
+  minSearchLength?: number;
+  debounceMs?: number;
+  metricsEndpoint?: string;
+  superAdminOrgFilter?: boolean;
 };

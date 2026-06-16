@@ -39,10 +39,12 @@ export function FilterRow({
           updateFilter(filter.id, 'value', undefined);
           updateFilter(filter.id, 'valueTo', undefined);
         }}
-        data={columns.map((c) => ({
-          value: c.key,
-          label: c.label,
-        }))}
+        data={columns
+          .filter((c) => c.filters && c.filters.length > 0)
+          .map((c) => ({
+            value: c.key,
+            label: c.label,
+          }))}
       />
 
       {/* Operation */}

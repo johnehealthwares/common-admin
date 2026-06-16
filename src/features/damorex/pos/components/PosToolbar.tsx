@@ -1,7 +1,7 @@
 import { ActionIcon, Button, Group, Select, Text } from '@mantine/core';
-import { Plus, RefreshCcw, Settings } from 'lucide-react';
+import { Plus, RefreshCcw, Search, Settings } from 'lucide-react';
 import { useState } from 'react';
-import { useCustomers, usePriceLists } from '../../api/posApi';
+import { useCustomers, usePriceLists, useSearchSales } from '../../api/posApi';
 import { SaleSession } from '../types';
 import { CustomerQuickAddModal } from './CustomerQuickAddModal';
 
@@ -12,6 +12,7 @@ interface Props {
   onPricingModeChange: (mode: 'retail' | 'wholesale') => void;
   onReset: () => void;
   onSettings: () => void;
+  onLoadSale: (saleId: string) => void;
 }
 
 export function PosToolbar({
@@ -21,13 +22,16 @@ export function PosToolbar({
   onPricingModeChange,
   onReset,
   onSettings,
+  onLoadSale,
 }: Props) {
   const [customerModal, setCustomerModal] = useState(false);
   const [customerSearch, setCustomerSearch] = useState('');
   const [priceListSearch, setPriceListSearch] = useState('');
+  const [saleSearch, setSaleSearch] = useState('');
 
   const { data: customers = [] } = useCustomers(customerSearch);
   const { data: priceLists = [] } = usePriceLists(priceListSearch);
+  const { data: sales = [] } = useSearchSales(saleSearch);
 
   const customerData = (Array.isArray(customers) ? customers : []).map((c: any) => ({
     value: c.id,
@@ -37,6 +41,11 @@ export function PosToolbar({
   const priceListData = (Array.isArray(priceLists) ? priceLists : []).map((p: any) => ({
     value: p.id,
     label: p.name,
+  }));
+
+  const saleData = (Array.isArray(sales) ? sales : []).map((s: any) => ({
+    value: s.id,
+    label: `${s.saleNumber} - ₦${s.totalAmount?.toFixed(2) ?? '0.00'}`,
   }));
 
   return (
@@ -93,6 +102,21 @@ export function PosToolbar({
           searchable
           clearable
           w={200}
+        />
+
+        <Select
+          size="xs"
+          placeholder="Load Sale by #"
+          data={saleData}
+          onSearchChange={setSaleSearch}
+          onChange={(value) => {
+            if (value) onLoadSale(value);
+          }}
+          searchable
+          clearable
+          w={200}
+          leftSection={<Search size={14} />}
+          nothingFoundMessage="No sales found"
         />
 
         <Button size="xs" color="red" leftSection={<RefreshCcw size={14} />} onClick={onReset}>

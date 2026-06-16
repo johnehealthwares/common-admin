@@ -4,6 +4,13 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
 
 export default defineConfig({
+   optimizeDeps: {
+    include: [
+      'react', 
+      'react/jsx-runtime', 
+      'react-dom'
+    ],
+  },
   plugins: [
     tanstackRouter({
       target: 'react',
@@ -19,4 +26,10 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  build: {
+    minify: false,
+  },
+  server: {
+    allowedHosts: ['kyung-unexempted-brunilda.ngrok-free.dev']
+  }
 });

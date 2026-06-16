@@ -24,7 +24,7 @@ export function HeldSalesDrawer({ opened, onClose, onResume }: Props) {
               onClose();
             }}
           >
-            {sale.saleCode} - {sale.customerName || 'Walk-in'} ($
+            {sale.saleCode} - {sale.customerName || 'Walk-in'} (₦
             {sale.cart.reduce((s, i) => s + i.lineTotal, 0).toFixed(2)})
           </Button>
         ))}

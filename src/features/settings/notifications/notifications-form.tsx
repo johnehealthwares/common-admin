@@ -189,7 +189,7 @@ export function NotificationsForm() {
                 <Text size="sm" c="dimmed">
                   You can manage your mobile notifications in the{' '}
                   <Link
-                    to="/settings"
+                    to={'/settings' as any}
                     style={{
                       textDecoration: 'underline',
                     }}

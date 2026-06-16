@@ -21,7 +21,7 @@ import {
   Tooltip,
   useMantineTheme,
 } from '@mantine/core';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+// import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {
@@ -58,10 +58,11 @@ type ChatUiPageProps = {
 
 export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
   const theme = useMantineTheme();
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  // const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = false;
   const [search, setSearch] = useState('');
   const [selectedConversationId, setSelectedConversationId] = useState<string>();
-  const [sidebarOpened, sidebar] = useDisclosure(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const userPhone = useAuthStore((state) => state.user?.phone);
   const inboxQuery = useConversationInbox(search);
   const selectedConversation = useMemo(
@@ -103,7 +104,7 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
       onSearch={setSearch}
       onSelect={(conversation) => {
         setSelectedConversationId(conversation.conversationId);
-        sidebar.close();
+        setSidebarOpen(false)
       }}
       search={search}
       selectedConversationId={selectedConversationId}
@@ -133,7 +134,7 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
             connected={socket.connected}
             conversation={selectedConversation}
             mode={mode}
-            onBack={sidebar.open}
+            onBack={() =>         setSidebarOpen(true) }
             showMobileBack={Boolean(isMobile)}
             typingParticipantId={socket.typingParticipantId}
             userPhone={userPhone}
@@ -142,8 +143,8 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
       </Group>
 
       <Drawer
-        opened={sidebarOpened}
-        onClose={sidebar.close}
+        opened={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
         title="Inbox"
         size="min(92vw, 380px)"
         padding="sm"

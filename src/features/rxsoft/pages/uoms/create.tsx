@@ -66,7 +66,7 @@ function UomFormContent({ uomId }: { uomId: string }) {
         message: 'UOM updated successfully.',
         color: 'green',
       });
-      navigate({ to: '/uoms/$uomId', params: { uomId } });
+      (navigate as any)({ to: `/uoms/${uomId}` });
     },
     onError: (error) => {
       notifications.show({
@@ -96,7 +96,7 @@ export function RxUomEditPage({ uomId }: { uomId: string }) {
       title="Edit UOM"
       description="PATCH /uoms/{uomId}"
       actions={
-        <Button component={Link} to="/uoms" variant="outline">
+        <Button component={Link} to={'/uoms' as any} variant="outline">
           Back to UOMs
         </Button>
       }

@@ -20,6 +20,10 @@ export const paymentMethodKeys = {
   list: ['payment-methods'] as any,
 };
 
+export const userPosConfigKeys = {
+  me: ['user-pos-config', 'me'] as any,
+};
+
 export async function createSale(payload: CreateSaleDto) {
   const { data } = await rxsoftApi.post('/sales', payload);
   return data;
@@ -58,6 +62,21 @@ export function useSale(id?: string) {
       return data;
     },
     enabled: !!id,
+  });
+}
+
+export function useSearchSales(search?: string) {
+  return useQuery({
+    queryKey: ['sales', 'search', search] as const,
+    queryFn: async () => {
+      if (!search) return [];
+      const { data } = await rxsoftApi.get('/sales', {
+        params: { search, limit: 10 },
+      });
+      return data?.data ?? data ?? [];
+    },
+    enabled: !!search && search.length >= 2,
+    staleTime: 30_000,
   });
 }
 
@@ -125,5 +144,46 @@ export function useCreateCustomer() {
     onSuccess: () => {
       qc.invalidateQueries(customerKeys.list());
     },
+  });
+}
+
+export function useUserPosConfig() {
+  return useQuery({
+    queryKey: userPosConfigKeys.me,
+    queryFn: async () => {
+      const { data } = await rxsoftApi.get('/user-pos-config/me');
+      return data;
+    },
+    staleTime: 60_000,
+  });
+}
+
+export function useUpdateUserPosConfig() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: {
+      stockLocationId?: string | null;
+      storeId?: string | null;
+      allowA4Print?: boolean;
+      allowPos?: boolean;
+      loginTimeoutMinutes?: number | null;
+    }) => {
+      const { data } = await rxsoftApi.patch('/user-pos-config/me', payload);
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries(userPosConfigKeys.me);
+    },
+  });
+}
+
+export function useOrganisationConfig() {
+  return useQuery({
+    queryKey: ['organisation-config'],
+    queryFn: async () => {
+      const { data } = await rxsoftApi.get('/organisation-config');
+      return data;
+    },
+    staleTime: 60_000,
   });
 }

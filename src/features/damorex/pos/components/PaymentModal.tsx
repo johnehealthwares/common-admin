@@ -1,5 +1,7 @@
 import { Button, Group, Modal, NumberInput, Select, Stack, Text } from '@mantine/core';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { rxsoftApi } from '@/lib/rxsoft-api';
 import { useCreateSale, usePaymentMethods } from '../../api/posApi';
 
 interface Props {
@@ -15,6 +17,15 @@ export function PaymentModal({ opened, onClose, totals, session, onComplete }: P
   const [methodId, setMethodId] = useState<string | null>(null);
 
   const { data: paymentMethods = [] } = usePaymentMethods();
+  const { data: posConfig } = useQuery({
+    queryKey: ['user-pos-config', 'me'],
+    queryFn: async () => {
+      const { data } = await rxsoftApi.get('/user-pos-config/me');
+      return data;
+    },
+    staleTime: 60_000,
+  });
+
   const mutation = useCreateSale({
     onSuccess: () => {
       onComplete();
@@ -41,8 +52,9 @@ export function PaymentModal({ opened, onClose, totals, session, onComplete }: P
     const payload: any = {
       saleNumber: session.saleCode,
       saleChannel: 'pos',
-      storeId: 'default',
+      storeId: posConfig?.storeId ?? 'default',
       customerId: session.customerId || null,
+      stockLocationId: posConfig?.stockLocationId ?? null,
       lines,
       payments: methodId ? [{ paymentMethodId: methodId, amount: paid }] : [],
     };
@@ -69,12 +81,12 @@ export function PaymentModal({ opened, onClose, totals, session, onComplete }: P
           min={0}
         />
 
-        <Text>Total: ${totals.total.toFixed(2)}</Text>
-        <Text>Balance: ${Math.max(0, balance).toFixed(2)}</Text>
-        {change > 0 && <Text c="green">Change: ${change.toFixed(2)}</Text>}
+        <Text>Total: ₦{totals.total.toFixed(2)}</Text>
+        <Text>Balance: ₦{Math.max(0, balance).toFixed(2)}</Text>
+        {change > 0 && <Text c="green">Change: ₦{change.toFixed(2)}</Text>}
 
         <Group grow>
-          <Button loading={mutation.isPending} onClick={handleComplete}>
+          <Button loading={mutation.isPending} onClick={handleComplete} disabled={!methodId}>
             Complete Sale
           </Button>
           <Button variant="light" onClick={onClose}>

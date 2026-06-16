@@ -119,7 +119,7 @@ function UserManagement() {
                   <Text c="dimmed">Manage your users and their roles here.</Text>
 
                   <Link
-                    to="/users"
+                    to={'/users' as any}
                     style={{
                       color: '#228be6',
                       textDecoration: 'underline',

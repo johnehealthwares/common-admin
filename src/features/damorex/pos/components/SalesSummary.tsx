@@ -7,6 +7,8 @@ interface Props {
   onCheckout: () => void;
   onHold: () => void;
   onNextCustomer: () => void;
+  onSellPrint: () => void;
+  onPrintWholesale: () => void;
   paidAmount: number;
 }
 
@@ -16,6 +18,8 @@ export function SalesSummary({
   onCheckout,
   onHold,
   onNextCustomer,
+  onSellPrint,
+  onPrintWholesale,
   paidAmount,
 }: Props) {
   return (
@@ -35,14 +39,14 @@ export function SalesSummary({
         <Paper withBorder p="xs" radius={0}>
           <Flex justify="space-between">
             <Text size="sm">Total Cost</Text>
-            <Text fw={700}>${totals.total.toFixed(2)}</Text>
+            <Text fw={700}>₦{totals.total.toFixed(2)}</Text>
           </Flex>
         </Paper>
 
         <Paper withBorder p="xs" radius={0}>
           <Flex justify="space-between">
             <Text size="sm">Total Paid</Text>
-            <Text fw={700}>{paidAmount > 0 ? `$${paidAmount.toFixed(2)}` : 'Not Yet Paid'}</Text>
+            <Text fw={700}>{paidAmount > 0 ? `₦${paidAmount.toFixed(2)}` : 'Not Yet Paid'}</Text>
           </Flex>
         </Paper>
 
@@ -55,17 +59,17 @@ export function SalesSummary({
             Total Cost
           </Text>
           <Title order={2} ta="center">
-            ${totals.total.toFixed(2)}
+            ₦{totals.total.toFixed(2)}
           </Title>
         </Paper>
 
         <Button fullWidth mt="md" onClick={onCheckout}>
           Sell Only
         </Button>
-        <Button fullWidth mt="xs">
+        <Button fullWidth mt="xs" onClick={onSellPrint}>
           Sell Print
         </Button>
-        <Button fullWidth mt="xs">
+        <Button fullWidth mt="xs" onClick={onPrintWholesale}>
           Print Wholesale Receipt
         </Button>
         <Button fullWidth mt="xs" variant="light" onClick={onHold}>

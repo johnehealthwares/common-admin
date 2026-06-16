@@ -28,4 +28,5 @@ export const manufacturersConfig: ModelConfig = {
   createFields,
   buildCreatePayload,
   canDelete: true,
+  metricsEndpoint: '/manufacturers/metrics',
 };

@@ -1,22 +1,55 @@
 import { create } from 'zustand';
 import { PoLineItem } from '../types';
 
-interface PoFormState {
+interface PoTab {
+  id: string;
+  label: string;
   supplierId: string;
   supplierName: string;
   warehouseId: string;
   warehouseName: string;
   expectedDate: string;
   note: string;
+  receiptNumber: string;
+  receivedDate: string;
   lines: PoLineItem[];
+  pendingPoId: string | null;
+  pendingPoLabel: string;
+}
+
+interface PoStoreState {
+  tabs: PoTab[];
+  activeTabId: string;
+  defaultWarehouseId: string;
+  defaultWarehouseName: string;
+  autoPrint: boolean;
+  autoReceiptNumber: boolean;
+  settingsOpened: boolean;
+
+  addTab: () => void;
+  closeTab: (id: string) => void;
+  setActiveTab: (id: string) => void;
+  updateTab: (id: string, updates: Partial<PoTab>) => void;
+
   setSupplier: (id: string, name: string) => void;
   setWarehouse: (id: string, name: string) => void;
   setExpectedDate: (date: string) => void;
   setNote: (note: string) => void;
-  addLine: (line: PoLineItem) => void;
-  updateLine: (id: string, updates: Partial<PoLineItem>) => void;
-  removeLine: (id: string) => void;
-  reset: () => void;
+  setReceiptNumber: (num: string) => void;
+  setReceivedDate: (date: string) => void;
+  setPendingPo: (id: string | null, label?: string) => void;
+
+  addLine: (line?: Partial<PoLineItem>) => void;
+  updateLine: (lineId: string, updates: Partial<PoLineItem>) => void;
+  removeLine: (lineId: string) => void;
+
+  resetActiveTab: () => void;
+  resetAll: () => void;
+
+  setDefaultWarehouse: (id: string, name: string) => void;
+  setAutoPrint: (v: boolean) => void;
+  setAutoReceiptNumber: (v: boolean) => void;
+  setSettingsOpened: (v: boolean) => void;
 }
 
 const emptyLine = (): PoLineItem => ({
@@ -30,27 +63,112 @@ const emptyLine = (): PoLineItem => ({
   taxPercent: 0,
   lineSubtotal: 0,
   lineTotal: 0,
+  isDraft: true,
+  isPosted: false,
 });
 
-export const usePoStore = create<PoFormState>((set) => ({
+const defaultTabState = (): PoTab => ({
+  id: crypto.randomUUID(),
+  label: `PO ${new Date().toLocaleDateString()}`,
   supplierId: '',
   supplierName: '',
   warehouseId: '',
   warehouseName: '',
   expectedDate: '',
   note: '',
+  receiptNumber: '',
+  receivedDate: new Date().toISOString().slice(0, 10),
   lines: [emptyLine()],
+  pendingPoId: null,
+  pendingPoLabel: '',
+});
 
-  setSupplier: (id, name) => set({ supplierId: id, supplierName: name }),
-  setWarehouse: (id, name) => set({ warehouseId: id, warehouseName: name }),
-  setExpectedDate: (date) => set({ expectedDate: date }),
-  setNote: (note) => set({ note }),
+export const usePoStore = create<PoStoreState>((set, get) => ({
+  tabs: [defaultTabState()],
+  activeTabId: '',
+  defaultWarehouseId: '',
+  defaultWarehouseName: '',
+  autoPrint: false,
+  autoReceiptNumber: true,
+  settingsOpened: false,
 
-  addLine: (line) => set((state) => ({ lines: [...state.lines, line] })),
-  updateLine: (id, updates) =>
-    set((state) => ({
-      lines: state.lines.map((line) => {
-        if (line.id !== id) return line;
+  addTab: () => {
+    const tab = defaultTabState();
+    set((s) => ({ tabs: [...s.tabs, tab], activeTabId: tab.id }));
+  },
+
+  closeTab: (id) =>
+    set((s) => {
+      const filtered = s.tabs.filter((t) => t.id !== id);
+      if (filtered.length === 0) {
+        const tab = defaultTabState();
+        return { tabs: [tab], activeTabId: tab.id };
+      }
+      const newActive = s.activeTabId === id ? filtered[filtered.length - 1].id : s.activeTabId;
+      return { tabs: filtered, activeTabId: newActive };
+    }),
+
+  setActiveTab: (id) => set({ activeTabId: id }),
+
+  updateTab: (id, updates) =>
+    set((s) => ({
+      tabs: s.tabs.map((t) => (t.id === id ? { ...t, ...updates } : t)),
+    })),
+
+  setSupplier: (id, name) => {
+    const active = get().activeTabId;
+    get().updateTab(active, { supplierId: id, supplierName: name });
+  },
+
+  setWarehouse: (id, name) => {
+    const active = get().activeTabId;
+    get().updateTab(active, { warehouseId: id, warehouseName: name });
+  },
+
+  setExpectedDate: (date) => {
+    const active = get().activeTabId;
+    get().updateTab(active, { expectedDate: date });
+  },
+
+  setNote: (note) => {
+    const active = get().activeTabId;
+    get().updateTab(active, { note });
+  },
+
+  setReceiptNumber: (num) => {
+    const active = get().activeTabId;
+    get().updateTab(active, { receiptNumber: num });
+  },
+
+  setReceivedDate: (date) => {
+    const active = get().activeTabId;
+    get().updateTab(active, { receivedDate: date });
+  },
+
+  setPendingPo: (id, label) => {
+    const active = get().activeTabId;
+    get().updateTab(active, { pendingPoId: id, pendingPoLabel: label ?? '' });
+  },
+
+  addLine: (line) => {
+    const active = get().activeTabId;
+    const tab = get().tabs.find((t) => t.id === active);
+    if (!tab) return;
+    get().updateTab(active, {
+      lines: [
+        ...tab.lines,
+        { ...emptyLine(), ...line },
+      ],
+    });
+  },
+
+  updateLine: (lineId, updates) => {
+    const active = get().activeTabId;
+    const tab = get().tabs.find((t) => t.id === active);
+    if (!tab) return;
+    get().updateTab(active, {
+      lines: tab.lines.map((line) => {
+        if (line.id !== lineId) return line;
         const updated = { ...line, ...updates };
         const raw = updated.orderedQty * updated.unitCost;
         const discount = raw * (updated.discountPercent / 100);
@@ -59,16 +177,28 @@ export const usePoStore = create<PoFormState>((set) => ({
         updated.lineTotal = +(updated.lineSubtotal + tax).toFixed(2);
         return updated;
       }),
-    })),
-  removeLine: (id) => set((state) => ({ lines: state.lines.filter((l) => l.id !== id) })),
-  reset: () =>
-    set({
-      supplierId: '',
-      supplierName: '',
-      warehouseId: '',
-      warehouseName: '',
-      expectedDate: '',
-      note: '',
-      lines: [emptyLine()],
-    }),
+    });
+  },
+
+  removeLine: (lineId) => {
+    const active = get().activeTabId;
+    const tab = get().tabs.find((t) => t.id === active);
+    if (!tab) return;
+    get().updateTab(active, { lines: tab.lines.filter((l) => l.id !== lineId) });
+  },
+
+  resetActiveTab: () => {
+    const active = get().activeTabId;
+    get().updateTab(active, { ...defaultTabState(), id: active });
+  },
+
+  resetAll: () => {
+    const tab = defaultTabState();
+    set({ tabs: [tab], activeTabId: tab.id });
+  },
+
+  setDefaultWarehouse: (id, name) => set({ defaultWarehouseId: id, defaultWarehouseName: name }),
+  setAutoPrint: (v) => set({ autoPrint: v }),
+  setAutoReceiptNumber: (v) => set({ autoReceiptNumber: v }),
+  setSettingsOpened: (v) => set({ settingsOpened: v }),
 }));

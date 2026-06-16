@@ -92,14 +92,33 @@ export const resolveAutoFilterValue = (filter: ColumnFilter): FilterValue | null
 export function getValueByPath(obj: Record<string, any>, path: string): any {
   return path.split('.').reduce((acc, key) => (acc != null ? acc[key] : undefined), obj);
 }
+
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function renderCell(row: Record<string, any>, column: Column) {
-  const value = getValueByPath(row, column.key);
+  let value = getValueByPath(row, column.key);
+
+  if (
+    (column.key.endsWith('.id') || column.key.endsWith('Id')) &&
+    typeof value === 'string' &&
+    UUID_REGEX.test(value)
+  ) {
+    value = `${value.slice(0, 5)}..${value.slice(-5)}`;
+  }
+
   if (column.editable && column.field?.updateField) {
-    const update = column.field?.updateField;
-    const updateField = (name: string, value: string) => update(row, name, value);
+    const update = column.field.updateField;
+    const updateField = (name: string, value: string) =>
+      update(row, name, value);
+
     return (
       <>
-        <RenderField inTable field={column.field} value={value} updateField={updateField} />
+        <RenderField
+          inTable
+          field={column.field}
+          value={value}
+          updateField={updateField}
+        />
         {column.error?.(row) && (
           <Text c="red" size="xs">
             {column.error(row)}
@@ -108,6 +127,7 @@ export function renderCell(row: Record<string, any>, column: Column) {
       </>
     );
   }
+
   return renderCellValue(value);
 }
 

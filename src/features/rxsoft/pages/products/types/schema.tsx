@@ -19,6 +19,7 @@ import {
   validatePricingRow,
 } from '../utils/pricing-matrix-helper';
 
+const endpoint = '/items'
 const itemCreateFieldGroups: FieldGroup[] = [
   {
     title: 'Classification',
@@ -39,7 +40,7 @@ const itemCreateFieldGroups: FieldGroup[] = [
         placeholder: 'Select Category',
       },
       {
-        name: 'genericProduct',
+        name: 'genericProductCode',
         label: 'Generic Product',
         type: 'async-select',
         searchParam: {
@@ -47,7 +48,7 @@ const itemCreateFieldGroups: FieldGroup[] = [
           minChars: 2,
           queryParam: 'search',
           labelKey: 'name',
-          valueKey: 'id',
+          valueKey: 'code',
         },
         col: 6,
         required: true,
@@ -423,6 +424,14 @@ export const buildFormState = (row: Record<string, any>) => {
     }
   }
 
+  // handle genericProductCode (stored as code string, not FK id)
+  if (row.genericProductCode && row.genericProduct) {
+    formState.genericProductCode = {
+      label: row.genericProduct.name,
+      value: row.genericProduct.code,
+    };
+  }
+
   return formState;
 };
 
@@ -439,7 +448,7 @@ function ToggleActive({ row, onToggle }: { row: Record<string, unknown>; onToggl
     mutationFn: (isActive: boolean) =>
       rxsoftApi.patch(`/items/${String(row.id)}`, { isActive }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['rxsoft-data-page', '/items'] });
+      queryClient.invalidateQueries({ queryKey: ['rxsoft-data-page', endpoint] });
       onToggle?.();
     },
     onError: () => {
@@ -503,7 +512,7 @@ export const itemsView: View<any> = {
           key: 'genericProduct',
           label: 'Generic Product',
           col: 4,
-          render: (_, data) => data.genericProduct?.name ?? '-',
+          render: (_, data) => data.genericProduct?.name ?? data.genericProductCode ?? '-',
         },
       ],
     },
@@ -582,7 +591,7 @@ export const itemsConfig: ModelConfig = {
   id: 'items',
   title: 'Items',
   description: 'Manage item catalog records.',
-  endpoint: '/items',
+  endpoint,
   columns: itemColumns,
   tabGroups,
   modalTitle: 'Add Item',
@@ -611,7 +620,7 @@ export function buildItemPayload(values: Record<string, any>) {
     code: values.code,
     name: values.name,
     categoryId: (values.category as any).value,
-    genericProductId: (values.genericProduct as any).value,
+    genericProductCode: (values.genericProductCode as any).value,
     baseUomId: (values.baseUom as any).value,
     purchaseUomId: (values as any).purchaseUom.value,
     saleUomId: (values as any).saleUom.value || undefined,

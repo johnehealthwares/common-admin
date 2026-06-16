@@ -37,7 +37,7 @@ const createEmptySession = (): SaleSession => ({
   saleCode: generateSaleCode(),
   createdAt: new Date().toISOString(),
   discount: 0,
-  vatPercent: 7.5,
+  vatPercent: 0,
   pricingMode: 'retail',
   held: false,
   status: 'active',

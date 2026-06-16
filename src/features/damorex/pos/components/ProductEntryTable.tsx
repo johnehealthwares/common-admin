@@ -1,8 +1,18 @@
-import { Button, Checkbox, Group, NumberInput, Paper, Select, Table, Text } from '@mantine/core';
+import { Button, Checkbox, NumberInput, Paper, Select, Table, Text } from '@mantine/core';
 import { Plus } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { rxsoftApi } from '@/lib/rxsoft-api';
 import { usePriceListItems } from '../../api/posApi';
 import { SaleSession, CartItem } from '../types';
+
+interface UomOption {
+  id: string;
+  name: string;
+  code: string | null;
+  factor: number;
+  uomType: string;
+}
 
 interface Props {
   session: SaleSession;
@@ -16,6 +26,21 @@ export function ProductEntryTable({ session, onAddToCart }: Props) {
   const [uomName, setUomName] = useState('');
 
   const { data: priceListItems = [] } = usePriceListItems(session.priceListId);
+
+  const { data: allUoms = [] } = useQuery({
+    queryKey: ['uoms', 'all'],
+    queryFn: async () => {
+      const { data } = await rxsoftApi.get('/uoms', { params: { limit: 200 } });
+      return (data?.data ?? data ?? []) as UomOption[];
+    },
+    staleTime: 300_000,
+  });
+
+  const uomMap = useMemo(() => {
+    const map = new Map<string, UomOption>();
+    for (const u of allUoms) map.set(u.id, u);
+    return map;
+  }, [allUoms]);
 
   const productOptions = useMemo(() => {
     return (Array.isArray(priceListItems) ? priceListItems : []).map((pli: any) => ({
@@ -35,7 +60,17 @@ export function ProductEntryTable({ session, onAddToCart }: Props) {
   const retailPrice = selectedProduct?.retailPrice || 0;
   const wholesalePrice = selectedProduct?.wholesalePrice || 0;
   const effectivePrice = session.pricingMode === 'wholesale' ? wholesalePrice : retailPrice;
-  const total = quantity * effectivePrice;
+
+  const currentUom = uomId ? uomMap.get(uomId) : null;
+  const uomFactor = currentUom?.factor ?? 1;
+  const total = quantity * effectivePrice * uomFactor;
+
+  useEffect(() => {
+    if (selectedProduct) {
+      setUomId(selectedProduct.uomId);
+      setUomName(selectedProduct.uomName);
+    }
+  }, [selectedProduct]);
 
   function handleAdd() {
     if (!selectedProductId || !quantity) return;
@@ -48,7 +83,7 @@ export function ProductEntryTable({ session, onAddToCart }: Props) {
       quantity,
       uomId: uomId || selectedProduct?.uomId || '',
       uomName: uomName || selectedProduct?.uomName || 'Unit',
-      uomFactor: 1,
+      uomFactor,
       lineTotal: total,
     };
     onAddToCart(item);
@@ -102,9 +137,16 @@ export function ProductEntryTable({ session, onAddToCart }: Props) {
             <Table.Td>
               <Select
                 size="xs"
-                data={[{ value: uomId || '', label: uomName || 'Unit' }]}
+                data={Array.from(uomMap.values()).map((u) => ({
+                  value: u.id,
+                  label: u.name,
+                }))}
                 value={uomId}
-                onChange={(v) => setUomId(v)}
+                onChange={(v) => {
+                  setUomId(v);
+                  const u = v ? uomMap.get(v) : null;
+                  if (u) setUomName(u.name);
+                }}
                 w={80}
               />
             </Table.Td>

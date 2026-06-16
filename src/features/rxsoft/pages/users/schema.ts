@@ -16,9 +16,16 @@ const createFields: Field[] = [
   { name: 'password', label: 'Password', type: 'password', required: true },
   {
     name: 'roleCodes',
-    label: 'Role Codes (comma-separated)',
+    label: 'Roles',
+    type: 'multi-async-select' as any,
     required: true,
-    placeholder: 'admin,cashier',
+    searchParam: {
+      endpoint: '/roles',
+      queryParam: 'search',
+      valueKey: 'code',
+      labelKey: 'name',
+      minChars: 0,
+    },
   },
 ];
 
@@ -26,10 +33,9 @@ function buildCreatePayload(values: Record<string, unknown>) {
   return {
     username: values.username,
     password: values.password,
-    roleCodes: String(values.roleCodes ?? '')
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean),
+    roleCodes: Array.isArray(values.roleCodes)
+      ? values.roleCodes.map((item: any) => (typeof item === 'string' ? item : item.value ?? item.code ?? ''))
+      : [],
   };
 }
 
@@ -38,10 +44,9 @@ function buildUpdatePayload(values: Record<string, unknown>, _row?: Record<strin
   if (values.username) payload.username = values.username;
   if (values.password) payload.password = values.password;
   if (values.roleCodes) {
-    payload.roleCodes = String(values.roleCodes)
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean);
+    payload.roleCodes = Array.isArray(values.roleCodes)
+      ? values.roleCodes.map((item: any) => (typeof item === 'string' ? item : item.value ?? item.code ?? ''))
+      : [];
   }
   return payload;
 }

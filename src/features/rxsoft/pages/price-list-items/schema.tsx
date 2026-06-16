@@ -1,3 +1,4 @@
+import React from 'react';
 import { Column, ColumnTypeFilters, FieldGroup, FilterType } from '../../types';
 import { InlinePriceCell } from './inline-price-cell';
 

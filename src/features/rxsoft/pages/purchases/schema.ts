@@ -1,10 +1,10 @@
 import type { ModelConfig } from '../../../shared/model-schema';
-import type { Column, Field } from '../../types';
+import { RELATION_FILTER, type Column, type Field } from '../../types';
 
 const columns: Column[] = [
   { key: 'invoiceNumber', label: 'PO/Invoice' },
-  { key: 'supplierId', label: 'Supplier' },
-  { key: 'warehouseId', label: 'Warehouse' },
+  { key: 'supplier.name', label: 'Supplier', filters: RELATION_FILTER({ endpoint: '/customers', queryParam: 'search', valueKey: 'id', labelKey: 'name', minChars: 2 }) },
+  { key: 'warehouse.name', label: 'Warehouse', filters: RELATION_FILTER({ endpoint: '/stock-locations', queryParam: 'search', valueKey: 'id', labelKey: 'name', minChars: 0 }) },
   { key: 'currencyCode', label: 'Currency' },
   { key: 'totalCost', label: 'Total Cost' },
   { key: 'status', label: 'Status' },
@@ -16,21 +16,45 @@ const columns: Column[] = [
 ];
 
 const createFields: Field[] = [
-  { name: 'supplierId', label: 'Supplier ID', required: true },
-  { name: 'warehouseId', label: 'Warehouse ID/Code', required: true },
+  {
+    name: 'supplier',
+    label: 'Supplier',
+    type: 'async-select',
+    required: true,
+    searchParam: {
+      endpoint: '/customers',
+      queryParam: 'search',
+      valueKey: 'id',
+      labelKey: 'name',
+      minChars: 2,
+    },
+  },
+  {
+    name: 'warehouse',
+    label: 'Warehouse',
+    type: 'async-select',
+    required: true,
+    searchParam: {
+      endpoint: '/stock-locations',
+      queryParam: 'search',
+      valueKey: 'id',
+      labelKey: 'name',
+      minChars: 0,
+    },
+  },
   { name: 'productId', label: 'Product ID', required: true },
   { name: 'quantity', label: 'Quantity', type: 'number', required: true },
   { name: 'unitCost', label: 'Unit Cost', type: 'number', required: true },
   { name: 'invoiceNumber', label: 'Invoice/PO Number' },
-  { name: 'currencyCode', label: 'Currency Code', placeholder: 'USD' },
+  { name: 'currencyCode', label: 'Currency Code', placeholder: 'NGN' },
   { name: 'status', label: 'Status', placeholder: 'draft' },
   { name: 'note', label: 'Note' },
 ];
 
 function buildCreatePayload(values: Record<string, unknown>) {
   return {
-    supplierId: values.supplierId,
-    warehouseId: values.warehouseId,
+    supplierId: values.supplier ? (values.supplier as { value: string }).value : values.supplierId,
+    warehouseId: values.warehouse ? (values.warehouse as { value: string }).value : values.warehouseId,
     productId: values.productId,
     quantity: Number(values.quantity || 0),
     unitCost: Number(values.unitCost || 0),
@@ -41,6 +65,23 @@ function buildCreatePayload(values: Record<string, unknown>) {
   };
 }
 
+function buildFormState(row: Record<string, unknown>) {
+  const formState = { ...row };
+  if (row.supplier) {
+    formState.supplier = {
+      label: (row.supplier as { name: string }).name,
+      value: row.supplierId,
+    };
+  }
+  if (row.warehouse) {
+    formState.warehouse = {
+      label: (row.warehouse as { name: string }).name,
+      value: row.warehouseId,
+    };
+  }
+  return formState;
+}
+
 export const purchasesConfig: ModelConfig = {
   id: 'purchases',
   title: 'Purchases',
@@ -49,5 +90,6 @@ export const purchasesConfig: ModelConfig = {
   columns,
   createFields,
   buildCreatePayload,
+  buildFormState,
   canDelete: true,
 };

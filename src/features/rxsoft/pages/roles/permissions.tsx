@@ -26,7 +26,7 @@ function permCode(modId: string, _feature: Feature, action: Action): string {
 }
 
 export function RolePermissionsPage() {
-  const { id } = useParams({ from: '/_authenticated/roles/$id/permissions/' });
+  const { id } = useParams({} as any);
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
 
@@ -110,7 +110,7 @@ export function RolePermissionsPage() {
         permissionCodes: Array.from(selected),
       });
       notifications.show({ color: 'green', message: 'Permissions updated' });
-      navigate({ to: '/roles' });
+      (navigate as any)({ to: '/roles' });
     } catch {
       notifications.show({ color: 'red', message: 'Failed to save permissions' });
     } finally {
@@ -132,7 +132,7 @@ export function RolePermissionsPage() {
         <Button
           variant="subtle"
           leftSection={<ArrowLeft size={16} />}
-          onClick={() => navigate({ to: '/roles' })}
+          onClick={() => (navigate as any)({ to: '/roles' })}
         >
           Back to Roles
         </Button>

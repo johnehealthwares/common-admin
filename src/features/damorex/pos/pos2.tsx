@@ -187,7 +187,7 @@ export default function PosSalesPage() {
             <Paper withBorder p="xs" radius={0}>
               <Flex justify="space-between">
                 <Text size="sm">Total Cost</Text>
-                <Text fw={700}>$920.00</Text>
+                <Text fw={700}>₦920.00</Text>
               </Flex>
             </Paper>
 
@@ -208,7 +208,7 @@ export default function PosSalesPage() {
               </Text>
 
               <Title order={2} ta="center">
-                $920.00
+                ₦920.00
               </Title>
             </Paper>
 

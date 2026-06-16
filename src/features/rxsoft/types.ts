@@ -436,6 +436,10 @@ export const RELATION_FILTER = (searchParam: SearchConfig): ColumnFilter[] => [
   },
 ];
 
+export const SUPPLIER_FILTER = RELATION_FILTER({ endpoint: '/customers', queryParam: 'search', valueKey: 'id', labelKey: 'name', minChars: 2 });
+
+export const WAREHOUSE_FILTER = RELATION_FILTER({ endpoint: '/stock-locations', queryParam: 'search', valueKey: 'id', labelKey: 'name', minChars: 0 });
+
 export const EQUALS_WITH_OPTIONS = (options: Option[]) => [
   {
     name: 'Equals',

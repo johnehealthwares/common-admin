@@ -10,6 +10,7 @@ import { getModelConfig } from '@/features/registry';
 import type { View } from '@/features/rxsoft/types';
 import type { ModelConfig } from '@/features/shared/model-schema';
 import { modules } from '@/features/shared/module-data';
+import { useApiProvider } from '@/context/module-context';
 
 export const Route = createFileRoute('/_authenticated/$page/$id')({
   component: GenericViewPage,
@@ -28,8 +29,8 @@ function GenericViewPage() {
   }, [page]);
 
   const view = modelConfig ? deriveView(modelConfig) : null;
-  const apiProvider = modelConfig?.apiProvider ?? findModuleForResource(page)?.apiProvider;
-
+  const apiProvider = modelConfig?.apiProvider ?? useApiProvider();
+  console.log({view, page, apiProvider})
   const detailQuery = useQuery({
     queryKey: [page, id],
     enabled: !!view && !!apiProvider && page !== 'coding-concepts',
