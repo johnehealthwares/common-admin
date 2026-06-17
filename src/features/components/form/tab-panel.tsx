@@ -1,4 +1,4 @@
-import { Stack, Tabs } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import { memo } from 'react';
 import { TabGroup } from '@/features/rxsoft/types';
 import { FieldGroup } from './FieldGroup';
@@ -13,7 +13,7 @@ function TabPanelComponent({
   updateField: (name: string, value: unknown) => void;
 }) {
   return (
-    <Tabs.Panel key={tab.value} value={tab.value} pt="md">
+    <>
       {tab.render ? (
         tab.render({ formState, updateField })
       ) : (
@@ -28,7 +28,7 @@ function TabPanelComponent({
           ))}
         </Stack>
       )}
-    </Tabs.Panel>
+    </>
   );
 }
 

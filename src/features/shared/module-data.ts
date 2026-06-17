@@ -197,6 +197,7 @@ export const moduleMap: Record<ModuleId, ModuleDefinition> = {
   rxsoft: modules[3],
   lis: modules[4],
   admin: modules[5],
+
 };
 
 export const defaultModule: ModuleId = 'rxsoft';

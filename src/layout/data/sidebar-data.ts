@@ -141,18 +141,6 @@ export const sidebarData: SidebarData = {
           modules: ['rxsoft', 'admin'],
         },
         {
-          title: 'Pharmaceutics',
-          url: '/rxsoft/pharmaceutics',
-          icon: Pill,
-          modules: ['rxsoft', 'admin'],
-        },
-        {
-          title: 'Drug Components',
-          url: '/rxsoft/drug-components',
-          icon: Layers3,
-          modules: ['rxsoft', 'admin'],
-        },
-        {
           title: 'Manufacturers',
           url: '/rxsoft/manufacturers',
           icon: Truck,
@@ -324,6 +312,12 @@ export const sidebarData: SidebarData = {
           title: 'Locations',
           url: '/rxsoft/stock-locations',
           icon: Store,
+          modules: ['rxsoft', 'admin'],
+        },
+        {
+          title: 'Warehouses',
+          url: '/rxsoft/warehouses',
+          icon: Building2,
           modules: ['rxsoft', 'admin'],
         },
       ],

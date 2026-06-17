@@ -84,6 +84,41 @@ export default function MeetAdekanmbiPage() {
         </Container>
       </Box>
 
+      {/* Interview video */}
+      <Box py={80} style={{ background: '#fff' }}>
+        <Container size="md">
+          <SectionHeading
+            title="In Conversation"
+            subtitle="Hear directly from Bimbo Adekanmbi on his vision, values, and plans for Oyo State."
+          />
+          <Box
+            style={{
+              position: 'relative',
+              width: '100%',
+              paddingBottom: '56.25%',
+              borderRadius: 16,
+              overflow: 'hidden',
+              boxShadow: '0 16px 48px rgba(0,0,0,0.12)',
+            }}
+          >
+            <iframe
+              src="https://www.youtube.com/embed/CQeRLccE4Qg"
+              title="Bimbo Adekanmbi in Conversation"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                border: 'none',
+              }}
+            />
+          </Box>
+        </Container>
+      </Box>
+
       {/* Stakeholder engagement gallery */}
       <Box py={80} style={{ background: soft }}>
         <Container size="xl">

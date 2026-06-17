@@ -18,6 +18,30 @@ import {
   PricingMatrixRow,
   validatePricingRow,
 } from '../utils/pricing-matrix-helper';
+import { useEffect } from 'react';
+
+function CategoryUomWatcher({
+  formState,
+  updateField,
+}: {
+  formState: Record<string, unknown>;
+  updateField: (name: string, value: unknown) => void;
+}) {
+  const category = formState.category as { value?: string; uomCategoryId?: string } | undefined;
+  useEffect(() => {
+    if (category?.value && category?.uomCategoryId) {
+      updateField('categoryUomCategoryId', category.uomCategoryId);
+    } else if (category?.value) {
+      rxsoftApi.get(`/categories/${category.value}`).then((res) => {
+        const data = res.data?.data ?? res.data;
+        if (data?.uomCategoryId) {
+          updateField('categoryUomCategoryId', data.uomCategoryId);
+        }
+      }).catch(() => {});
+    }
+  }, [category?.value]);
+  return null;
+}
 
 const endpoint = '/items'
 const itemCreateFieldGroups: FieldGroup[] = [
@@ -95,6 +119,10 @@ const itemCreateFieldGroups: FieldGroup[] = [
             },
           ],
         },
+        extraParams: (fs) => {
+          const uomCatId = fs.categoryUomCategoryId as string | undefined;
+          return uomCatId ? { uomCategoryId: uomCatId } : {};
+        },
         required: true,
         col: 4,
       },
@@ -118,6 +146,10 @@ const itemCreateFieldGroups: FieldGroup[] = [
             },
           ],
         },
+        extraParams: (fs) => {
+          const uomCatId = fs.categoryUomCategoryId as string | undefined;
+          return uomCatId ? { uomCategoryId: uomCatId } : {};
+        },
         col: 4,
       },
       {
@@ -139,6 +171,10 @@ const itemCreateFieldGroups: FieldGroup[] = [
               value: 'reference',
             },
           ],
+        },
+        extraParams: (fs) => {
+          const uomCatId = fs.categoryUomCategoryId as string | undefined;
+          return uomCatId ? { uomCategoryId: uomCatId } : {};
         },
         col: 4,
       },
@@ -432,6 +468,19 @@ export const buildFormState = (row: Record<string, any>) => {
     };
   }
 
+  // populate image URLs for edit form
+  const imageFields = ['imageUrl', 'smallImageUrl', 'mediumImageUrl', 'largeImageUrl'];
+  for (const field of imageFields) {
+    if (row[field]) {
+      formState[field] = row[field];
+    }
+  }
+
+  // populate categoryUomCategoryId for UOM filtering
+  if (row.category?.uomCategoryId) {
+    formState.categoryUomCategoryId = row.category.uomCategoryId;
+  }
+
   return formState;
 };
 
@@ -479,6 +528,17 @@ export const itemColumns: Column[] = [
     }),
   },
   { key: 'name', label: 'Item Name', filters: ColumnTypeFilters.STRING },
+  {
+    key: 'genericProduct.name',
+    label: 'Generic Product',
+    filters: RELATION_FILTER({
+      endpoint: '/generic-products',
+      valueKey: 'name',
+      labelKey: 'name',
+      queryParam: 'search',
+      minChars: 3,
+    }),
+  },
   { key: 'code', label: 'Code' },
   { key: 'barcode', label: 'Barcode' },
   {
@@ -556,6 +616,47 @@ export const itemsView: View<any> = {
         },
       ],
     },
+    {
+      title: 'Images',
+      fields: [
+        {
+          key: 'imageUrl',
+          label: 'Default Image',
+          col: 3,
+          render: (value) =>
+            value ? (
+              <img src={value as string} alt="product" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 4 }} />
+            ) : '-',
+        },
+        {
+          key: 'smallImageUrl',
+          label: 'Small Image',
+          col: 3,
+          render: (value) =>
+            value ? (
+              <img src={value as string} alt="product" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 4 }} />
+            ) : '-',
+        },
+        {
+          key: 'mediumImageUrl',
+          label: 'Medium Image',
+          col: 3,
+          render: (value) =>
+            value ? (
+              <img src={value as string} alt="product" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 4 }} />
+            ) : '-',
+        },
+        {
+          key: 'largeImageUrl',
+          label: 'Large Image',
+          col: 3,
+          render: (value) =>
+            value ? (
+              <img src={value as string} alt="product" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 4 }} />
+            ) : '-',
+        },
+      ],
+    },
   ],
   lists: [
     {
@@ -598,9 +699,12 @@ export const itemsConfig: ModelConfig = {
   buildCreatePayload: buildItemPayload,
   buildUpdatePayload: buildItemPayload,
   buildFormState,
-  createPathBuilder: () => '/items/create',
-  detailPathBuilder: (row) => `/items/${String(row.id)}`,
+  createPathBuilder: () => '/rxsoft/items/create',
+  detailPathBuilder: (row) => `/rxsoft/items/${String(row.id)}`,
   view: itemsView,
+  renderCreateExtras: ({ formState, updateField }) => (
+    <CategoryUomWatcher formState={formState} updateField={updateField} />
+  ),
 };
 
 export function buildItemPayload(values: Record<string, any>) {

@@ -13,7 +13,7 @@ import type { Customer } from './types';
 import { calculateTotals } from './utils/calculation';
 import { printPosReceipt, printA4Receipt } from './utils/print';
 import { useKeyboardShortcuts } from './utils/useKeyboardShortcuts';
-import { useOrganisationConfig } from '../api/posApi';
+import { useOrganisationConfig, useUserPosConfig } from '../api/posApi';
 
 export default function PosSalesPage() {
   const {
@@ -38,6 +38,8 @@ export default function PosSalesPage() {
   const [settingsOpened, setSettingsOpened] = useState(false);
   const saleResultRef = useRef<any>(null);
   const { data: orgConfig } = useOrganisationConfig();
+  const { data: userPosConfig } = useUserPosConfig();
+  const stockLocationId = userPosConfig?.stockLocationId as string | undefined;
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeSessionId) ?? sessions[0],
@@ -189,6 +191,7 @@ export default function PosSalesPage() {
           <ProductEntryTable
             session={activeSession}
             onAddToCart={(item) => addItem(activeSession.id, item)}
+            stockLocationId={stockLocationId}
           />
 
           {/* MAIN AREA */}

@@ -26,6 +26,7 @@ export * from './settings';
 export * from './sign-in';
 export * from './stock-locations';
 export * from './suppliers';
+export * from './warehouses';
 export * from './conversation';
 export * from './uoms';
 export * from './users';

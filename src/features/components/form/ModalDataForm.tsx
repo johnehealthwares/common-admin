@@ -35,6 +35,8 @@ export const ModalDataForm = ({
   updateField,
   renderCreateExtras,
 }: FormProps) => {
+  const isWizard = Boolean(tabGroups);
+
   return (
     <Modal
       opened={showModal}
@@ -52,37 +54,47 @@ export const ModalDataForm = ({
         </Text>
 
         <Stack gap="xl">
-          {tabGroups && (
-            <TabGroups tabGroups={tabGroups} formState={formState} updateField={updateField} />
-          )}
-          {fieldGroups.map((fieldGroup, index) => (
-            <FieldGroup
-              index={index}
-              fieldGroup={fieldGroup}
+          {tabGroups ? (
+            <TabGroups
+              tabGroups={tabGroups}
               formState={formState}
               updateField={updateField}
+              onSubmit={() => mutation.mutate(formState)}
+              isPending={mutation.isPending}
             />
-          ))}
-
-          {renderCreateExtras?.({
-            formState,
-            updateField,
-          })}
+          ) : (
+            <>
+              {fieldGroups.map((fieldGroup, index) => (
+                <FieldGroup
+                  index={index}
+                  fieldGroup={fieldGroup}
+                  formState={formState}
+                  updateField={updateField}
+                />
+              ))}
+              {renderCreateExtras?.({
+                formState,
+                updateField,
+              })}
+            </>
+          )}
         </Stack>
 
-        <Group justify="flex-end">
-          <Button variant="outline" onClick={() => setShowModal(false)}>
-            Cancel
-          </Button>
+        {!isWizard && (
+          <Group justify="flex-end">
+            <Button variant="outline" onClick={() => setShowModal(false)}>
+              Cancel
+            </Button>
 
-          <Button
-            onClick={() => mutation.mutate(formState)}
-            disabled={mutation.isPending}
-            leftSection={mutation.isPending ? <Loader size={16} /> : null}
-          >
-            {formState?.id ? 'Update' : 'Create'}
-          </Button>
-        </Group>
+            <Button
+              onClick={() => mutation.mutate(formState)}
+              disabled={mutation.isPending}
+              leftSection={mutation.isPending ? <Loader size={16} /> : null}
+            >
+              {formState?.id ? 'Update' : 'Create'}
+            </Button>
+          </Group>
+        )}
       </Stack>
     </Modal>
   );

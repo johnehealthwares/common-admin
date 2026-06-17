@@ -1,12 +1,13 @@
-import { Card, Text, Stack, Grid, Button, TextInput, Group, Table, Modal, Select, NumberInput, Badge } from '@mantine/core';
+import { Card, Text, Stack, Grid, Button, TextInput, Group, Table, Modal, Select, NumberInput, Badge, Combobox, InputBase, useCombobox } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { ArrowRight, Rotate3D } from 'lucide-react';
+import { ArrowRight, Search } from 'lucide-react';
 import { rxsoftApi } from '@/lib/rxsoft-api';
 import { DataPageShell } from '../../../components/page/data-page-shell';
 import { RxPage } from '../../../components/page/rx-page';
-import { stockBalancesConfig, stockMovementsConfig } from './schema';
+import { stockMovementsConfig } from './schema';
+import { StockMatrix } from './components/stock-matrix';
 
 function TransferModal({
   opened,
@@ -98,19 +99,38 @@ function TransferModal({
 }
 
 export function RxInventoryPage() {
-  const [stockBalanceId, setStockBalanceId] = useState('');
+  const [selectedBalanceId, setSelectedBalanceId] = useState<string | null>(null);
+  const [selectedBalanceLabel, setSelectedBalanceLabel] = useState('');
   const [deltaQuantity, setDeltaQuantity] = useState('');
   const [reason, setReason] = useState('');
+  const [balanceSearch, setBalanceSearch] = useState('');
 
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [selectedBalance, setSelectedBalance] = useState<Record<string, unknown> | null>(null);
 
+  const balanceCombobox = useCombobox();
   const qc = useQueryClient();
+
+  const { data: balanceOptions = [] } = useQuery({
+    queryKey: ['stock-balances', 'search', balanceSearch],
+    queryFn: async () => {
+      const params: Record<string, unknown> = { limit: 30 };
+      if (balanceSearch) params.search = balanceSearch;
+      const { data } = await rxsoftApi.get('/inventory/stock-balances', { params });
+      const items = (data?.data ?? []) as Record<string, any>[];
+      return items.map((b: any) => ({
+        value: b.id,
+        label: `${b.item?.name ?? b.itemId} @ ${b.location?.name ?? b.locationId}`,
+        balance: b,
+      }));
+    },
+    enabled: balanceCombobox.dropdownOpened,
+  });
 
   const adjustmentMutation = useMutation({
     mutationFn: async () => {
       await rxsoftApi.post('/inventory/adjustments', {
-        stockBalanceId,
+        stockBalanceId: selectedBalanceId,
         deltaQuantity: Number(deltaQuantity),
         reason,
       });
@@ -118,7 +138,8 @@ export function RxInventoryPage() {
     onSuccess: () => {
       notifications.show({ message: 'Adjustment posted successfully.', color: 'green' });
       qc.invalidateQueries({ queryKey: ['rxsoft-data-page'] });
-      setStockBalanceId('');
+      setSelectedBalanceId(null);
+      setSelectedBalanceLabel('');
       setDeltaQuantity('');
       setReason('');
     },
@@ -143,6 +164,9 @@ export function RxInventoryPage() {
       description="Stock balances, movement history, and manual adjustments."
     >
       <Stack gap="xl">
+        {/* STOCK MATRIX */}
+        <StockMatrix />
+
         {/* STOCK BALANCES */}
         <Card withBorder p="md">
           <Stack gap="sm">
@@ -155,6 +179,7 @@ export function RxInventoryPage() {
                   <Table.Tr>
                     <Table.Th>Item</Table.Th>
                     <Table.Th>Location</Table.Th>
+                    <Table.Th>UOM</Table.Th>
                     <Table.Th>On Hand</Table.Th>
                     <Table.Th>Reserved</Table.Th>
                     <Table.Th>Available</Table.Th>
@@ -164,10 +189,25 @@ export function RxInventoryPage() {
                 <Table.Tbody>
                   {balances.map((b: any) => {
                     const available = Number(b.quantityOnHand ?? 0) - Number(b.quantityReserved ?? 0);
+                    const itemUomCat = b.item?.baseUom?.categoryId ?? b.item?.purchaseUom?.categoryId;
+                    const balUomCat = b.uom?.categoryId;
+                    const uomMatch = itemUomCat && balUomCat ? itemUomCat === balUomCat : null;
                     return (
                       <Table.Tr key={b.id}>
                         <Table.Td>{b.item?.name ?? b.itemId}</Table.Td>
                         <Table.Td>{b.location?.name ?? b.locationId}</Table.Td>
+                        <Table.Td>
+                          {b.uom?.name ? (
+                            <Group gap={4}>
+                              <Text size="sm">{b.uom.name}</Text>
+                              {uomMatch !== null && (
+                                <Badge color={uomMatch ? 'green' : 'red'} size="xs" variant="light">
+                                  {uomMatch ? 'OK' : 'MISMATCH'}
+                                </Badge>
+                              )}
+                            </Group>
+                          ) : '-'}
+                        </Table.Td>
                         <Table.Td>{b.quantityOnHand ?? 0}</Table.Td>
                         <Table.Td>{b.quantityReserved ?? 0}</Table.Td>
                         <Table.Td>
@@ -211,9 +251,6 @@ export function RxInventoryPage() {
         <Card withBorder p="md">
           <Stack gap="sm">
             <Text fw={600}>New Stock Adjustment</Text>
-            <Text size="sm" c="dimmed">
-              POST /inventory/adjustments
-            </Text>
 
             <form
               onSubmit={(e) => {
@@ -223,12 +260,46 @@ export function RxInventoryPage() {
             >
               <Grid>
                 <Grid.Col span={{ base: 12, md: 4 }}>
-                  <TextInput
-                    label="Stock Balance ID"
-                    value={stockBalanceId}
-                    onChange={(e) => setStockBalanceId(e.currentTarget.value)}
-                    required
-                  />
+                  <Combobox
+                    store={balanceCombobox}
+                    onOptionSubmit={(val, opt) => {
+                      const option = balanceOptions.find((o) => o.value === val);
+                      setSelectedBalanceId(val);
+                      setSelectedBalanceLabel(option?.label ?? val);
+                      balanceCombobox.closeDropdown();
+                    }}
+                  >
+                    <Combobox.Target>
+                      <InputBase
+                        label="Stock Balance"
+                        value={selectedBalanceLabel || balanceSearch}
+                        placeholder="Search stock balance..."
+                        onChange={(e) => {
+                          setBalanceSearch(e.currentTarget.value);
+                          setSelectedBalanceLabel('');
+                          setSelectedBalanceId(null);
+                          balanceCombobox.openDropdown();
+                        }}
+                        onClick={() => balanceCombobox.openDropdown()}
+                        onFocus={() => balanceCombobox.openDropdown()}
+                        rightSection={<Search size={14} />}
+                        required
+                      />
+                    </Combobox.Target>
+                    <Combobox.Dropdown>
+                      <Combobox.Options>
+                        {balanceOptions.length === 0 ? (
+                          <Combobox.Empty>No results</Combobox.Empty>
+                        ) : (
+                          balanceOptions.map((opt) => (
+                            <Combobox.Option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </Combobox.Option>
+                          ))
+                        )}
+                      </Combobox.Options>
+                    </Combobox.Dropdown>
+                  </Combobox>
                 </Grid.Col>
 
                 <Grid.Col span={{ base: 12, md: 4 }}>
@@ -252,7 +323,7 @@ export function RxInventoryPage() {
 
                 <Grid.Col span={12}>
                   <Group justify="flex-end">
-                    <Button type="submit" loading={adjustmentMutation.isPending}>
+                    <Button type="submit" loading={adjustmentMutation.isPending} disabled={!selectedBalanceId}>
                       Post Adjustment
                     </Button>
                   </Group>

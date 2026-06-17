@@ -63,6 +63,7 @@ import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as ClerkAuthenticatedRouteRouteImport } from './routes/clerk/_authenticated/route'
 import { Route as ClerkauthRouteRouteImport } from './routes/clerk/(auth)/route'
+import { Route as ApmAdminRouteRouteImport } from './routes/apm/admin/route'
 import { Route as DamorexPurchasesIndexRouteImport } from './routes/damorex/purchases/index'
 import { Route as AuthenticatedLisIndexRouteImport } from './routes/_authenticated/lis/index'
 import { Route as AuthenticatedConversationIndexRouteImport } from './routes/_authenticated/conversation/index'
@@ -78,6 +79,20 @@ import { Route as DamorexBlogSlugRouteImport } from './routes/damorex/blog.$slug
 import { Route as ClerkAuthenticatedUserManagementRouteImport } from './routes/clerk/_authenticated/user-management'
 import { Route as ApmNewsSlugRouteImport } from './routes/apm/news.$slug'
 import { Route as ApmEventsIdRouteImport } from './routes/apm/events.$id'
+import { Route as ApmAdminWhatsappRouteImport } from './routes/apm/admin/whatsapp'
+import { Route as ApmAdminVolunteersRouteImport } from './routes/apm/admin/volunteers'
+import { Route as ApmAdminToursRouteImport } from './routes/apm/admin/tours'
+import { Route as ApmAdminStakeholdersRouteImport } from './routes/apm/admin/stakeholders'
+import { Route as ApmAdminSentimentRouteImport } from './routes/apm/admin/sentiment'
+import { Route as ApmAdminResultsRouteImport } from './routes/apm/admin/results'
+import { Route as ApmAdminListeningRouteImport } from './routes/apm/admin/listening'
+import { Route as ApmAdminLgasRouteImport } from './routes/apm/admin/lgas'
+import { Route as ApmAdminIncidentsRouteImport } from './routes/apm/admin/incidents'
+import { Route as ApmAdminGotvRouteImport } from './routes/apm/admin/gotv'
+import { Route as ApmAdminConversionRouteImport } from './routes/apm/admin/conversion'
+import { Route as ApmAdminContentRouteImport } from './routes/apm/admin/content'
+import { Route as ApmAdminCanvassingRouteImport } from './routes/apm/admin/canvassing'
+import { Route as ApmAdminAgentsRouteImport } from './routes/apm/admin/agents'
 import { Route as AuthenticatedLisResourceKeyRouteImport } from './routes/_authenticated/lis/$resourceKey'
 import { Route as AuthenticatedCommunicationTraceExplorerRouteImport } from './routes/_authenticated/communication/trace-explorer'
 import { Route as AuthenticatedCommunicationMessageTesterRouteImport } from './routes/_authenticated/communication/message-tester'
@@ -100,6 +115,7 @@ import { Route as AuthenticatedCommunicationCommunicationChannelsRouteRouteImpor
 import { Route as AuthenticatedCommunicationBroadcastsRouteRouteImport } from './routes/_authenticated/communication/broadcasts/route'
 import { Route as AuthenticatedCommunicationAesRouteRouteImport } from './routes/_authenticated/communication/aes/route'
 import { Route as AuthenticatedRxsoftWebsiteOrdersIndexRouteImport } from './routes/_authenticated/rxsoft/website-orders/index'
+import { Route as AuthenticatedRxsoftWarehousesIndexRouteImport } from './routes/_authenticated/rxsoft/warehouses/index'
 import { Route as AuthenticatedRxsoftUsersIndexRouteImport } from './routes/_authenticated/rxsoft/users/index'
 import { Route as AuthenticatedRxsoftUomsIndexRouteImport } from './routes/_authenticated/rxsoft/uoms/index'
 import { Route as AuthenticatedRxsoftUomCategoryIndexRouteImport } from './routes/_authenticated/rxsoft/uom-category/index'
@@ -143,6 +159,8 @@ import { Route as AuthenticatedCodingConceptPharmaceuticsIndexRouteImport } from
 import { Route as AuthenticatedCodingConceptGenericDrugsIndexRouteImport } from './routes/_authenticated/coding-concept/generic-drugs/index'
 import { Route as AuthenticatedCodingConceptFacilitiesIndexRouteImport } from './routes/_authenticated/coding-concept/facilities/index'
 import { Route as AuthenticatedCodingConceptDrugComponentsIndexRouteImport } from './routes/_authenticated/coding-concept/drug-components/index'
+import { Route as ApmAdminWardsLgaIdRouteImport } from './routes/apm/admin/wards.$lgaId'
+import { Route as ApmAdminPollingUnitsWardIdRouteImport } from './routes/apm/admin/polling-units.$wardId'
 import { Route as AuthenticatedRxsoftUomsUomIdRouteImport } from './routes/_authenticated/rxsoft/uoms/$uomId'
 import { Route as AuthenticatedRxsoftSettingsNotificationsRouteImport } from './routes/_authenticated/rxsoft/settings/notifications'
 import { Route as AuthenticatedRxsoftSettingsDisplayRouteImport } from './routes/_authenticated/rxsoft/settings/display'
@@ -429,6 +447,11 @@ const ClerkauthRouteRoute = ClerkauthRouteRouteImport.update({
   id: '/(auth)',
   getParentRoute: () => ClerkRouteRoute,
 } as any)
+const ApmAdminRouteRoute = ApmAdminRouteRouteImport.update({
+  id: '/apm/admin',
+  path: '/apm/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DamorexPurchasesIndexRoute = DamorexPurchasesIndexRouteImport.update({
   id: '/damorex/purchases/',
   path: '/damorex/purchases/',
@@ -508,6 +531,76 @@ const ApmEventsIdRoute = ApmEventsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => ApmEventsRoute,
+} as any)
+const ApmAdminWhatsappRoute = ApmAdminWhatsappRouteImport.update({
+  id: '/whatsapp',
+  path: '/whatsapp',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminVolunteersRoute = ApmAdminVolunteersRouteImport.update({
+  id: '/volunteers',
+  path: '/volunteers',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminToursRoute = ApmAdminToursRouteImport.update({
+  id: '/tours',
+  path: '/tours',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminStakeholdersRoute = ApmAdminStakeholdersRouteImport.update({
+  id: '/stakeholders',
+  path: '/stakeholders',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminSentimentRoute = ApmAdminSentimentRouteImport.update({
+  id: '/sentiment',
+  path: '/sentiment',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminResultsRoute = ApmAdminResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminListeningRoute = ApmAdminListeningRouteImport.update({
+  id: '/listening',
+  path: '/listening',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminLgasRoute = ApmAdminLgasRouteImport.update({
+  id: '/lgas',
+  path: '/lgas',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminIncidentsRoute = ApmAdminIncidentsRouteImport.update({
+  id: '/incidents',
+  path: '/incidents',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminGotvRoute = ApmAdminGotvRouteImport.update({
+  id: '/gotv',
+  path: '/gotv',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminConversionRoute = ApmAdminConversionRouteImport.update({
+  id: '/conversion',
+  path: '/conversion',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminContentRoute = ApmAdminContentRouteImport.update({
+  id: '/content',
+  path: '/content',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminCanvassingRoute = ApmAdminCanvassingRouteImport.update({
+  id: '/canvassing',
+  path: '/canvassing',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminAgentsRoute = ApmAdminAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => ApmAdminRouteRoute,
 } as any)
 const AuthenticatedLisResourceKeyRoute =
   AuthenticatedLisResourceKeyRouteImport.update({
@@ -637,6 +730,12 @@ const AuthenticatedRxsoftWebsiteOrdersIndexRoute =
   AuthenticatedRxsoftWebsiteOrdersIndexRouteImport.update({
     id: '/rxsoft/website-orders/',
     path: '/rxsoft/website-orders/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedRxsoftWarehousesIndexRoute =
+  AuthenticatedRxsoftWarehousesIndexRouteImport.update({
+    id: '/rxsoft/warehouses/',
+    path: '/rxsoft/warehouses/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedRxsoftUsersIndexRoute =
@@ -897,6 +996,17 @@ const AuthenticatedCodingConceptDrugComponentsIndexRoute =
     path: '/coding-concept/drug-components/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApmAdminWardsLgaIdRoute = ApmAdminWardsLgaIdRouteImport.update({
+  id: '/wards/$lgaId',
+  path: '/wards/$lgaId',
+  getParentRoute: () => ApmAdminRouteRoute,
+} as any)
+const ApmAdminPollingUnitsWardIdRoute =
+  ApmAdminPollingUnitsWardIdRouteImport.update({
+    id: '/polling-units/$wardId',
+    path: '/polling-units/$wardId',
+    getParentRoute: () => ApmAdminRouteRoute,
+  } as any)
 const AuthenticatedRxsoftUomsUomIdRoute =
   AuthenticatedRxsoftUomsUomIdRouteImport.update({
     id: '/rxsoft/uoms/$uomId',
@@ -991,6 +1101,7 @@ const AuthenticatedRxsoftRolesIdPermissionsIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clerk': typeof ClerkauthRouteRoute
+  '/apm/admin': typeof ApmAdminRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
@@ -1061,6 +1172,20 @@ export interface FileRoutesByFullPath {
   '/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
   '/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
+  '/apm/admin/agents': typeof ApmAdminAgentsRoute
+  '/apm/admin/canvassing': typeof ApmAdminCanvassingRoute
+  '/apm/admin/content': typeof ApmAdminContentRoute
+  '/apm/admin/conversion': typeof ApmAdminConversionRoute
+  '/apm/admin/gotv': typeof ApmAdminGotvRoute
+  '/apm/admin/incidents': typeof ApmAdminIncidentsRoute
+  '/apm/admin/lgas': typeof ApmAdminLgasRoute
+  '/apm/admin/listening': typeof ApmAdminListeningRoute
+  '/apm/admin/results': typeof ApmAdminResultsRoute
+  '/apm/admin/sentiment': typeof ApmAdminSentimentRoute
+  '/apm/admin/stakeholders': typeof ApmAdminStakeholdersRoute
+  '/apm/admin/tours': typeof ApmAdminToursRoute
+  '/apm/admin/volunteers': typeof ApmAdminVolunteersRoute
+  '/apm/admin/whatsapp': typeof ApmAdminWhatsappRoute
   '/apm/events/$id': typeof ApmEventsIdRoute
   '/apm/news/$slug': typeof ApmNewsSlugRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
@@ -1084,6 +1209,8 @@ export interface FileRoutesByFullPath {
   '/rxsoft/settings/display': typeof AuthenticatedRxsoftSettingsDisplayRoute
   '/rxsoft/settings/notifications': typeof AuthenticatedRxsoftSettingsNotificationsRoute
   '/rxsoft/uoms/$uomId': typeof AuthenticatedRxsoftUomsUomIdRouteWithChildren
+  '/apm/admin/polling-units/$wardId': typeof ApmAdminPollingUnitsWardIdRoute
+  '/apm/admin/wards/$lgaId': typeof ApmAdminWardsLgaIdRoute
   '/coding-concept/drug-components/': typeof AuthenticatedCodingConceptDrugComponentsIndexRoute
   '/coding-concept/facilities/': typeof AuthenticatedCodingConceptFacilitiesIndexRoute
   '/coding-concept/generic-drugs/': typeof AuthenticatedCodingConceptGenericDrugsIndexRoute
@@ -1127,6 +1254,7 @@ export interface FileRoutesByFullPath {
   '/rxsoft/uom-category/': typeof AuthenticatedRxsoftUomCategoryIndexRoute
   '/rxsoft/uoms/': typeof AuthenticatedRxsoftUomsIndexRoute
   '/rxsoft/users/': typeof AuthenticatedRxsoftUsersIndexRoute
+  '/rxsoft/warehouses/': typeof AuthenticatedRxsoftWarehousesIndexRoute
   '/rxsoft/website-orders/': typeof AuthenticatedRxsoftWebsiteOrdersIndexRoute
   '/rxsoft/uoms/$uomId/edit': typeof AuthenticatedRxsoftUomsUomIdEditRoute
   '/coding-concept/facilities/levels/': typeof AuthenticatedCodingConceptFacilitiesLevelsIndexRoute
@@ -1139,6 +1267,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clerk': typeof ClerkauthRouteRoute
+  '/apm/admin': typeof ApmAdminRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
@@ -1207,6 +1336,20 @@ export interface FileRoutesByTo {
   '/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
   '/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
+  '/apm/admin/agents': typeof ApmAdminAgentsRoute
+  '/apm/admin/canvassing': typeof ApmAdminCanvassingRoute
+  '/apm/admin/content': typeof ApmAdminContentRoute
+  '/apm/admin/conversion': typeof ApmAdminConversionRoute
+  '/apm/admin/gotv': typeof ApmAdminGotvRoute
+  '/apm/admin/incidents': typeof ApmAdminIncidentsRoute
+  '/apm/admin/lgas': typeof ApmAdminLgasRoute
+  '/apm/admin/listening': typeof ApmAdminListeningRoute
+  '/apm/admin/results': typeof ApmAdminResultsRoute
+  '/apm/admin/sentiment': typeof ApmAdminSentimentRoute
+  '/apm/admin/stakeholders': typeof ApmAdminStakeholdersRoute
+  '/apm/admin/tours': typeof ApmAdminToursRoute
+  '/apm/admin/volunteers': typeof ApmAdminVolunteersRoute
+  '/apm/admin/whatsapp': typeof ApmAdminWhatsappRoute
   '/apm/events/$id': typeof ApmEventsIdRoute
   '/apm/news/$slug': typeof ApmNewsSlugRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
@@ -1230,6 +1373,8 @@ export interface FileRoutesByTo {
   '/rxsoft/settings/display': typeof AuthenticatedRxsoftSettingsDisplayRoute
   '/rxsoft/settings/notifications': typeof AuthenticatedRxsoftSettingsNotificationsRoute
   '/rxsoft/uoms/$uomId': typeof AuthenticatedRxsoftUomsUomIdRouteWithChildren
+  '/apm/admin/polling-units/$wardId': typeof ApmAdminPollingUnitsWardIdRoute
+  '/apm/admin/wards/$lgaId': typeof ApmAdminWardsLgaIdRoute
   '/coding-concept/drug-components': typeof AuthenticatedCodingConceptDrugComponentsIndexRoute
   '/coding-concept/facilities': typeof AuthenticatedCodingConceptFacilitiesIndexRoute
   '/coding-concept/generic-drugs': typeof AuthenticatedCodingConceptGenericDrugsIndexRoute
@@ -1273,6 +1418,7 @@ export interface FileRoutesByTo {
   '/rxsoft/uom-category': typeof AuthenticatedRxsoftUomCategoryIndexRoute
   '/rxsoft/uoms': typeof AuthenticatedRxsoftUomsIndexRoute
   '/rxsoft/users': typeof AuthenticatedRxsoftUsersIndexRoute
+  '/rxsoft/warehouses': typeof AuthenticatedRxsoftWarehousesIndexRoute
   '/rxsoft/website-orders': typeof AuthenticatedRxsoftWebsiteOrdersIndexRoute
   '/rxsoft/uoms/$uomId/edit': typeof AuthenticatedRxsoftUomsUomIdEditRoute
   '/coding-concept/facilities/levels': typeof AuthenticatedCodingConceptFacilitiesLevelsIndexRoute
@@ -1287,6 +1433,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/clerk': typeof ClerkRouteRouteWithChildren
+  '/apm/admin': typeof ApmAdminRouteRouteWithChildren
   '/clerk/(auth)': typeof ClerkauthRouteRoute
   '/clerk/_authenticated': typeof ClerkAuthenticatedRouteRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
@@ -1359,6 +1506,20 @@ export interface FileRoutesById {
   '/_authenticated/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/_authenticated/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
   '/_authenticated/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
+  '/apm/admin/agents': typeof ApmAdminAgentsRoute
+  '/apm/admin/canvassing': typeof ApmAdminCanvassingRoute
+  '/apm/admin/content': typeof ApmAdminContentRoute
+  '/apm/admin/conversion': typeof ApmAdminConversionRoute
+  '/apm/admin/gotv': typeof ApmAdminGotvRoute
+  '/apm/admin/incidents': typeof ApmAdminIncidentsRoute
+  '/apm/admin/lgas': typeof ApmAdminLgasRoute
+  '/apm/admin/listening': typeof ApmAdminListeningRoute
+  '/apm/admin/results': typeof ApmAdminResultsRoute
+  '/apm/admin/sentiment': typeof ApmAdminSentimentRoute
+  '/apm/admin/stakeholders': typeof ApmAdminStakeholdersRoute
+  '/apm/admin/tours': typeof ApmAdminToursRoute
+  '/apm/admin/volunteers': typeof ApmAdminVolunteersRoute
+  '/apm/admin/whatsapp': typeof ApmAdminWhatsappRoute
   '/apm/events/$id': typeof ApmEventsIdRoute
   '/apm/news/$slug': typeof ApmNewsSlugRoute
   '/clerk/_authenticated/user-management': typeof ClerkAuthenticatedUserManagementRoute
@@ -1382,6 +1543,8 @@ export interface FileRoutesById {
   '/_authenticated/rxsoft/settings/display': typeof AuthenticatedRxsoftSettingsDisplayRoute
   '/_authenticated/rxsoft/settings/notifications': typeof AuthenticatedRxsoftSettingsNotificationsRoute
   '/_authenticated/rxsoft/uoms/$uomId': typeof AuthenticatedRxsoftUomsUomIdRouteWithChildren
+  '/apm/admin/polling-units/$wardId': typeof ApmAdminPollingUnitsWardIdRoute
+  '/apm/admin/wards/$lgaId': typeof ApmAdminWardsLgaIdRoute
   '/_authenticated/coding-concept/drug-components/': typeof AuthenticatedCodingConceptDrugComponentsIndexRoute
   '/_authenticated/coding-concept/facilities/': typeof AuthenticatedCodingConceptFacilitiesIndexRoute
   '/_authenticated/coding-concept/generic-drugs/': typeof AuthenticatedCodingConceptGenericDrugsIndexRoute
@@ -1425,6 +1588,7 @@ export interface FileRoutesById {
   '/_authenticated/rxsoft/uom-category/': typeof AuthenticatedRxsoftUomCategoryIndexRoute
   '/_authenticated/rxsoft/uoms/': typeof AuthenticatedRxsoftUomsIndexRoute
   '/_authenticated/rxsoft/users/': typeof AuthenticatedRxsoftUsersIndexRoute
+  '/_authenticated/rxsoft/warehouses/': typeof AuthenticatedRxsoftWarehousesIndexRoute
   '/_authenticated/rxsoft/website-orders/': typeof AuthenticatedRxsoftWebsiteOrdersIndexRoute
   '/_authenticated/rxsoft/uoms/$uomId/edit': typeof AuthenticatedRxsoftUomsUomIdEditRoute
   '/_authenticated/coding-concept/facilities/levels/': typeof AuthenticatedCodingConceptFacilitiesLevelsIndexRoute
@@ -1439,6 +1603,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/clerk'
+    | '/apm/admin'
     | '/forgot-password'
     | '/otp'
     | '/sign-in'
@@ -1509,6 +1674,20 @@ export interface FileRouteTypes {
     | '/communication/message-tester'
     | '/communication/trace-explorer'
     | '/lis/$resourceKey'
+    | '/apm/admin/agents'
+    | '/apm/admin/canvassing'
+    | '/apm/admin/content'
+    | '/apm/admin/conversion'
+    | '/apm/admin/gotv'
+    | '/apm/admin/incidents'
+    | '/apm/admin/lgas'
+    | '/apm/admin/listening'
+    | '/apm/admin/results'
+    | '/apm/admin/sentiment'
+    | '/apm/admin/stakeholders'
+    | '/apm/admin/tours'
+    | '/apm/admin/volunteers'
+    | '/apm/admin/whatsapp'
     | '/apm/events/$id'
     | '/apm/news/$slug'
     | '/clerk/user-management'
@@ -1532,6 +1711,8 @@ export interface FileRouteTypes {
     | '/rxsoft/settings/display'
     | '/rxsoft/settings/notifications'
     | '/rxsoft/uoms/$uomId'
+    | '/apm/admin/polling-units/$wardId'
+    | '/apm/admin/wards/$lgaId'
     | '/coding-concept/drug-components/'
     | '/coding-concept/facilities/'
     | '/coding-concept/generic-drugs/'
@@ -1575,6 +1756,7 @@ export interface FileRouteTypes {
     | '/rxsoft/uom-category/'
     | '/rxsoft/uoms/'
     | '/rxsoft/users/'
+    | '/rxsoft/warehouses/'
     | '/rxsoft/website-orders/'
     | '/rxsoft/uoms/$uomId/edit'
     | '/coding-concept/facilities/levels/'
@@ -1587,6 +1769,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/clerk'
+    | '/apm/admin'
     | '/forgot-password'
     | '/otp'
     | '/sign-in'
@@ -1655,6 +1838,20 @@ export interface FileRouteTypes {
     | '/communication/message-tester'
     | '/communication/trace-explorer'
     | '/lis/$resourceKey'
+    | '/apm/admin/agents'
+    | '/apm/admin/canvassing'
+    | '/apm/admin/content'
+    | '/apm/admin/conversion'
+    | '/apm/admin/gotv'
+    | '/apm/admin/incidents'
+    | '/apm/admin/lgas'
+    | '/apm/admin/listening'
+    | '/apm/admin/results'
+    | '/apm/admin/sentiment'
+    | '/apm/admin/stakeholders'
+    | '/apm/admin/tours'
+    | '/apm/admin/volunteers'
+    | '/apm/admin/whatsapp'
     | '/apm/events/$id'
     | '/apm/news/$slug'
     | '/clerk/user-management'
@@ -1678,6 +1875,8 @@ export interface FileRouteTypes {
     | '/rxsoft/settings/display'
     | '/rxsoft/settings/notifications'
     | '/rxsoft/uoms/$uomId'
+    | '/apm/admin/polling-units/$wardId'
+    | '/apm/admin/wards/$lgaId'
     | '/coding-concept/drug-components'
     | '/coding-concept/facilities'
     | '/coding-concept/generic-drugs'
@@ -1721,6 +1920,7 @@ export interface FileRouteTypes {
     | '/rxsoft/uom-category'
     | '/rxsoft/uoms'
     | '/rxsoft/users'
+    | '/rxsoft/warehouses'
     | '/rxsoft/website-orders'
     | '/rxsoft/uoms/$uomId/edit'
     | '/coding-concept/facilities/levels'
@@ -1734,6 +1934,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/clerk'
+    | '/apm/admin'
     | '/clerk/(auth)'
     | '/clerk/_authenticated'
     | '/(auth)/forgot-password'
@@ -1806,6 +2007,20 @@ export interface FileRouteTypes {
     | '/_authenticated/communication/message-tester'
     | '/_authenticated/communication/trace-explorer'
     | '/_authenticated/lis/$resourceKey'
+    | '/apm/admin/agents'
+    | '/apm/admin/canvassing'
+    | '/apm/admin/content'
+    | '/apm/admin/conversion'
+    | '/apm/admin/gotv'
+    | '/apm/admin/incidents'
+    | '/apm/admin/lgas'
+    | '/apm/admin/listening'
+    | '/apm/admin/results'
+    | '/apm/admin/sentiment'
+    | '/apm/admin/stakeholders'
+    | '/apm/admin/tours'
+    | '/apm/admin/volunteers'
+    | '/apm/admin/whatsapp'
     | '/apm/events/$id'
     | '/apm/news/$slug'
     | '/clerk/_authenticated/user-management'
@@ -1829,6 +2044,8 @@ export interface FileRouteTypes {
     | '/_authenticated/rxsoft/settings/display'
     | '/_authenticated/rxsoft/settings/notifications'
     | '/_authenticated/rxsoft/uoms/$uomId'
+    | '/apm/admin/polling-units/$wardId'
+    | '/apm/admin/wards/$lgaId'
     | '/_authenticated/coding-concept/drug-components/'
     | '/_authenticated/coding-concept/facilities/'
     | '/_authenticated/coding-concept/generic-drugs/'
@@ -1872,6 +2089,7 @@ export interface FileRouteTypes {
     | '/_authenticated/rxsoft/uom-category/'
     | '/_authenticated/rxsoft/uoms/'
     | '/_authenticated/rxsoft/users/'
+    | '/_authenticated/rxsoft/warehouses/'
     | '/_authenticated/rxsoft/website-orders/'
     | '/_authenticated/rxsoft/uoms/$uomId/edit'
     | '/_authenticated/coding-concept/facilities/levels/'
@@ -1886,6 +2104,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ClerkRouteRoute: typeof ClerkRouteRouteWithChildren
+  ApmAdminRouteRoute: typeof ApmAdminRouteRouteWithChildren
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authOtpRoute: typeof authOtpRoute
   authSignInRoute: typeof authSignInRoute
@@ -2320,6 +2539,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClerkauthRouteRouteImport
       parentRoute: typeof ClerkRouteRoute
     }
+    '/apm/admin': {
+      id: '/apm/admin'
+      path: '/apm/admin'
+      fullPath: '/apm/admin'
+      preLoaderRoute: typeof ApmAdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/damorex/purchases/': {
       id: '/damorex/purchases/'
       path: '/damorex/purchases'
@@ -2424,6 +2650,104 @@ declare module '@tanstack/react-router' {
       fullPath: '/apm/events/$id'
       preLoaderRoute: typeof ApmEventsIdRouteImport
       parentRoute: typeof ApmEventsRoute
+    }
+    '/apm/admin/whatsapp': {
+      id: '/apm/admin/whatsapp'
+      path: '/whatsapp'
+      fullPath: '/apm/admin/whatsapp'
+      preLoaderRoute: typeof ApmAdminWhatsappRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/volunteers': {
+      id: '/apm/admin/volunteers'
+      path: '/volunteers'
+      fullPath: '/apm/admin/volunteers'
+      preLoaderRoute: typeof ApmAdminVolunteersRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/tours': {
+      id: '/apm/admin/tours'
+      path: '/tours'
+      fullPath: '/apm/admin/tours'
+      preLoaderRoute: typeof ApmAdminToursRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/stakeholders': {
+      id: '/apm/admin/stakeholders'
+      path: '/stakeholders'
+      fullPath: '/apm/admin/stakeholders'
+      preLoaderRoute: typeof ApmAdminStakeholdersRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/sentiment': {
+      id: '/apm/admin/sentiment'
+      path: '/sentiment'
+      fullPath: '/apm/admin/sentiment'
+      preLoaderRoute: typeof ApmAdminSentimentRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/results': {
+      id: '/apm/admin/results'
+      path: '/results'
+      fullPath: '/apm/admin/results'
+      preLoaderRoute: typeof ApmAdminResultsRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/listening': {
+      id: '/apm/admin/listening'
+      path: '/listening'
+      fullPath: '/apm/admin/listening'
+      preLoaderRoute: typeof ApmAdminListeningRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/lgas': {
+      id: '/apm/admin/lgas'
+      path: '/lgas'
+      fullPath: '/apm/admin/lgas'
+      preLoaderRoute: typeof ApmAdminLgasRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/incidents': {
+      id: '/apm/admin/incidents'
+      path: '/incidents'
+      fullPath: '/apm/admin/incidents'
+      preLoaderRoute: typeof ApmAdminIncidentsRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/gotv': {
+      id: '/apm/admin/gotv'
+      path: '/gotv'
+      fullPath: '/apm/admin/gotv'
+      preLoaderRoute: typeof ApmAdminGotvRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/conversion': {
+      id: '/apm/admin/conversion'
+      path: '/conversion'
+      fullPath: '/apm/admin/conversion'
+      preLoaderRoute: typeof ApmAdminConversionRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/content': {
+      id: '/apm/admin/content'
+      path: '/content'
+      fullPath: '/apm/admin/content'
+      preLoaderRoute: typeof ApmAdminContentRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/canvassing': {
+      id: '/apm/admin/canvassing'
+      path: '/canvassing'
+      fullPath: '/apm/admin/canvassing'
+      preLoaderRoute: typeof ApmAdminCanvassingRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/agents': {
+      id: '/apm/admin/agents'
+      path: '/agents'
+      fullPath: '/apm/admin/agents'
+      preLoaderRoute: typeof ApmAdminAgentsRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
     }
     '/_authenticated/lis/$resourceKey': {
       id: '/_authenticated/lis/$resourceKey'
@@ -2577,6 +2901,13 @@ declare module '@tanstack/react-router' {
       path: '/rxsoft/website-orders'
       fullPath: '/rxsoft/website-orders/'
       preLoaderRoute: typeof AuthenticatedRxsoftWebsiteOrdersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/rxsoft/warehouses/': {
+      id: '/_authenticated/rxsoft/warehouses/'
+      path: '/rxsoft/warehouses'
+      fullPath: '/rxsoft/warehouses/'
+      preLoaderRoute: typeof AuthenticatedRxsoftWarehousesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/rxsoft/users/': {
@@ -2880,6 +3211,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCodingConceptDrugComponentsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/apm/admin/wards/$lgaId': {
+      id: '/apm/admin/wards/$lgaId'
+      path: '/wards/$lgaId'
+      fullPath: '/apm/admin/wards/$lgaId'
+      preLoaderRoute: typeof ApmAdminWardsLgaIdRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
+    '/apm/admin/polling-units/$wardId': {
+      id: '/apm/admin/polling-units/$wardId'
+      path: '/polling-units/$wardId'
+      fullPath: '/apm/admin/polling-units/$wardId'
+      preLoaderRoute: typeof ApmAdminPollingUnitsWardIdRouteImport
+      parentRoute: typeof ApmAdminRouteRoute
+    }
     '/_authenticated/rxsoft/uoms/$uomId': {
       id: '/_authenticated/rxsoft/uoms/$uomId'
       path: '/rxsoft/uoms/$uomId'
@@ -3117,6 +3462,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRxsoftUomCategoryIndexRoute: typeof AuthenticatedRxsoftUomCategoryIndexRoute
   AuthenticatedRxsoftUomsIndexRoute: typeof AuthenticatedRxsoftUomsIndexRoute
   AuthenticatedRxsoftUsersIndexRoute: typeof AuthenticatedRxsoftUsersIndexRoute
+  AuthenticatedRxsoftWarehousesIndexRoute: typeof AuthenticatedRxsoftWarehousesIndexRoute
   AuthenticatedRxsoftWebsiteOrdersIndexRoute: typeof AuthenticatedRxsoftWebsiteOrdersIndexRoute
   AuthenticatedCodingConceptFacilitiesLevelsIndexRoute: typeof AuthenticatedCodingConceptFacilitiesLevelsIndexRoute
   AuthenticatedCodingConceptFacilitiesLgasIndexRoute: typeof AuthenticatedCodingConceptFacilitiesLgasIndexRoute
@@ -3246,6 +3592,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedRxsoftUomCategoryIndexRoute,
   AuthenticatedRxsoftUomsIndexRoute: AuthenticatedRxsoftUomsIndexRoute,
   AuthenticatedRxsoftUsersIndexRoute: AuthenticatedRxsoftUsersIndexRoute,
+  AuthenticatedRxsoftWarehousesIndexRoute:
+    AuthenticatedRxsoftWarehousesIndexRoute,
   AuthenticatedRxsoftWebsiteOrdersIndexRoute:
     AuthenticatedRxsoftWebsiteOrdersIndexRoute,
   AuthenticatedCodingConceptFacilitiesLevelsIndexRoute:
@@ -3292,6 +3640,48 @@ const ClerkRouteRouteChildren: ClerkRouteRouteChildren = {
 
 const ClerkRouteRouteWithChildren = ClerkRouteRoute._addFileChildren(
   ClerkRouteRouteChildren,
+)
+
+interface ApmAdminRouteRouteChildren {
+  ApmAdminAgentsRoute: typeof ApmAdminAgentsRoute
+  ApmAdminCanvassingRoute: typeof ApmAdminCanvassingRoute
+  ApmAdminContentRoute: typeof ApmAdminContentRoute
+  ApmAdminConversionRoute: typeof ApmAdminConversionRoute
+  ApmAdminGotvRoute: typeof ApmAdminGotvRoute
+  ApmAdminIncidentsRoute: typeof ApmAdminIncidentsRoute
+  ApmAdminLgasRoute: typeof ApmAdminLgasRoute
+  ApmAdminListeningRoute: typeof ApmAdminListeningRoute
+  ApmAdminResultsRoute: typeof ApmAdminResultsRoute
+  ApmAdminSentimentRoute: typeof ApmAdminSentimentRoute
+  ApmAdminStakeholdersRoute: typeof ApmAdminStakeholdersRoute
+  ApmAdminToursRoute: typeof ApmAdminToursRoute
+  ApmAdminVolunteersRoute: typeof ApmAdminVolunteersRoute
+  ApmAdminWhatsappRoute: typeof ApmAdminWhatsappRoute
+  ApmAdminPollingUnitsWardIdRoute: typeof ApmAdminPollingUnitsWardIdRoute
+  ApmAdminWardsLgaIdRoute: typeof ApmAdminWardsLgaIdRoute
+}
+
+const ApmAdminRouteRouteChildren: ApmAdminRouteRouteChildren = {
+  ApmAdminAgentsRoute: ApmAdminAgentsRoute,
+  ApmAdminCanvassingRoute: ApmAdminCanvassingRoute,
+  ApmAdminContentRoute: ApmAdminContentRoute,
+  ApmAdminConversionRoute: ApmAdminConversionRoute,
+  ApmAdminGotvRoute: ApmAdminGotvRoute,
+  ApmAdminIncidentsRoute: ApmAdminIncidentsRoute,
+  ApmAdminLgasRoute: ApmAdminLgasRoute,
+  ApmAdminListeningRoute: ApmAdminListeningRoute,
+  ApmAdminResultsRoute: ApmAdminResultsRoute,
+  ApmAdminSentimentRoute: ApmAdminSentimentRoute,
+  ApmAdminStakeholdersRoute: ApmAdminStakeholdersRoute,
+  ApmAdminToursRoute: ApmAdminToursRoute,
+  ApmAdminVolunteersRoute: ApmAdminVolunteersRoute,
+  ApmAdminWhatsappRoute: ApmAdminWhatsappRoute,
+  ApmAdminPollingUnitsWardIdRoute: ApmAdminPollingUnitsWardIdRoute,
+  ApmAdminWardsLgaIdRoute: ApmAdminWardsLgaIdRoute,
+}
+
+const ApmAdminRouteRouteWithChildren = ApmAdminRouteRoute._addFileChildren(
+  ApmAdminRouteRouteChildren,
 )
 
 interface ApmEventsRouteChildren {
@@ -3369,6 +3759,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ClerkRouteRoute: ClerkRouteRouteWithChildren,
+  ApmAdminRouteRoute: ApmAdminRouteRouteWithChildren,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authOtpRoute: authOtpRoute,
   authSignInRoute: authSignInRoute,

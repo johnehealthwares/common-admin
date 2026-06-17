@@ -2,10 +2,26 @@ import type { Column } from '@/features/rxsoft/types';
 import type { ModelConfig } from '@/features/shared/model-schema';
 
 const stockBalancesColumns: Column[] = [
-  { key: 'id', label: 'ID' },
-  { key: 'productId', label: 'Product' },
-  { key: 'locationId', label: 'Location' },
+  {
+    key: 'item',
+    label: 'Item',
+    render: (row) => (row as any).item?.name ?? (row as any).itemId ?? '-',
+  },
+  {
+    key: 'location',
+    label: 'Location',
+    render: (row) => (row as any).location?.name ?? (row as any).locationId ?? '-',
+  },
   { key: 'quantityOnHand', label: 'On Hand' },
+  { key: 'quantityReserved', label: 'Reserved' },
+  {
+    key: 'available',
+    label: 'Available',
+    render: (row) => {
+      const available = Number((row as any).quantityOnHand ?? 0) - Number((row as any).quantityReserved ?? 0);
+      return String(available);
+    },
+  },
 ];
 
 const stockMovementsColumns: Column[] = [

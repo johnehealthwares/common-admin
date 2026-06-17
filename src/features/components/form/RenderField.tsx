@@ -41,6 +41,8 @@ function RenderFieldComponent({
   // Use FormProvider hook if available, fall back to props
   let fieldValue = propValue;
   let fieldError = propError;
+  let formState: Record<string, unknown> | undefined;
+
   let handleChange = useCallback(
     (v: any) => {
       onChange?.(v);
@@ -61,6 +63,8 @@ function RenderFieldComponent({
         },
         [fieldState, onChange]
       );
+      // Lazy access to formState — useFormField already gave us the context
+      formState = undefined;
     } catch (err) {
       // FormProvider not available, use props
       console.debug('FormProvider not available, using prop-based mode');
@@ -97,6 +101,7 @@ function RenderFieldComponent({
           onBlur={onBlur}
           onFocus={onFocus}
           error={fieldError}
+          formState={formState}
         />
       </LabelField>
     );

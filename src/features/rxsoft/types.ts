@@ -260,6 +260,7 @@ export type Field = {
   options?: Option[];
   validate?: (value: unknown) => boolean | string;
   updateField?: (row: Record<string, unknown>, name: string, value: unknown) => void;
+  extraParams?: (formState: Record<string, unknown>) => Record<string, unknown>;
 };
 
 export type FieldGroup = {

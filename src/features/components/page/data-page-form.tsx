@@ -62,6 +62,8 @@ export function DataPageForm({ config }: DataPageFormProps) {
     },
   });
 
+  const isWizard = Boolean(tabGroups);
+
   return (
     <RxPage title={modalTitle ?? `Create ${title}`} description={description}>
       <Stack gap="lg">
@@ -70,36 +72,47 @@ export function DataPageForm({ config }: DataPageFormProps) {
         </Text>
 
         <Stack gap="xl">
-          {tabGroups && (
-            <TabGroups tabGroups={tabGroups} formState={formState} updateField={updateField} />
-          )}
-          {fieldGroups.map((fieldGroup, index) => (
-            <FieldGroup
-              key={index}
-              index={index}
-              fieldGroup={fieldGroup}
+          {tabGroups ? (
+            <TabGroups
+              tabGroups={tabGroups}
               formState={formState}
               updateField={updateField}
+              onSubmit={() => mutation.mutate(formState)}
+              isPending={mutation.isPending}
             />
-          ))}
-          {renderCreateExtras?.({
-            formState,
-            updateField,
-          })}
+          ) : (
+            <>
+              {fieldGroups.map((fieldGroup, index) => (
+                <FieldGroup
+                  key={index}
+                  index={index}
+                  fieldGroup={fieldGroup}
+                  formState={formState}
+                  updateField={updateField}
+                />
+              ))}
+              {renderCreateExtras?.({
+                formState,
+                updateField,
+              })}
+            </>
+          )}
         </Stack>
 
-        <Group justify="flex-end">
-          <Button variant="outline" onClick={() => navigate({ to: '..' })}>
-            Cancel
-          </Button>
-          <Button
-            onClick={() => mutation.mutate(formState)}
-            disabled={mutation.isPending}
-            leftSection={mutation.isPending ? <Loader size={16} /> : null}
-          >
-            Create
-          </Button>
-        </Group>
+        {!isWizard && (
+          <Group justify="flex-end">
+            <Button variant="outline" onClick={() => navigate({ to: '..' })}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => mutation.mutate(formState)}
+              disabled={mutation.isPending}
+              leftSection={mutation.isPending ? <Loader size={16} /> : null}
+            >
+              Create
+            </Button>
+          </Group>
+        )}
       </Stack>
     </RxPage>
   );

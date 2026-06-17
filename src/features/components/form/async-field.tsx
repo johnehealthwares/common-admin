@@ -15,6 +15,7 @@ type Props = {
   error?: string;
   onBlur?: () => void;
   onFocus?: () => void;
+  formState?: Record<string, unknown>;
 };
 
 const STATIC_SELECT_THRESHOLD = 50;
@@ -25,6 +26,7 @@ export function AsyncSelectField({
   onChange,
   disabled = false,
   error,
+  formState,
   ...props
 }: Props) {
   const apiProvider = useApiProvider();
@@ -65,7 +67,7 @@ export function AsyncSelectField({
       if (field.searchParam.queryParam && !field.searchParam?.filter) {
         params[field.searchParam.queryParam] = debouncedInput;
       }
-      if (field.searchParam?.staticFilters && field.searchParam?.staticFilters) {
+      if (field.searchParam?.staticFilters) {
         field.searchParam.staticFilters.forEach((staticFilter) => {
           if (staticFilter.filter.type) {
             //{field:EQUALS|value,name:EQUALS|value}
@@ -74,6 +76,19 @@ export function AsyncSelectField({
           } else {
             //{field:value,name:value}
             params[staticFilter.filter.name] = staticFilter.value;
+          }
+        });
+      }
+      if (field.searchParam?.staticParams) {
+        Object.entries(field.searchParam.staticParams).forEach(([key, val]) => {
+          params[key] = val;
+        });
+      }
+      if (field.extraParams && formState) {
+        const extra = field.extraParams(formState);
+        Object.entries(extra).forEach(([key, val]) => {
+          if (val != null) {
+            params[key] = val;
           }
         });
       }
