@@ -167,3 +167,42 @@ export function useItemUoms(itemId: string | null) {
     staleTime: 120_000,
   });
 }
+
+export function useAddPoLine() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ poId, payload }: { poId: string; payload: any }) => {
+      const { data } = await rxsoftApi.post(`/purchases/${poId}/lines`, payload);
+      return data as PurchaseOrder;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries(poKeys.list());
+    },
+  });
+}
+
+export function useUpdatePoLine() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ poId, lineId, payload }: { poId: string; lineId: string; payload: any }) => {
+      const { data } = await rxsoftApi.put(`/purchases/${poId}/lines/${lineId}`, payload);
+      return data as PurchaseOrder;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries(poKeys.list());
+    },
+  });
+}
+
+export function useDeletePoLine() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ poId, lineId }: { poId: string; lineId: string }) => {
+      const { data } = await rxsoftApi.delete(`/purchases/${poId}/lines/${lineId}`);
+      return data as PurchaseOrder;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries(poKeys.list());
+    },
+  });
+}

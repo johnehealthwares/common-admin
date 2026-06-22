@@ -91,9 +91,11 @@ export const HeaderBar = ({
         </Group>
 
         <Group gap="xs">
-          <Text size="xs" c="dimmed">
-            {Math.ceil(totalItems / pageSize)}–{pageIndex * pageSize} of {totalItems}
-          </Text>
+          {totalItems > 0 && (
+            <Text size="xs" c="dimmed">
+              {(pageIndex - 1) * pageSize + 1}–{Math.min(pageIndex * pageSize, totalItems)} of {totalItems}
+            </Text>
+          )}
           <ActionIcon variant="subtle" onClick={refresh}>
             <RefreshCcw size={16} />
           </ActionIcon>

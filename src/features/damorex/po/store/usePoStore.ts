@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { PoLineItem } from '../types';
+import { PoLineItem, PurchaseOrderStatus } from '../types';
 
 interface PoTab {
   id: string;
@@ -15,6 +15,7 @@ interface PoTab {
   lines: PoLineItem[];
   pendingPoId: string | null;
   pendingPoLabel: string;
+  pendingPoStatus: PurchaseOrderStatus | null;
 }
 
 interface PoStoreState {
@@ -37,7 +38,7 @@ interface PoStoreState {
   setNote: (note: string) => void;
   setReceiptNumber: (num: string) => void;
   setReceivedDate: (date: string) => void;
-  setPendingPo: (id: string | null, label?: string) => void;
+  setPendingPo: (id: string | null, label?: string, status?: PurchaseOrderStatus | null) => void;
 
   addLine: (line?: Partial<PoLineItem>) => void;
   updateLine: (lineId: string, updates: Partial<PoLineItem>) => void;
@@ -81,6 +82,7 @@ const defaultTabState = (): PoTab => ({
   lines: [emptyLine()],
   pendingPoId: null,
   pendingPoLabel: '',
+  pendingPoStatus: null,
 });
 
 export const usePoStore = create<PoStoreState>((set, get) => ({
@@ -145,9 +147,9 @@ export const usePoStore = create<PoStoreState>((set, get) => ({
     get().updateTab(active, { receivedDate: date });
   },
 
-  setPendingPo: (id, label) => {
+  setPendingPo: (id, label, status) => {
     const active = get().activeTabId;
-    get().updateTab(active, { pendingPoId: id, pendingPoLabel: label ?? '' });
+    get().updateTab(active, { pendingPoId: id, pendingPoLabel: label ?? '', pendingPoStatus: status ?? null });
   },
 
   addLine: (line) => {

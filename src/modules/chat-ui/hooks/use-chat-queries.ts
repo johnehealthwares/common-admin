@@ -1,24 +1,36 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  addProjection,
+  createConversation,
   fetchConversationInbox,
   fetchConversationMessages,
+  listProjections,
   markConversationRead,
+  removeParticipantProjections,
   sendConversationMessage,
 } from '../services/chat-api';
-import type { ExchangeMessage, ExchangeMessagesResponse } from '../types';
+import type {
+  ExchangeMessage,
+  ExchangeMessagesResponse,
+  InboxMode,
+} from '../types';
 
 export const chatKeys = {
-  inbox: (search: string) => ['conversation-inbox', { search }] as const,
+  inbox: (search: string, mode?: InboxMode) =>
+    ['conversation-inbox', { search, mode }] as const,
   messages: (conversationId?: string) => ['conversation-messages', conversationId] as const,
+  projections: (conversationId?: string) => ['projections', conversationId] as const,
 };
 
-export function useConversationInbox(search: string) {
+export function useConversationInbox(search: string, mode?: InboxMode, adminParticipantId?: string) {
   return useInfiniteQuery({
-    queryKey: chatKeys.inbox(search),
+    queryKey: chatKeys.inbox(search, mode),
     queryFn: ({ pageParam }) =>
       fetchConversationInbox({
         cursor: pageParam,
         search: search.trim() || undefined,
+        mode,
+        participantId: mode === 'admin' ? adminParticipantId : undefined,
       }),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -106,8 +118,6 @@ export function useSendConversationMessage() {
       });
     },
     onSuccess: (_data, input, context) => {
-      // Mark the optimistic message as confirmed (no longer optimistic)
-      // The mock webhook returns 201 — the real message will arrive via WebSocket
       queryClient.setQueryData<{
         pages: ExchangeMessagesResponse[];
         pageParams: Array<string | undefined>;
@@ -133,5 +143,44 @@ export function useSendConversationMessage() {
 export function useMarkConversationRead() {
   return useMutation({
     mutationFn: markConversationRead,
+  });
+}
+
+export function useCreateConversation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createConversation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversation-inbox'] });
+    },
+  });
+}
+
+export function useAddProjection() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: addProjection,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversation-inbox'] });
+    },
+  });
+}
+
+export function useListProjections(conversationId?: string) {
+  return useQuery({
+    queryKey: chatKeys.projections(conversationId),
+    enabled: Boolean(conversationId),
+    queryFn: () => listProjections(conversationId!),
+  });
+}
+
+export function useRemoveParticipantProjections() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: removeParticipantProjections,
+    onSuccess: (_data, input) => {
+      queryClient.invalidateQueries({ queryKey: ['conversation-inbox'] });
+      queryClient.invalidateQueries({ queryKey: chatKeys.projections(input.conversationId) });
+    },
   });
 }

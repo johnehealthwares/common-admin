@@ -1,7 +1,8 @@
-import { ActionIcon, Badge, Group, Switch } from '@mantine/core';
+import { ActionIcon, Badge, Grid, Group, SimpleGrid, Switch } from '@mantine/core';
 import { memo, useCallback } from 'react';
 import { LabelField } from '@/features/communication/components/shared';
 import { Field, Option } from '@/features/rxsoft/types';
+import { ImageUploader } from '@/features/rxsoft/pages/products/components/image-uploader';
 import { AsyncSelectField } from './async-field';
 import { DebouncedTextInput } from './debounced-text-input';
 import { useFormField } from './form-context';
@@ -67,7 +68,7 @@ function RenderFieldComponent({
       formState = undefined;
     } catch (err) {
       // FormProvider not available, use props
-      console.debug('FormProvider not available, using prop-based mode');
+      // console.debug('FormProvider not available, using prop-based mode');
     }
   }
 
@@ -108,8 +109,14 @@ function RenderFieldComponent({
   }
 
   if (field.type === 'multi-async-select') {
-    const current = (fieldValue || []) as Option[];
+    
+    const raw = (fieldValue || []) as (string | Option)[];
+    const current: Option[] = field.toOptions
+      ? field.toOptions(raw)
+      : raw.map((item) => (typeof item === 'string' ? { value: item, label: item } : item));
+    console.log({current})
     const toggle = (option: Option) => {
+      console.log({option,})
       const index = current.findIndex((item) => item.value === option.value);
       const updated = index >= 0 ? current.filter((_, i) => i !== index) : [...current, option];
       handleChange(updated);
@@ -267,6 +274,24 @@ function RenderFieldComponent({
         />
       </LabelField>
     );
+  }
+
+  if (field.type === 'image') {
+    return (
+      <Grid.Col span={{ base: 12, md: field.col ?? 6 }}>
+        <ImageUploader
+          label={field.label}
+          description={field.placeholder}
+          value={(fieldValue as string) ?? ''}
+          onChange={(url) => handleChange(url)}
+          size={(field as any).imageSize ?? 'medium'}
+        />
+      </Grid.Col>
+    );
+  }
+
+  if (field.type === 'multi-image') {
+    return null;
   }
 
   if (field.type === 'hidden') {

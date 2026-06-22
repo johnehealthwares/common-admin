@@ -17,7 +17,7 @@ import type {
 } from './types';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://rxsoft-backend.onrender.com/api',
+  baseURL: import.meta.env.VITE_RXSOFT_API_URL || 'https://rxsoft-backend.onrender.com/api',
 });
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
@@ -98,14 +98,17 @@ export const websiteApi = {
 
   // Orders
   createOrder: (data: {
-    deliveryAddress: string;
-    city?: string;
-    state?: string;
-    phone?: string;
-    shippingMethod?: string;
     paymentMethod: string;
     prescriptionIds?: string[];
     notes?: string;
+    items: Array<{ itemId: string; quantity: number; unitPrice?: number }>;
+    delivery?: {
+      address: string;
+      city?: string;
+      state?: string;
+      phone?: string;
+      shippingMethod?: string;
+    };
   }) => api.post<OrderView>('/website/orders', data).then((r) => r.data),
 
   listOrders: () => api.get<OrderView[]>('/website/orders').then((r) => r.data),

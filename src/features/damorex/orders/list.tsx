@@ -7,14 +7,16 @@ import { WebsiteLayout, green, ink, muted, line, soft } from '../website/layout'
 import { PageLoader } from '../website/loaders';
 
 const statusColors: Record<string, string> = {
-  Pending: 'yellow',
-  Confirmed: 'blue',
-  Processing: 'violet',
-  Dispatched: 'orange',
-  'In Transit': 'cyan',
-  Delivered: 'green',
-  Cancelled: 'red',
+  pending: 'yellow',
+  confirmed: 'blue',
+  processing: 'violet',
+  dispatched: 'orange',
+  in_transit: 'cyan',
+  delivered: 'green',
+  cancelled: 'red',
 };
+
+const statusLabel = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ');
 
 export default function OrdersPage() {
   const { data: orders, isLoading } = useOrders();
@@ -51,9 +53,9 @@ export default function OrdersPage() {
                   <Group justify="space-between">
                     <Stack gap={4}>
                       <Group gap={8}>
-                        <Text fw={900}>{order.code || `#${order.id.slice(0, 8)}`}</Text>
-                        <Badge radius="xl" color={statusColors[order.status] || 'gray'}>
-                          {order.status}
+                        <Text fw={900}>{order.orderNumber || `#${order.id.slice(0, 8)}`}</Text>
+                        <Badge radius="xl" color={statusColors[order.orderStatus] || 'gray'}>
+                          {statusLabel(order.orderStatus)}
                         </Badge>
                       </Group>
                       <Text size="sm" c={muted}>

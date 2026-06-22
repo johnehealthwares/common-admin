@@ -59,7 +59,10 @@ export const ModalDataForm = ({
               tabGroups={tabGroups}
               formState={formState}
               updateField={updateField}
-              onSubmit={() => mutation.mutate(formState)}
+              onSubmit={() => {
+                console.log({ stage: 'onSubmit-formState', formState });
+                mutation.mutate(formState);
+              }}
               isPending={mutation.isPending}
             />
           ) : (
@@ -87,7 +90,10 @@ export const ModalDataForm = ({
             </Button>
 
             <Button
-              onClick={() => mutation.mutate(formState)}
+              onClick={() => {
+                console.log({ stage: 'onSubmit-simple-formState', formState });
+                mutation.mutate(formState);
+              }}
               disabled={mutation.isPending}
               leftSection={mutation.isPending ? <Loader size={16} /> : null}
             >

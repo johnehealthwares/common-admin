@@ -12,6 +12,7 @@ interface Props {
   stockLocationId: string;
   currentQty: number;
   onAdjusted: () => void;
+  uomId?: string;
   uomName?: string;
 }
 
@@ -23,6 +24,7 @@ export function StockAdjustModal({
   stockLocationId,
   currentQty,
   onAdjusted,
+  uomId,
   uomName,
 }: Props) {
   const [newQty, setNewQty] = useState<number>(currentQty);
@@ -37,6 +39,7 @@ export function StockAdjustModal({
         locationId: stockLocationId,
         deltaQuantity: delta,
         reason: 'POS stock adjustment',
+        uomId: uomId || undefined,
       });
     },
     onSuccess: () => {

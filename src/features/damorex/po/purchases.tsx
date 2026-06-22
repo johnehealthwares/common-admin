@@ -6,7 +6,7 @@ import { PoSettingsDrawer } from './components/PoSettingsDrawer';
 import { PoSummary } from './components/PoSummary';
 import { PoToolbar } from './components/PoToolbar';
 import { usePoStore } from './store/usePoStore';
-import { useCreatePurchaseOrder, useReceiveGoods, useUnpostGoods } from './api/poApi';
+import { useAddPoLine, useCreatePurchaseOrder, useReceiveGoods, useUnpostGoods, useUpdatePurchaseOrder } from './api/poApi';
 import { printPo } from './utils/print';
 import { UnpostPasswordModal } from './components/UnpostPasswordModal';
 
@@ -22,9 +22,11 @@ export default function PurchasesPage() {
   const receivedDate = activeTab?.receivedDate ?? '';
   const lines = activeTab?.lines ?? [];
   const pendingPoId = activeTab?.pendingPoId ?? null;
+  const status = activeTab?.pendingPoStatus ?? null;
 
   const [unpostModal, setUnpostModal] = useState(false);
   const [unpostTargetLine, setUnpostTargetLine] = useState<string | null>(null);
+  const [savingLines, setSavingLines] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!usePoStore.getState().activeTabId && tabs.length > 0) {
@@ -39,11 +41,13 @@ export default function PurchasesPage() {
   }, [defaultWarehouseId]);
 
   const createMutation = useCreatePurchaseOrder();
+  const updateMutation = useUpdatePurchaseOrder();
+  const addLineMutation = useAddPoLine();
   const receiveMutation = useReceiveGoods();
   const unpostMutation = useUnpostGoods();
 
   async function handleSaveDraft() {
-    await createMutation.mutateAsync({
+    const result = await createMutation.mutateAsync({
       supplierId,
       warehouseId,
       expectedDate: expectedDate || undefined,
@@ -58,11 +62,31 @@ export default function PurchasesPage() {
         taxPercent: l.taxPercent,
       })),
     });
-    resetActiveTab();
+    const poId = result.id;
+    usePoStore.getState().setPendingPo(poId, result.invoiceNumber || result.purchaseOrderNumber, 'draft');
+    usePoStore.getState().updateTab(activeTabId, {
+      lines: (result.lines || []).map((l: any) => ({
+        id: crypto.randomUUID(),
+        itemId: l.itemId,
+        itemCode: l.itemCode || '',
+        itemName: l.itemName || '',
+        orderedQty: l.orderedQty,
+        receivedQty: l.receivedQty || 0,
+        uomId: l.uomId,
+        unitCost: l.unitCost,
+        discountPercent: l.discountPercent || 0,
+        taxPercent: l.taxPercent || 0,
+        lineSubtotal: l.lineSubtotal || 0,
+        lineTotal: l.lineTotal || 0,
+        isDraft: false,
+        isPosted: false,
+        serverLineId: l.id,
+      })),
+    });
   }
 
   async function handleSubmitApprove() {
-    await createMutation.mutateAsync({
+    const result = await createMutation.mutateAsync({
       supplierId,
       warehouseId,
       expectedDate: expectedDate || undefined,
@@ -77,10 +101,60 @@ export default function PurchasesPage() {
         taxPercent: l.taxPercent,
       })),
     });
-    resetActiveTab();
+    usePoStore.getState().setPendingPo(result.id, result.invoiceNumber || result.purchaseOrderNumber, 'approved');
+    usePoStore.getState().updateTab(activeTabId, {
+      lines: (result.lines || []).map((l: any) => ({
+        id: crypto.randomUUID(),
+        itemId: l.itemId,
+        itemCode: l.itemCode || '',
+        itemName: l.itemName || '',
+        orderedQty: l.orderedQty,
+        receivedQty: l.receivedQty || 0,
+        uomId: l.uomId,
+        unitCost: l.unitCost,
+        discountPercent: l.discountPercent || 0,
+        taxPercent: l.taxPercent || 0,
+        lineSubtotal: l.lineSubtotal || 0,
+        lineTotal: l.lineTotal || 0,
+        isDraft: false,
+        isPosted: false,
+        serverLineId: l.id,
+      })),
+    });
   }
 
-  async function handlePostLine(line: any) {
+  async function handleSaveLine(line: any) {
+    if (!pendingPoId) return;
+    setSavingLines((prev) => new Set(prev).add(line.id));
+    try {
+      const result = await addLineMutation.mutateAsync({
+        poId: pendingPoId,
+        payload: {
+          itemId: line.itemId,
+          orderedQty: line.orderedQty,
+          uomId: line.uomId,
+          unitCost: line.unitCost,
+          discountPercent: line.discountPercent,
+          taxPercent: line.taxPercent,
+        },
+      });
+      const savedLine = result.lines?.find((l: any) => l.itemId === line.itemId);
+      usePoStore.getState().updateLine(line.id, {
+        isDraft: false,
+        serverLineId: savedLine?.id || '',
+        itemCode: savedLine?.itemCode || line.itemCode,
+        itemName: savedLine?.itemName || line.itemName,
+      });
+    } finally {
+      setSavingLines((prev) => {
+        const next = new Set(prev);
+        next.delete(line.id);
+        return next;
+      });
+    }
+  }
+
+  async function handleReceiveLine(line: any) {
     if (!pendingPoId) return;
     const payload = {
       purchaseOrderId: pendingPoId,
@@ -89,7 +163,6 @@ export default function PurchasesPage() {
       lines: [
         {
           itemId: line.itemId,
-          orderedQty: line.orderedQty,
           receivedQty: line.receivedQty,
           uomId: line.uomId,
           unitCost: line.unitCost,
@@ -110,8 +183,15 @@ export default function PurchasesPage() {
     }
   }
 
+  function handleReceiveAll() {
+    const receivable = lines.filter((l) => l.serverLineId && !l.isPosted && l.receivedQty > 0);
+    for (const line of receivable) {
+      handleReceiveLine(line);
+    }
+  }
+
   function handleUnpostLine(line: any) {
-    setUnpostTargetLine(line.id);
+    setUnpostTargetLine(line.serverLineId || line.id);
     setUnpostModal(true);
   }
 
@@ -122,16 +202,12 @@ export default function PurchasesPage() {
       poId: pendingPoId,
       payload: { receiptLineId, password },
     });
-    usePoStore.getState().updateLine(unpostTargetLine, { isPosted: false });
+    const line = lines.find((l) => (l.serverLineId || l.id) === unpostTargetLine);
+    if (line) {
+      usePoStore.getState().updateLine(line.id, { isPosted: false });
+    }
     setUnpostModal(false);
     setUnpostTargetLine(null);
-  }
-
-  function handlePostAll() {
-    const unposted = lines.filter((l) => !l.isDraft && !l.isPosted && l.receivedQty > 0);
-    for (const line of unposted) {
-      handlePostLine(line);
-    }
   }
 
   function handlePrint() {
@@ -198,28 +274,37 @@ export default function PurchasesPage() {
               <Paper withBorder>
                 <PoLinesTable
                   lines={activeTab.lines}
+                  status={status}
+                  pendingPoId={pendingPoId}
+                  receiptNumber={receiptNumber}
                   onUpdateLine={(id, updates) => usePoStore.getState().updateLine(id, updates)}
                   onRemoveLine={(id) => usePoStore.getState().removeLine(id)}
                   onAddLine={() => usePoStore.getState().addLine()}
-                  onPostLine={handlePostLine}
+                  onSaveLine={handleSaveLine}
+                  onReceiveLine={handleReceiveLine}
                   onUnpostLine={handleUnpostLine}
+                  savingLines={savingLines}
                 />
-                <Group p="xs">
-                  <Button
-                    size="xs"
-                    leftSection={<Plus size={14} />}
-                    onClick={() => usePoStore.getState().addLine()}
-                  >
-                    Add Line
-                  </Button>
-                </Group>
+                {(!status || status === 'draft') && (
+                  <Group p="xs">
+                    <Button
+                      size="xs"
+                      leftSection={<Plus size={14} />}
+                      onClick={() => usePoStore.getState().addLine()}
+                    >
+                      Add Line
+                    </Button>
+                  </Group>
+                )}
               </Paper>
 
               <PoSummary
                 lines={activeTab.lines}
+                status={status}
                 receivedDate={activeTab.receivedDate}
+                receiptNumber={receiptNumber}
                 onReceivedDateChange={(d) => usePoStore.getState().setReceivedDate(d)}
-                onPostAll={handlePostAll}
+                onReceiveAll={handleReceiveAll}
                 onSaveDraft={handleSaveDraft}
                 onSubmitApprove={handleSubmitApprove}
                 saving={createMutation.isPending}

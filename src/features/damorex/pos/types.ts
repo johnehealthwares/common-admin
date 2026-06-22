@@ -11,6 +11,8 @@ export interface CartItem {
   lineTotal: number;
   batchNo?: string;
   expiryDate?: string;
+  imageUrl?: string;
+  pricingMode?: 'retail' | 'wholesale';
 }
 
 export interface Customer {

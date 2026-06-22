@@ -1,4 +1,4 @@
-import { Button, Checkbox, NumberInput, Paper, Select, Table, Text, UnstyledButton } from '@mantine/core';
+import { Button, Image, NumberInput, Paper, Select, Table, Text, UnstyledButton } from '@mantine/core';
 import { Plus } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -30,6 +30,7 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
   const [adjustModalOpen, setAdjustModalOpen] = useState(false);
   const [adjustItemId, setAdjustItemId] = useState('');
   const [adjustItemName, setAdjustItemName] = useState('');
+  const [adjustUomId, setAdjustUomId] = useState('');
   const [adjustUomName, setAdjustUomName] = useState('');
   const [adjustCurrentQty, setAdjustCurrentQty] = useState(0);
 
@@ -58,7 +59,7 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
       retailPrice: pli.unitPrice,
       wholesalePrice: pli.unitPrice,
       uomId: pli.item?.saleUomId || pli.uomId || '',
-      uomName: pli.item?.saleUomName || 'Unit',
+      imageUrl: pli.item?.smallImageUrl || pli.item?.imageUrl || '',
     }));
   }, [priceListItems]);
 
@@ -84,15 +85,16 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
       return Number(list[0]?.quantityOnHand ?? 0);
     },
     enabled: !!selectedProductId && !!stockLocationId,
-    staleTime: 30_000,
+    staleTime: 0,
   });
 
   useEffect(() => {
     if (selectedProduct) {
       setUomId(selectedProduct.uomId);
-      setUomName(selectedProduct.uomName);
+      const u = uomMap.get(selectedProduct.uomId);
+      setUomName(u?.name || '');
     }
-  }, [selectedProduct]);
+  }, [selectedProductId, uomMap]);
 
   function handleAdd() {
     if (!selectedProductId || !quantity) return;
@@ -103,10 +105,12 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
       retailPrice,
       wholesalePrice,
       quantity,
+      pricingMode: session.pricingMode,
       uomId: uomId || selectedProduct?.uomId || '',
-      uomName: uomName || selectedProduct?.uomName || 'Unit',
+      uomName: currentUom?.name || 'Unit',
       uomFactor,
       lineTotal: total,
+      imageUrl: selectedProduct?.imageUrl || '',
     };
     onAddToCart(item);
     setSelectedProductId(null);
@@ -117,7 +121,8 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
     if (!selectedProductId || !stockLocationId) return;
     setAdjustItemId(selectedProductId);
     setAdjustItemName(selectedProduct?.label || itemCode);
-    setAdjustUomName(uomName || selectedProduct?.uomName || 'Unit');
+    setAdjustUomId(uomId || selectedProduct?.uomId || '');
+    setAdjustUomName(currentUom?.name || 'Unit');
     setAdjustCurrentQty(stockQty);
     setAdjustModalOpen(true);
   }
@@ -127,7 +132,7 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
       <Table striped withTableBorder withColumnBorders horizontalSpacing="xs" verticalSpacing={4}>
         <Table.Thead bg="#a6d5e5">
           <Table.Tr>
-            <Table.Th w={40}>No</Table.Th>
+            <Table.Th w={50}>Image</Table.Th>
             <Table.Th>ITEM CODE</Table.Th>
             <Table.Th>ITEM NAME</Table.Th>
             <Table.Th>RtPrice</Table.Th>
@@ -141,7 +146,11 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
         <Table.Tbody>
           <Table.Tr>
             <Table.Td>
-              <Checkbox />
+              {selectedProduct?.imageUrl ? (
+                <Image src={selectedProduct.imageUrl} w={40} h={40} fit="cover" />
+              ) : (
+                <Text size="xs" c="dimmed">-</Text>
+              )}
             </Table.Td>
             <Table.Td>{itemCode || '-'}</Table.Td>
             <Table.Td>
@@ -155,7 +164,8 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
                   const prod = productOptions.find((p: any) => p.value === v);
                   if (prod) {
                     setUomId(prod.uomId);
-                    setUomName(prod.uomName);
+                    const u = uomMap.get(prod.uomId);
+                    setUomName(u?.name || '');
                   }
                 }}
                 searchable
@@ -170,18 +180,16 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
                   onClick={openAdjustModal}
                   style={{ textDecoration: 'underline', cursor: 'pointer' }}
                 >
-                  {stockQty}hello
+                  {stockQty}
                 </UnstyledButton>
               ) : (
-               <UnstyledButton
-                  onClick={openAdjustModal}
-                  style={{ textDecoration: 'underline', cursor: 'pointer' }}
-                > Set Stock</UnstyledButton>
+                <Text size="xs" c="dimmed">-</Text>
               )}
             </Table.Td>
             <Table.Td>
               <Select
                 size="xs"
+                w={200}
                 data={Array.from(uomMap.values()).map((u) => ({
                   value: u.id,
                   label: u.name,
@@ -192,7 +200,7 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
                   const u = v ? uomMap.get(v) : null;
                   if (u) setUomName(u.name);
                 }}
-                w={80}
+                disabled
               />
             </Table.Td>
             <Table.Td>
@@ -213,9 +221,6 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
           </Table.Tr>
         </Table.Tbody>
       </Table>
-      <Text ta="center" c="blue" py="xs" fw={600}>
-        Add to Cart
-      </Text>
 
       <StockAdjustModal
         opened={adjustModalOpen}
@@ -225,6 +230,7 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
         stockLocationId={stockLocationId ?? ''}
         currentQty={adjustCurrentQty}
         onAdjusted={() => refetchStock()}
+        uomId={adjustUomId}
         uomName={adjustUomName}
       />
     </Paper>

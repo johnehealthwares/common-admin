@@ -4,23 +4,29 @@ import { Calculator } from 'lucide-react';
 interface Props {
   itemCount: number;
   totals: { subtotal: number; discount: number; vat: number; total: number };
+  onCalculate: () => void;
   onCheckout: () => void;
   onHold: () => void;
   onNextCustomer: () => void;
   onSellPrint: () => void;
   onPrintWholesale: () => void;
   paidAmount: number;
+  cartEmpty?: boolean;
+  sessionCompleted?: boolean;
 }
 
 export function SalesSummary({
   itemCount,
   totals,
+  onCalculate,
   onCheckout,
   onHold,
   onNextCustomer,
   onSellPrint,
   onPrintWholesale,
   paidAmount,
+  cartEmpty = true,
+  sessionCompleted = false,
 }: Props) {
   return (
     <Paper radius={0} withBorder bg="#c7e6f1" h="100%" p="md">
@@ -50,8 +56,8 @@ export function SalesSummary({
           </Flex>
         </Paper>
 
-        <Button fullWidth mt="md" leftSection={<Calculator size={16} />} onClick={onCheckout}>
-          Calculate Current Sales
+        <Button fullWidth mt="md" leftSection={<Calculator size={16} />} onClick={onCalculate} disabled={cartEmpty || sessionCompleted}>
+          Print Invoice
         </Button>
 
         <Paper mt="md" p="md" withBorder>
@@ -63,19 +69,19 @@ export function SalesSummary({
           </Title>
         </Paper>
 
-        <Button fullWidth mt="md" onClick={onCheckout}>
+        <Button fullWidth mt="md" onClick={onCheckout} disabled={cartEmpty || sessionCompleted}>
           Sell Only
         </Button>
-        <Button fullWidth mt="xs" onClick={onSellPrint}>
-          Sell Print
+        <Button fullWidth mt="xs" onClick={onSellPrint} disabled={cartEmpty || sessionCompleted}>
+          Sell and Print
         </Button>
-        <Button fullWidth mt="xs" onClick={onPrintWholesale}>
-          Print Wholesale Receipt
+        <Button fullWidth mt="xs" onClick={onPrintWholesale} disabled={cartEmpty || sessionCompleted}>
+          Sell and Print wholesale
         </Button>
-        <Button fullWidth mt="xs" variant="light" onClick={onHold}>
+        <Button fullWidth mt="xs" variant="light" onClick={onHold} disabled={cartEmpty || sessionCompleted}>
           Hold Sale
         </Button>
-        <Button fullWidth mt="xs" variant="outline" onClick={onNextCustomer}>
+        <Button fullWidth mt="xs" variant="outline" onClick={onNextCustomer} disabled={!sessionCompleted}>
           Next Customer
         </Button>
       </Stack>

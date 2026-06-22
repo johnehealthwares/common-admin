@@ -59,16 +59,18 @@ export default function TrackOrderPage() {
               <Stack gap="md">
                 <Group justify="space-between">
                   <Text fw={900} size="lg">
-                    Order {order.code || `#${order.id.slice(0, 8)}`}
+                    Order {order.orderNumber || `#${order.id.slice(0, 8)}`}
                   </Text>
-                  <Badge size="lg" radius="xl" color="green">
-                    {order.status}
+                  <Badge size="lg" radius="xl" color={
+                    order.orderStatus === 'delivered' ? 'green' : order.orderStatus === 'cancelled' ? 'red' : 'yellow'
+                  }>
+                    {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1).replace(/_/g, ' ')}
                   </Badge>
                 </Group>
-                {order.deliveryAddress ? (
+                {order.delivery?.address ? (
                   <Group gap={8}>
                     <MapPin size={18} color={green} />
-                    <Text c={muted}>{order.deliveryAddress}</Text>
+                    <Text c={muted}>{order.delivery.address}</Text>
                   </Group>
                 ) : null}
                 <Text size="sm" c={muted}>

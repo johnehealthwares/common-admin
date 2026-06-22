@@ -1,5 +1,11 @@
 import { conversationApi } from '@/lib/conversation-api';
-import type { ConversationInboxResponse, ExchangeMessagesResponse } from '../types';
+import type {
+  ConversationInboxResponse,
+  ConversationProjection,
+  ExchangeMessagesResponse,
+  InboxMode,
+  ParticipantRole,
+} from '../types';
 
 type InboxParams = {
   cursor?: string;
@@ -8,6 +14,7 @@ type InboxParams = {
   participantId?: string;
   status?: string;
   activeOnly?: boolean;
+  mode?: InboxMode;
 };
 
 export async function fetchConversationInbox(params: InboxParams) {
@@ -58,4 +65,63 @@ export async function markConversationRead(input: {
   await conversationApi.post(`/conversations/${input.conversationId}/read`, {
     participantId: input.participantId,
   });
+}
+
+export async function createConversation(input: {
+  phone?: string;
+  questionnaireId: string;
+  channelId: string;
+}) {
+  const response = await conversationApi.post('/conversations', input);
+  return response.data;
+}
+
+export async function addProjection(input: {
+  conversationId: string;
+  participantId: string;
+  channelId: string;
+  role: ParticipantRole;
+}) {
+  const response = await conversationApi.post(
+    `/conversations/${input.conversationId}/projections`,
+    {
+      participantId: input.participantId,
+      channelId: input.channelId,
+      role: input.role,
+    },
+  );
+  return response.data;
+}
+
+export async function listProjections(conversationId: string) {
+  const response = await conversationApi.get<ConversationProjection[]>(
+    `/conversations/${conversationId}/projections`,
+  );
+  return response.data;
+}
+
+export async function removeParticipantProjections(input: {
+  conversationId: string;
+  participantId: string;
+}) {
+  await conversationApi.delete(
+    `/conversations/${input.conversationId}/projections/${input.participantId}`,
+  );
+}
+
+export async function findParticipantByPhone(phone: string) {
+  try {
+    const response = await conversationApi.get('/participants', {
+      params: { phone },
+    });
+    const data = response.data;
+    return (Array.isArray(data) ? data[0] : data?.items?.[0]) || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function createParticipant(input: { phone: string; firstName?: string }) {
+  const response = await conversationApi.post('/participants', input);
+  return response.data;
 }

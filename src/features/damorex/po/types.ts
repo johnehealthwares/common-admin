@@ -1,3 +1,5 @@
+export type PurchaseOrderStatus = 'draft' | 'approved' | 'partially_received' | 'received' | 'cancelled';
+
 export interface PoLineItem {
   id: string;
   itemId: string;
@@ -14,6 +16,7 @@ export interface PoLineItem {
   lineTotal: number;
   isDraft?: boolean;
   isPosted?: boolean;
+  serverLineId?: string;
 }
 
 export interface PurchaseOrder {

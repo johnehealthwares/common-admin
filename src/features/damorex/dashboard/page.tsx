@@ -12,8 +12,9 @@ export default function DashboardPage() {
   const { data: consultations, isLoading: consultationsLoading } = useConsultations();
   const { data: rewards, isLoading: rewardsLoading } = useRewards();
 
+  const statusLabel = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   const activeOrders =
-    orders?.filter((o) => !['Delivered', 'Cancelled'].includes(o.status))?.length || 0;
+    orders?.filter((o) => !['delivered', 'cancelled'].includes(o.orderStatus))?.length || 0;
   const pendingPrescriptions = prescriptions?.filter((p) => p.status === 'Pending')?.length || 0;
 
   if (ordersLoading || prescriptionsLoading || consultationsLoading || rewardsLoading) {

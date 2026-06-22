@@ -43,6 +43,7 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
   };
 
   const loadMatrix = useCallback(async () => {
+    console.log({parentId})
     if (!parentId) {
       syncRows([], []);
       return;
@@ -86,9 +87,16 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
 
   useEffect(() => {
     setLocalFormState((current) => ({ ...current, [fieldGroup.parentId || '']: parentId }));
-    setRows(rows);
-    loadMatrix();
-  }, []);
+    const existingRows = formState[rowsField] as Record<string, unknown>[] | undefined;
+    if (existingRows && existingRows.length > 0) {
+      setRows(existingRows);
+      setOriginalRows(existingRows);
+    } else if (parentId) {
+      loadMatrix();
+    } else {
+      syncRows([], []);
+    }
+  }, [parentId]);
 
   const updateMatrixRow = (rowId: string, field: keyof PricingMatrixRow, value: unknown) => {
     const nextRows = rows.map((row) =>
@@ -245,7 +253,7 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
         }}
       />
 
-      <Stack gap="sm">
+      {/* <Stack gap="sm">
         <Text size="sm" fw={500}>
           Manual Entry
         </Text>
@@ -277,7 +285,7 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
             Add Price
           </Button>
         </Group>
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 }

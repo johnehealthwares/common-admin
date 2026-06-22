@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Group, Select, Text, TextInput } from '@mantine/core';
+import { ActionIcon, Badge, Button, Group, Select, Text, TextInput } from '@mantine/core';
 import { FileText, Plus, Printer, RefreshCcw, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useSuppliers, useWarehouses, usePurchaseOrders } from '../api/poApi';
@@ -40,11 +40,12 @@ export function PoToolbar({ onNew, onReset, onPrint, onSettings }: Props) {
   }));
 
   const pendingPOpts = (Array.isArray(orders) ? orders : []).filter(
-    (o: any) => o.status === 'approved' || o.status === 'partially_received',
+    (o: any) => o.status === 'approved' || o.status === 'draft',
   ).map((o: any) => ({
     value: o.id,
-    label: `${o.invoiceNumber || o.purchaseOrderNumber}:${o.supplier?.name || ''}:${o.receiptNumber || ''}`,
+    label: `${o.invoiceNumber || o.purchaseOrderNumber}:${o.supplier?.name || ''}:${o.receiptNumber || o.status}`,
   }));
+  console.log({pendingPOpts, orders})
 
   return (
     <>
@@ -61,7 +62,7 @@ export function PoToolbar({ onNew, onReset, onPrint, onSettings }: Props) {
             }
             const po = (Array.isArray(orders) ? orders : []).find((o: any) => o.id === v);
             if (po) {
-              setPendingPo(po.id, po.invoiceNumber || po.purchaseOrderNumber);
+              setPendingPo(po.id, po.invoiceNumber || po.purchaseOrderNumber, po.status);
               setSupplier(po.supplier?.id || '', po.supplier?.name || '');
               setWarehouse(po.warehouse?.id || '', po.warehouse?.name || '');
               usePoStore.getState().setExpectedDate(po.expectedDate || '');
@@ -71,6 +72,8 @@ export function PoToolbar({ onNew, onReset, onPrint, onSettings }: Props) {
                 lines: (po.lines || []).map((l: any) => ({
                   id: crypto.randomUUID(),
                   itemId: l.itemId,
+                  itemCode: l.itemCode || '',
+                  itemName: l.itemName || '',
                   orderedQty: l.orderedQty,
                   receivedQty: l.receivedQty || 0,
                   uomId: l.uomId,
@@ -81,6 +84,7 @@ export function PoToolbar({ onNew, onReset, onPrint, onSettings }: Props) {
                   lineTotal: l.lineTotal || 0,
                   isDraft: false,
                   isPosted: Number(l.receivedQty || 0) > 0,
+                  serverLineId: l.id,
                 })),
               });
             }
@@ -90,6 +94,21 @@ export function PoToolbar({ onNew, onReset, onPrint, onSettings }: Props) {
           clearable
           w={320}
         />
+
+        {activeTab?.pendingPoStatus && (
+          <Badge
+            color={
+              activeTab.pendingPoStatus === 'draft' ? 'yellow' :
+              activeTab.pendingPoStatus === 'approved' ? 'blue' :
+              activeTab.pendingPoStatus === 'partially_received' ? 'orange' :
+              activeTab.pendingPoStatus === 'received' ? 'green' :
+              'gray'
+            }
+            size="lg"
+          >
+            {activeTab.pendingPoStatus.replace('_', ' ')}
+          </Badge>
+        )}
 
         <Select
           size="xs"
@@ -148,7 +167,7 @@ export function PoToolbar({ onNew, onReset, onPrint, onSettings }: Props) {
         </ActionIcon>
 
         <Text size="xs" c="dimmed" ml="auto">
-          User: {activeTab?.supplierName || 'N/A'}
+          {activeTab?.supplierName || 'No supplier'}
         </Text>
       </Group>
 

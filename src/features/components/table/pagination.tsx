@@ -15,7 +15,7 @@ export function Pagination({
   onPageChange,
   onPageSizeChange,
 }: PaginationProps) {
-  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const totalPages = totalItems > 0 ? Math.ceil(totalItems / pageSize) : 0;
 
   return (
     <Group justify="space-between" align="center" wrap="wrap">
@@ -25,26 +25,28 @@ export function Pagination({
       </Text>
 
       {/* RIGHT: controls */}
-      <Group gap="sm" align="center">
-        {/* page info */}
-        <Text size="sm" c="dimmed">
-          Page {pageIndex} of {totalPages}
-        </Text>
+      {totalItems > 0 && (
+        <Group gap="sm" align="center">
+          {/* page info */}
+          <Text size="sm" c="dimmed">
+            Page {pageIndex} of {totalPages}
+          </Text>
 
-        {/* pagination */}
-        <MantinePagination value={pageIndex} onChange={onPageChange} total={totalPages} />
+          {/* pagination */}
+          <MantinePagination value={pageIndex} onChange={onPageChange} total={totalPages} />
 
-        {/* page size */}
-        <Select
-          value={String(pageSize)}
-          onChange={(val) => val && onPageSizeChange(Number(val))}
-          data={[5, 10, 20, 30, 50, 100].map((size) => ({
-            value: String(size),
-            label: `${size} / page`,
-          }))}
-          w={120}
-        />
-      </Group>
+          {/* page size */}
+          <Select
+            value={String(pageSize)}
+            onChange={(val) => val && onPageSizeChange(Number(val))}
+            data={[5, 10, 20, 30, 50, 100].map((size) => ({
+              value: String(size),
+              label: `${size} / page`,
+            }))}
+            w={120}
+          />
+        </Group>
+      )}
     </Group>
   );
 }

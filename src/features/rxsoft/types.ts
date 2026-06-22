@@ -245,7 +245,9 @@ export type Field = {
     | 'multi-check'
     | 'multi-pick'
     | 'remote-select'
-    | 'textarea';
+    | 'textarea'
+    | 'image'
+    | 'multi-image';
   hidden?: boolean;
   disabled?: boolean;
   placeholder?: string;
@@ -255,9 +257,11 @@ export type Field = {
   max?: number;
   step?: number;
   col?: number;
+  imageSize?: 'small' | 'medium' | 'large';
   defaultValue?: unknown;
   value?: string | { formKey: string; paramKey: string }; // value to be passed back during submission
   options?: Option[];
+  toOptions?: (value: any) => Option[]
   validate?: (value: unknown) => boolean | string;
   updateField?: (row: Record<string, unknown>, name: string, value: unknown) => void;
   extraParams?: (formState: Record<string, unknown>) => Record<string, unknown>;

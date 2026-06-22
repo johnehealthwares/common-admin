@@ -5,11 +5,9 @@ export const RXSOFT_API_BASE_URL =
   (import.meta.env.VITE_RXSOFT_API_URL as string | undefined) ??
   'https://rxsoft-backend.onrender.com/api';
 
-/** @deprecated Use RXSOFT_API_BASE_URL instead */
-export const API_BASE_URL = RXSOFT_API_BASE_URL;
 
 export const rxsoftApi = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: RXSOFT_API_BASE_URL,
   timeout: 15000,
 });
 
@@ -80,7 +78,7 @@ rxsoftApi.interceptors.response.use(
         const refreshResponse = await axios.post<{
           accessToken: string;
           refreshToken: string;
-        }>(`${API_BASE_URL}/auth/refresh-token`, { refreshToken });
+        }>(`${RXSOFT_API_BASE_URL}/auth/refresh-token`, { refreshToken });
 
         persistTokens(refreshResponse.data.accessToken, refreshResponse.data.refreshToken);
         queued.forEach((entry) => entry.resolve(refreshResponse.data.accessToken));

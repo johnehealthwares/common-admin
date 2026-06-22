@@ -1,4 +1,6 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { notifications } from '@mantine/notifications';
 import { rxsoftApi } from '@/lib/rxsoft-api';
 import type { CreateSaleDto } from '../types';
 
@@ -65,17 +67,27 @@ export function useSale(id?: string) {
   });
 }
 
+function useDebouncedValue(value: string, delay: number) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debounced;
+}
+
 export function useSearchSales(search?: string) {
+  const debounced = useDebouncedValue(search ?? '', 300);
   return useQuery({
-    queryKey: ['sales', 'search', search] as const,
+    queryKey: ['sales', 'search', debounced] as const,
     queryFn: async () => {
-      if (!search) return [];
+      if (!debounced) return [];
       const { data } = await rxsoftApi.get('/sales', {
-        params: { search, limit: 10 },
+        params: { search: debounced, limit: 10 },
       });
       return data?.data ?? data ?? [];
     },
-    enabled: !!search && search.length >= 2,
+    enabled: !!debounced && debounced.length >= 2,
     staleTime: 30_000,
   });
 }
@@ -167,6 +179,11 @@ export function useUpdateUserPosConfig() {
       allowA4Print?: boolean;
       allowPos?: boolean;
       loginTimeoutMinutes?: number | null;
+      defaultCustomerId?: string | null;
+      defaultPriceListId?: string | null;
+      autoSelectLocation?: boolean;
+      autoSelectCustomer?: boolean;
+      autoSelectPriceList?: boolean;
     }) => {
       const { data } = await rxsoftApi.patch('/user-pos-config/me', payload);
       return data;
@@ -174,6 +191,25 @@ export function useUpdateUserPosConfig() {
     onSuccess: () => {
       qc.invalidateQueries(userPosConfigKeys.me);
     },
+    onError: (err: any) => {
+      notifications.show({
+        color: 'red',
+        message: err?.response?.data?.message ?? err?.message ?? 'Failed to update settings',
+      });
+    },
+  });
+}
+
+export function useStockLocations() {
+  return useQuery({
+    queryKey: ['stock-locations', 'pos'] as const,
+    queryFn: async () => {
+      const { data } = await rxsoftApi.get('/stock-locations', {
+        params: { limit: 200 },
+      });
+      return (data?.data ?? data ?? []) as Array<{ id: string; name: string; code: string | null }>;
+    },
+    staleTime: 300_000,
   });
 }
 

@@ -173,23 +173,37 @@ export interface PaginatedResponse<T> {
 
 export interface OrderView {
   id: string;
-  code: string;
-  deliveryAddress: string;
+  orderNumber: string;
+  customerId: string | null;
+  paymentMethod: string;
+  notes: string | null;
+  orderStatus: string;
+  saleId: string | null;
+  createdBy: string | null;
+  subtotalAmount: number;
+  totalAmount: number;
+  createdAt: string;
+  items: OrderItemView[];
+  delivery: DeliveryView | null;
+}
+
+export interface OrderItemView {
+  id: string;
+  itemId: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface DeliveryView {
+  id: string;
+  address: string;
   city: string | null;
   state: string | null;
   phone: string | null;
-  paymentMethod: string;
+  shippingMethod: string | null;
+  trackingNumber: string | null;
   status: string;
   notes: string | null;
-  createdAt: string;
-  lines: OrderLineView[];
-}
-
-export interface OrderLineView {
-  id: string;
-  productId: string;
-  quantity: number;
-  unitPrice: number;
 }
 
 export interface CartItem {

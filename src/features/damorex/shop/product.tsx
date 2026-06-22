@@ -14,7 +14,7 @@ import {
   ThemeIcon,
   Title,
 } from '@mantine/core';
-import { useParams } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import {
   BadgeCheck,
   Clock3,
@@ -55,7 +55,9 @@ import { PageLoader } from '../website/loaders';
 export default function ProductDetailPage() {
   const { slug } = useParams({ from: '/damorex/shop_/$slug' });
   const { data, isLoading } = useProduct(slug);
+  const navigate = useNavigate();
   const addItem = useCartStore((s) => s.addItem);
+  const totalItems = useCartStore((s) => s.totalItems);
   const [quantity, setQuantity] = useState(1);
 
   const product = data?.product;
@@ -237,7 +239,7 @@ export default function ProductDetailPage() {
                           );
                         }}
                       >
-                        Order via WhatsApp
+                        WhatsApp
                       </Button>
                       <Button
                         radius="xl"
@@ -257,6 +259,20 @@ export default function ProductDetailPage() {
                         Chat
                       </Button>
                     </Group>
+                    {totalItems > 0 ? (
+                      <Button
+                        radius="xl"
+                        size="md"
+                        variant="filled"
+                        color="green"
+                        fullWidth
+                        leftSection={<ShoppingCart size={18} />}
+                        styles={buttonStyles}
+                        onClick={() => navigate({ to: '/damorex/checkout' })}
+                      >
+                        Checkout ({totalItems} item{totalItems !== 1 ? 's' : ''})
+                      </Button>
+                    ) : null}
                     </Stack>
                   </Paper>
                 </Stack>

@@ -26,7 +26,16 @@ const stockBalancesColumns: Column[] = [
 
 const stockMovementsColumns: Column[] = [
   { key: 'id', label: 'ID' },
-  { key: 'stockBalanceId', label: 'Stock Balance' },
+  {
+    key: 'item',
+    label: 'Item',
+    render: (row) => (row as any).item?.name ?? (row as any).itemId ?? '-',
+  },
+  {
+    key: 'location',
+    label: 'Location',
+    render: (row) => (row as any).fromLocation?.name ?? (row as any).toLocation?.name ?? (row as any).fromLocationId ?? (row as any).toLocationId ?? '-',
+  },
   { key: 'movementType', label: 'Type' },
   { key: 'quantity', label: 'Quantity' },
   { key: 'createdAt', label: 'Created' },

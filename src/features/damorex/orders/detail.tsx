@@ -19,14 +19,16 @@ import { WebsiteLayout, green, ink, muted, line } from '../website/layout';
 import { PageLoader } from '../website/loaders';
 
 const statusColors: Record<string, string> = {
-  Pending: 'yellow',
-  Confirmed: 'blue',
-  Processing: 'violet',
-  Dispatched: 'orange',
-  'In Transit': 'cyan',
-  Delivered: 'green',
-  Cancelled: 'red',
+  pending: 'yellow',
+  confirmed: 'blue',
+  processing: 'violet',
+  dispatched: 'orange',
+  in_transit: 'cyan',
+  delivered: 'green',
+  cancelled: 'red',
 };
+
+const statusLabel = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ');
 
 export default function OrderDetailPage() {
   const { id } = useParams({ from: '/damorex/orders_/$id' });
@@ -47,10 +49,10 @@ export default function OrderDetailPage() {
             <Box>
               <Group gap="sm">
                 <Title order={1} className="damorex-heading" style={{ color: ink }}>
-                  Order {order.code || `#${order.id.slice(0, 8)}`}
+                  Order {order.orderNumber || `#${order.id.slice(0, 8)}`}
                 </Title>
-                <Badge size="lg" radius="xl" color={statusColors[order.status] || 'gray'}>
-                  {order.status}
+                <Badge size="lg" radius="xl" color={statusColors[order.orderStatus] || 'gray'}>
+                  {statusLabel(order.orderStatus)}
                 </Badge>
               </Group>
               <Text c={muted} size="sm">
@@ -63,14 +65,16 @@ export default function OrderDetailPage() {
                 Delivery Details
               </Title>
               <Stack gap="sm">
-                <Group gap={8}>
-                  <MapPin size={18} color={green} />
-                  <Text>
-                    {order.deliveryAddress}
-                    {order.city ? `, ${order.city}` : ''}
-                    {order.state ? `, ${order.state}` : ''}
-                  </Text>
-                </Group>
+                {order.delivery ? (
+                  <Group gap={8}>
+                    <MapPin size={18} color={green} />
+                    <Text>
+                      {order.delivery.address}
+                      {order.delivery.city ? `, ${order.delivery.city}` : ''}
+                      {order.delivery.state ? `, ${order.delivery.state}` : ''}
+                    </Text>
+                  </Group>
+                ) : null}
                 {order.paymentMethod ? (
                   <Group gap={8}>
                     <CreditCard size={18} color={green} />
@@ -96,20 +100,20 @@ export default function OrderDetailPage() {
               </Timeline>
             </Paper>
 
-            {order.lines?.length ? (
+            {order.items?.length ? (
               <Paper radius={24} p="xl" withBorder style={{ borderColor: line }}>
                 <Title order={3} className="damorex-heading" mb="md">
                   Items
                 </Title>
                 <Stack gap="sm">
-                  {order.lines.map((line) => (
-                    <Group key={line.id} justify="space-between">
+                  {order.items.map((item, i) => (
+                    <Group key={item.id || i} justify="space-between">
                       <Text>
-                        {line.productId ? `Product #${line.productId.slice(0, 8)}` : 'Item'}
+                        {item.itemId ? `Product #${item.itemId.slice(0, 8)}` : 'Item'}
                       </Text>
                       <Group gap="md">
-                        <Text c={muted}>x{line.quantity}</Text>
-                        <Text fw={800}>₦{line.unitPrice?.toLocaleString() || 0}</Text>
+                        <Text c={muted}>x{item.quantity}</Text>
+                        <Text fw={800}>₦{item.unitPrice?.toLocaleString() || 0}</Text>
                       </Group>
                     </Group>
                   ))}

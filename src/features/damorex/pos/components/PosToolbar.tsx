@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Group, Select, Text } from '@mantine/core';
+import { ActionIcon, Badge, Button, Group, Select, Text } from '@mantine/core';
 import { Plus, RefreshCcw, Search, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useCustomers, usePriceLists, useSearchSales } from '../../api/posApi';
@@ -13,6 +13,8 @@ interface Props {
   onReset: () => void;
   onSettings: () => void;
   onLoadSale: (saleId: string) => void;
+  onHeldSalesOpen: () => void;
+  heldSalesCount: number;
 }
 
 export function PosToolbar({
@@ -23,6 +25,8 @@ export function PosToolbar({
   onReset,
   onSettings,
   onLoadSale,
+  onHeldSalesOpen,
+  heldSalesCount,
 }: Props) {
   const [customerModal, setCustomerModal] = useState(false);
   const [customerSearch, setCustomerSearch] = useState('');
@@ -51,23 +55,6 @@ export function PosToolbar({
   return (
     <>
       <Group px="md" py="xs" bg="#bfe0ea" gap="sm">
-        <Button
-          size="xs"
-          color={session.pricingMode === 'retail' ? 'blue' : 'gray'}
-          variant={session.pricingMode === 'retail' ? 'filled' : 'outline'}
-          onClick={() => onPricingModeChange('retail')}
-        >
-          Single Item Selection
-        </Button>
-        <Button
-          size="xs"
-          color={session.pricingMode === 'wholesale' ? 'blue' : 'gray'}
-          variant={session.pricingMode === 'wholesale' ? 'filled' : 'outline'}
-          onClick={() => onPricingModeChange('wholesale')}
-        >
-          Multiple Item Selection
-        </Button>
-
         <Select
           size="xs"
           placeholder="Choose Customer"
@@ -80,6 +67,7 @@ export function PosToolbar({
           searchable
           clearable
           w={220}
+          disabled={session.status === 'completed'}
         />
 
         <Button size="xs" leftSection={<Plus size={14} />} onClick={() => setCustomerModal(true)}>
@@ -102,7 +90,12 @@ export function PosToolbar({
           searchable
           clearable
           w={200}
+          disabled={session.status === 'completed'}
         />
+
+        <Button size="xs" leftSection={<Search size={14} />} onClick={onHeldSalesOpen}>
+          Held Sales {heldSalesCount > 0 && <Badge ml={4} size="xs">{heldSalesCount}</Badge>}
+        </Button>
 
         <Select
           size="xs"
@@ -119,7 +112,7 @@ export function PosToolbar({
           nothingFoundMessage="No sales found"
         />
 
-        <Button size="xs" color="red" leftSection={<RefreshCcw size={14} />} onClick={onReset}>
+        <Button size="xs" color="red" leftSection={<RefreshCcw size={14} />} onClick={onReset} disabled={session.status === 'completed'}>
           Reset POS
         </Button>
 

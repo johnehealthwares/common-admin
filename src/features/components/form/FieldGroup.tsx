@@ -104,7 +104,7 @@ function FieldGroupComponent({ title, fieldGroup, formState, updateField, index 
       updateField(formStateField, localRows, index);
     }
   };
-
+  console.log({fields, formState})
   return (
     <Stack key={`${title ?? 'group'}-${index}`} gap="sm">
       {title && (

@@ -1,5 +1,5 @@
 import {
-  Badge, Button, Card, Group, Modal, NumberInput, Select, Stack, Table, Text, TextInput, Timeline, SegmentedControl,
+  Badge, Button, Card, Group, Modal, Select, Stack, Table, Text, Timeline,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -42,69 +42,15 @@ function statusLabel(s: string) {
   return s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function AssignLocationModal({
-  opened, onClose, orderId, onAssigned,
-}: {
-  opened: boolean; onClose: () => void; orderId: string | null; onAssigned: () => void;
-}) {
-  const [stockLocationId, setStockLocationId] = useState<string | null>(null);
-
-  const { data: locations = [] } = useQuery({
-    queryKey: ['stock-locations', 'all'],
-    queryFn: async () => {
-      const { data } = await rxsoftApi.get('/stock-locations', { params: { limit: 200 } });
-      return data?.data ?? data ?? [];
-    },
-  });
-
-  const assignMutation = useMutation({
-    mutationFn: async () => {
-      await rxsoftApi.post(`/website/admin/orders/${orderId}/assign-location`, { stockLocationId });
-    },
-    onSuccess: () => {
-      notifications.show({ message: 'Location assigned.', color: 'green' });
-      onAssigned();
-      onClose();
-    },
-    onError: () => {
-      notifications.show({ message: 'Failed to assign location.', color: 'red' });
-    },
-  });
-
-  return (
-    <Modal opened={opened} onClose={onClose} title="Assign Stock Location" centered>
-      <Stack>
-        <Select
-          label="Stock Location"
-          value={stockLocationId}
-          onChange={setStockLocationId}
-          data={(Array.isArray(locations) ? locations : []).map((l: any) => ({ value: l.id, label: l.name }))}
-          searchable
-          required
-        />
-        <Group justify="flex-end">
-          <Button variant="light" onClick={onClose}>Cancel</Button>
-          <Button
-            onClick={() => assignMutation.mutate()}
-            loading={assignMutation.isPending}
-            disabled={!stockLocationId}
-          >
-            Assign
-          </Button>
-        </Group>
-      </Stack>
-    </Modal>
-  );
-}
-
 export function RxWebsiteOrdersPage() {
   const qc = useQueryClient();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [detailOpen, setDetailOpen] = useState(false);
-  const [assignModalOpen, setAssignModalOpen] = useState(false);
-  const [assignOrderId, setAssignOrderId] = useState<string | null>(null);
+  const [postSaleOpen, setPostSaleOpen] = useState(false);
+  const [postSaleOrderId, setPostSaleOrderId] = useState<string | null>(null);
+  const [stockLocationId, setStockLocationId] = useState<string | null>(null);
 
   const limit = 20;
 
@@ -115,6 +61,14 @@ export function RxWebsiteOrdersPage() {
       if (statusFilter) params.status = statusFilter;
       const { data } = await rxsoftApi.get('/website/admin/orders', { params });
       return data;
+    },
+  });
+
+  const { data: locations = [] } = useQuery({
+    queryKey: ['stock-locations', 'all'],
+    queryFn: async () => {
+      const { data } = await rxsoftApi.get('/stock-locations', { params: { limit: 200 } });
+      return data?.data ?? data ?? [];
     },
   });
 
@@ -136,17 +90,21 @@ export function RxWebsiteOrdersPage() {
     },
   });
 
-  const processMutation = useMutation({
-    mutationFn: async (id: string) => {
-      await rxsoftApi.post(`/website/admin/orders/${id}/process`);
+  const postSaleMutation = useMutation({
+    mutationFn: async () => {
+      await rxsoftApi.post(`/website/admin/orders/${postSaleOrderId}/post-sale`, {
+        stockLocationId: stockLocationId || undefined,
+      });
     },
     onSuccess: () => {
-      notifications.show({ message: 'Order processing started.', color: 'green' });
+      notifications.show({ message: 'Order posted as sale.', color: 'green' });
       qc.invalidateQueries({ queryKey: ['website-orders'] });
       qc.invalidateQueries({ queryKey: ['website-order-detail'] });
+      setPostSaleOpen(false);
+      setStockLocationId(null);
     },
     onError: (err: any) => {
-      notifications.show({ message: err?.response?.data?.message ?? 'Process failed.', color: 'red' });
+      notifications.show({ message: err?.response?.data?.message ?? 'Post sale failed.', color: 'red' });
     },
   });
 
@@ -163,7 +121,7 @@ export function RxWebsiteOrdersPage() {
             <Select
               placeholder="Filter by status"
               value={statusFilter}
-              onChange={setStatusFilter}
+              onChange={(v) => { setStatusFilter(v); setPage(1); }}
               data={[
                 { value: '', label: 'All' },
                 ...Object.keys(STATUS_COLORS).map((s) => ({ value: s, label: statusLabel(s) })),
@@ -184,46 +142,57 @@ export function RxWebsiteOrdersPage() {
                   <Table.Tr>
                     <Table.Th>Order #</Table.Th>
                     <Table.Th>Date</Table.Th>
-                    <Table.Th>Customer</Table.Th>
                     <Table.Th>Items</Table.Th>
                     <Table.Th>Total</Table.Th>
                     <Table.Th>Status</Table.Th>
                     <Table.Th>Location</Table.Th>
-                    <Table.Th w={200}>Actions</Table.Th>
+                    <Table.Th>Sale</Table.Th>
+                    <Table.Th w={220}>Actions</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                   {orders.map((o: any) => (
                     <Table.Tr key={o.id} style={{ cursor: 'pointer' }} onClick={() => openDetail(o)}>
-                      <Table.Td>{o.saleNumber}</Table.Td>
+                      <Table.Td>{o.orderNumber}</Table.Td>
                       <Table.Td>{o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '-'}</Table.Td>
-                      <Table.Td>{o.customer?.name ?? o.customerId ?? '-'}</Table.Td>
-                      <Table.Td>{o.lines?.length ?? 0}</Table.Td>
+                      <Table.Td>{o.items?.length ?? 0}</Table.Td>
                       <Table.Td>{(+o.totalAmount).toLocaleString()}</Table.Td>
                       <Table.Td>
                         <Badge color={STATUS_COLORS[o.orderStatus ?? 'pending'] ?? 'gray'}>
                           {statusLabel(o.orderStatus ?? 'pending')}
                         </Badge>
                       </Table.Td>
-                      <Table.Td>{o.assignedLocationId?.slice(0, 8) ?? '-'}</Table.Td>
+                      <Table.Td>
+                        {o.sale?.stockLocationId ? (
+                          <Badge color="blue" variant="light" size="sm">
+                            {o.sale.stockLocationId.slice(0, 8)}...
+                          </Badge>
+                        ) : (
+                          <Text size="sm" c="dimmed">—</Text>
+                        )}
+                      </Table.Td>
+                      <Table.Td>
+                        {o.saleId ? (
+                          <Badge color="green" variant="light" size="sm">Posted</Badge>
+                        ) : (
+                          <Badge color="gray" variant="light" size="sm">—</Badge>
+                        )}
+                      </Table.Td>
                       <Table.Td onClick={(e) => e.stopPropagation()}>
                         <Group gap="xs">
-                          <Button
-                            size="compact-xs" variant="light"
-                            onClick={() => { setAssignOrderId(o.id); setAssignModalOpen(true); }}
-                          >
-                            Assign
-                          </Button>
-                          {o.orderStatus === 'confirmed' && (
+                          {o.orderStatus === 'confirmed' && !o.saleId ? (
                             <Button
-                              size="compact-xs" variant="filled" color="blue"
-                              onClick={() => processMutation.mutate(o.id)}
-                              loading={processMutation.isPending}
+                              size="compact-xs" variant="filled" color="green"
+                              onClick={() => {
+                                setPostSaleOrderId(o.id);
+                                setStockLocationId(null);
+                                setPostSaleOpen(true);
+                              }}
                             >
-                              Process
+                              Post as Sale
                             </Button>
-                          )}
-                          {(STATUS_TRANSITIONS[o.orderStatus ?? 'pending']?.length ?? 0) > 0 && (
+                          ) : null}
+                          {(STATUS_TRANSITIONS[o.orderStatus ?? 'pending']?.length ?? 0) > 0 ? (
                             <Select
                               size="xs"
                               placeholder="Change"
@@ -234,6 +203,8 @@ export function RxWebsiteOrdersPage() {
                               clearable
                               style={{ width: 110 }}
                             />
+                          ) : (
+                            <Text size="xs" c="dimmed">No transitions</Text>
                           )}
                         </Group>
                       </Table.Td>
@@ -260,12 +231,29 @@ export function RxWebsiteOrdersPage() {
         </Card>
       </Stack>
 
-      <AssignLocationModal
-        opened={assignModalOpen}
-        onClose={() => { setAssignModalOpen(false); setAssignOrderId(null); }}
-        orderId={assignOrderId}
-        onAssigned={() => qc.invalidateQueries({ queryKey: ['website-orders'] })}
-      />
+      {/* Post as Sale Modal */}
+      <Modal opened={postSaleOpen} onClose={() => { setPostSaleOpen(false); setStockLocationId(null); }} title="Post Order as Sale" centered>
+        <Stack>
+          <Text size="sm" c="dimmed">This will create a draft sale record from this order. Stock won't be depleted until the sale is completed.</Text>
+          <Select
+            label="Stock Location (optional)"
+            value={stockLocationId}
+            onChange={setStockLocationId}
+            data={(Array.isArray(locations) ? locations : []).map((l: any) => ({ value: l.id, label: l.name }))}
+            searchable
+            clearable
+          />
+          <Group justify="flex-end">
+            <Button variant="light" onClick={() => { setPostSaleOpen(false); setStockLocationId(null); }}>Cancel</Button>
+            <Button
+              onClick={() => postSaleMutation.mutate()}
+              loading={postSaleMutation.isPending}
+            >
+              Confirm & Post Sale
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
 
       <DetailModal
         orderId={selectedOrder?.id}
@@ -310,20 +298,6 @@ function DetailModal({
     },
   });
 
-  const processMutation = useMutation({
-    mutationFn: async () => {
-      await rxsoftApi.post(`/website/admin/orders/${orderId}/process`);
-    },
-    onSuccess: () => {
-      notifications.show({ message: 'Order processing started.', color: 'green' });
-      qc.invalidateQueries({ queryKey: ['website-order-detail', orderId] });
-      onStatusChange();
-    },
-    onError: (err: any) => {
-      notifications.show({ message: err?.response?.data?.message ?? 'Failed.', color: 'red' });
-    },
-  });
-
   const status = order?.orderStatus ?? 'pending';
   const allowed = STATUS_TRANSITIONS[status] ?? [];
 
@@ -331,7 +305,7 @@ function DetailModal({
   const currentIdx = timelineOrder.indexOf(status);
 
   return (
-    <Modal opened={opened} onClose={onClose} title={`Order ${order?.saleNumber ?? ''}`} size="lg" centered>
+    <Modal opened={opened} onClose={onClose} title={`Order ${order?.orderNumber ?? ''}`} size="lg" centered>
       {isLoading ? (
         <Text c="dimmed">Loading...</Text>
       ) : !order ? (
@@ -355,39 +329,61 @@ function DetailModal({
             ))}
           </Timeline>
 
-          <Card withBorder p="sm">
-            <Stack gap="xs">
-              <Text size="sm"><b>Delivery Address:</b> {order.deliveryAddress ?? '-'}</Text>
-              {order.city && <Text size="sm"><b>City:</b> {order.city}</Text>}
-              {order.state && <Text size="sm"><b>State:</b> {order.state}</Text>}
-              {order.phone && <Text size="sm"><b>Phone:</b> {order.phone}</Text>}
-              {order.shippingMethod && <Text size="sm"><b>Shipping:</b> {order.shippingMethod}</Text>}
-              {order.notes && <Text size="sm"><b>Notes:</b> {order.notes}</Text>}
-              <Text size="sm"><b>Location:</b> {order.assignedLocationId?.slice(0, 8) ?? 'Not assigned'}</Text>
-            </Stack>
-          </Card>
+          {/* Delivery info */}
+          {order.delivery ? (
+            <Card withBorder p="sm">
+              <Text fw={600} mb="xs">Delivery</Text>
+              <Stack gap={4}>
+                <Text size="sm"><b>Address:</b> {order.delivery.address}</Text>
+                {order.delivery.city && <Text size="sm"><b>City:</b> {order.delivery.city}</Text>}
+                {order.delivery.state && <Text size="sm"><b>State:</b> {order.delivery.state}</Text>}
+                {order.delivery.phone && <Text size="sm"><b>Phone:</b> {order.delivery.phone}</Text>}
+                {order.delivery.shippingMethod && <Text size="sm"><b>Shipping:</b> {order.delivery.shippingMethod}</Text>}
+              </Stack>
+            </Card>
+          ) : null}
 
-          {order.lines?.length > 0 && (
+          {order.notes && (
+            <Card withBorder p="sm">
+              <Text size="sm"><b>Notes:</b> {order.notes}</Text>
+            </Card>
+          )}
+
+          {order.sale && (
+            <Card withBorder p="sm">
+              <Text fw={600} mb="xs">Linked Sale</Text>
+              <Stack gap={4}>
+                <Text size="sm"><b>Sale #:</b> {order.sale.saleNumber}</Text>
+                <Text size="sm"><b>Status:</b> <Badge color={order.sale.status === 'posted' ? 'green' : 'yellow'} size="sm">{order.sale.status}</Badge></Text>
+                {order.sale.stockLocationId && (
+                  <Text size="sm"><b>Stock Location:</b> {order.sale.stockLocationId.slice(0, 8)}...</Text>
+                )}
+              </Stack>
+            </Card>
+          )}
+
+          {/* Items */}
+          {order.items?.length > 0 && (
             <Card withBorder p="sm">
               <Text fw={600} mb="xs">Items</Text>
               <Table striped withTableBorder>
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th>#</Table.Th>
-                    <Table.Th>Item</Table.Th>
+                    <Table.Th>Item ID</Table.Th>
                     <Table.Th>Qty</Table.Th>
                     <Table.Th>Price</Table.Th>
                     <Table.Th>Total</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {order.lines.map((l: any, i: number) => (
+                  {order.items.map((l: any, i: number) => (
                     <Table.Tr key={l.id}>
-                      <Table.Td>{l.lineNumber ?? i + 1}</Table.Td>
-                      <Table.Td>{l.item?.name ?? l.itemId}</Table.Td>
+                      <Table.Td>{i + 1}</Table.Td>
+                      <Table.Td>{l.itemId}</Table.Td>
                       <Table.Td>{l.quantity}</Table.Td>
                       <Table.Td>{(+l.unitPrice).toLocaleString()}</Table.Td>
-                      <Table.Td>{(+l.lineTotal).toLocaleString()}</Table.Td>
+                      <Table.Td>{(+l.unitPrice * +l.quantity).toLocaleString()}</Table.Td>
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
@@ -395,6 +391,7 @@ function DetailModal({
             </Card>
           )}
 
+          {/* Status update */}
           {allowed.length > 0 && (
             <Group>
               <Select
@@ -408,15 +405,6 @@ function DetailModal({
                 data={allowed.map((s) => ({ value: s, label: statusLabel(s) }))}
                 style={{ width: 220 }}
               />
-              {status === 'confirmed' && (
-                <Button
-                  mt="lg"
-                  onClick={() => processMutation.mutate()}
-                  loading={processMutation.isPending}
-                >
-                  Process Order
-                </Button>
-              )}
             </Group>
           )}
         </Stack>

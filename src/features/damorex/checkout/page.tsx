@@ -247,13 +247,20 @@ export default function CheckoutPage() {
   const handlePlaceOrder = () => {
     placeOrder(
       {
-        deliveryAddress: address,
-        city,
-        state: state_,
-        phone,
         paymentMethod: paymentMethod || 'Card',
-        shippingMethod: 'standard',
         notes: promoCode ? `Promo: ${promoCode}` : undefined,
+        items: items.map((i) => ({
+          itemId: i.productId,
+          quantity: i.quantity,
+          unitPrice: getMockPrice2(i.productId),
+        })),
+        delivery: {
+          address,
+          city,
+          state: state_,
+          phone,
+          shippingMethod: 'standard',
+        },
       },
       {
         onSuccess: (order) => {
@@ -265,16 +272,28 @@ export default function CheckoutPage() {
           setStep(4);
           setPlacedOrder({
             id: 'ERR',
-            code: `DMX-${Date.now().toString(36).toUpperCase()}`,
-            deliveryAddress: address,
-            city,
-            state: state_,
-            phone,
+            orderNumber: `DMX-${Date.now().toString(36).toUpperCase()}`,
+            customerId: null,
             paymentMethod: paymentMethod || 'Card',
-            status: 'Pending',
+            orderStatus: 'pending',
             notes: null,
+            saleId: null,
+            createdBy: null,
+            subtotalAmount: 0,
+            totalAmount: 0,
             createdAt: new Date().toISOString(),
-            lines: [],
+            items: [],
+            delivery: {
+              id: '',
+              address,
+              city,
+              state: state_,
+              phone,
+              shippingMethod: 'standard',
+              trackingNumber: null,
+              status: 'pending',
+              notes: null,
+            },
           });
         },
       }
@@ -309,7 +328,7 @@ export default function CheckoutPage() {
                   Order Number
                 </Text>
                 <Text fw={950} size="xl" style={{ color: darkGreen, letterSpacing: '0.02em' }}>
-                  {placedOrder.code}
+                  {placedOrder.orderNumber}
                 </Text>
               </Stack>
             </Paper>

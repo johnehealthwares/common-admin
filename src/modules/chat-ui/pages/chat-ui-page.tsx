@@ -11,8 +11,10 @@ import {
   Drawer,
   Group,
   Loader,
+  Menu,
   Paper,
   ScrollArea,
+  SegmentedControl,
   Skeleton,
   Stack,
   Text,
@@ -21,23 +23,25 @@ import {
   Tooltip,
   useMantineTheme,
 } from '@mantine/core';
-// import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {
   AlertCircle,
   ArrowLeft,
   CheckCheck,
-  Menu,
   MessagesSquare,
   Paperclip,
+  Plus,
   RefreshCw,
   Search,
   Send,
+  UserPlus,
+  UserX,
   Wifi,
   WifiOff,
 } from 'lucide-react';
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import {
   useConversationInbox,
@@ -46,7 +50,10 @@ import {
   useSendConversationMessage,
 } from '../hooks/use-chat-queries';
 import { useChatSocket } from '../hooks/use-chat-socket';
-import type { ChatMode, ConversationInboxItem, ExchangeMessage } from '../types';
+import { findParticipantByPhone, createParticipant } from '../services/chat-api';
+import { NewConversationModal } from '../components/new-conversation-modal';
+import { ParticipantModal } from '../components/participant-modal';
+import type { ChatMode, ConversationInboxItem, ExchangeMessage, InboxMode } from '../types';
 import { getParticipantInitials, getParticipantName } from '../utils/participants';
 import { parseQuestionOptions } from '../utils/parse-options';
 
@@ -58,22 +65,55 @@ type ChatUiPageProps = {
 
 export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
   const theme = useMantineTheme();
-  // const isMobile = useMediaQuery('(max-width: 768px)');
-  const isMobile = false;
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [search, setSearch] = useState('');
   const [selectedConversationId, setSelectedConversationId] = useState<string>();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [inboxMode, setInboxMode] = useState<InboxMode>('admin');
+  const [adminParticipantId, setAdminParticipantId] = useState<string | null>(null);
+  const [adminParticipantLoaded, setAdminParticipantLoaded] = useState(false);
+  const [newChatOpened, { open: openNewChat, close: closeNewChat }] = useDisclosure(false);
+  const [participantModalOpened, { open: openParticipantModal, close: closeParticipantModal }] =
+    useDisclosure(false);
+  const [participantModalMode, setParticipantModalMode] = useState<'add' | 'remove'>('add');
+  const [contextConversationId, setContextConversationId] = useState<string | undefined>();
+
   const userPhone = useAuthStore((state) => state.user?.phone);
-  const inboxQuery = useConversationInbox(search);
+
+  useEffect(() => {
+    if (!userPhone || adminParticipantLoaded) return;
+
+    (async () => {
+      try {
+        let participant = await findParticipantByPhone(userPhone);
+        if (!participant) {
+          participant = await createParticipant({ phone: userPhone, firstName: 'Admin' });
+        }
+        if (participant?.id) {
+          setAdminParticipantId(participant.id);
+        }
+      } catch {
+        console.warn('Failed to resolve admin participant');
+      } finally {
+        setAdminParticipantLoaded(true);
+      }
+    })();
+  }, [userPhone, adminParticipantLoaded]);
+
+  const inboxQuery = useConversationInbox(search, inboxMode, adminParticipantId ?? undefined);
+
   const selectedConversation = useMemo(
     () =>
       inboxQuery.data?.pages
         .flatMap((page) => page.items)
         .find((item) => item.conversationId === selectedConversationId),
-    [inboxQuery.data, selectedConversationId]
+    [inboxQuery.data, selectedConversationId],
   );
+
   const activeParticipantId =
-    mode === 'admin' ? selectedConversation?.moderator?.id : selectedConversation?.participant.id;
+    mode === 'admin'
+      ? selectedConversation?.moderator?.id
+      : selectedConversation?.participant.id;
   const socket = useChatSocket({
     conversationId: selectedConversationId,
     participantId: activeParticipantId,
@@ -91,6 +131,10 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
 
   const conversations = inboxQuery.data?.pages.flatMap((page) => page.items) ?? [];
 
+  const handleNewChatCreated = useCallback((conversationId: string) => {
+    setSelectedConversationId(conversationId);
+  }, []);
+
   const inbox = (
     <InboxSidebar
       connected={socket.connected}
@@ -104,10 +148,23 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
       onSearch={setSearch}
       onSelect={(conversation) => {
         setSelectedConversationId(conversation.conversationId);
-        setSidebarOpen(false)
+        setSidebarOpen(false);
       }}
       search={search}
       selectedConversationId={selectedConversationId}
+      mode={inboxMode}
+      onModeChange={setInboxMode}
+      onNewChat={openNewChat}
+      onAddParticipant={(convId) => {
+        setContextConversationId(convId);
+        setParticipantModalMode('add');
+        openParticipantModal();
+      }}
+      onRemoveParticipant={(convId) => {
+        setContextConversationId(convId);
+        setParticipantModalMode('remove');
+        openParticipantModal();
+      }}
     />
   );
 
@@ -134,7 +191,7 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
             connected={socket.connected}
             conversation={selectedConversation}
             mode={mode}
-            onBack={() =>         setSidebarOpen(true) }
+            onBack={() => setSidebarOpen(true)}
             showMobileBack={Boolean(isMobile)}
             typingParticipantId={socket.typingParticipantId}
             userPhone={userPhone}
@@ -151,6 +208,22 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
       >
         {inbox}
       </Drawer>
+
+      <NewConversationModal
+        opened={newChatOpened}
+        onClose={closeNewChat}
+        onCreated={handleNewChatCreated}
+      />
+
+      <ParticipantModal
+        opened={participantModalOpened}
+        onClose={() => {
+          closeParticipantModal();
+          setContextConversationId(undefined);
+        }}
+        conversationId={contextConversationId}
+        defaultMode={participantModalMode}
+      />
     </AppShell>
   );
 }
@@ -168,23 +241,46 @@ function InboxSidebar(props: {
   onSelect: (conversation: ConversationInboxItem) => void;
   search: string;
   selectedConversationId?: string;
+  mode: InboxMode;
+  onModeChange: (mode: InboxMode) => void;
+  onNewChat: () => void;
+  onAddParticipant: (conversationId: string) => void;
+  onRemoveParticipant: (conversationId: string) => void;
 }) {
   return (
     <Stack h="100%" gap="sm" p="sm">
       <Group justify="space-between" wrap="nowrap">
-        <Group gap="xs" wrap="nowrap">
-          <MessagesSquare size={18} />
-          <Text fw={700} size="lg">
-            Inbox
-          </Text>
+        <Group gap="xs" wrap="nowrap" style={{ flex: 1 }}>
+          <SegmentedControl
+            data={[
+              { value: 'admin', label: 'Admin' },
+              { value: 'all', label: 'All' },
+              { value: 'individual', label: '1-on-1' },
+              { value: 'group', label: 'Group' },
+            ]}
+            onChange={(v) => props.onModeChange(v as InboxMode)}
+            size="xs"
+            value={props.mode}
+          />
         </Group>
-        <Badge
-          color={props.connected ? 'green' : 'gray'}
-          leftSection={props.connected ? <Wifi size={12} /> : <WifiOff size={12} />}
-          variant="light"
-        >
-          {props.connected ? 'Live' : 'Offline'}
-        </Badge>
+        <Group gap="xs" wrap="nowrap">
+          <ActionIcon
+            aria-label="New conversation"
+            onClick={props.onNewChat}
+            size="sm"
+            variant="light"
+          >
+            <Plus size={14} />
+          </ActionIcon>
+          <Badge
+            color={props.connected ? 'green' : 'gray'}
+            leftSection={props.connected ? <Wifi size={12} /> : <WifiOff size={12} />}
+            size="sm"
+            variant="light"
+          >
+            {props.connected ? 'Live' : 'Offline'}
+          </Badge>
+        </Group>
       </Group>
 
       <TextInput
@@ -250,6 +346,8 @@ function InboxSidebar(props: {
                 conversation={conversation}
                 onSelect={() => props.onSelect(conversation)}
                 selected={conversation.conversationId === props.selectedConversationId}
+                onAddParticipant={props.onAddParticipant}
+                onRemoveParticipant={props.onRemoveParticipant}
               />
               <Divider />
             </Fragment>
@@ -270,59 +368,99 @@ function ConversationListItem(props: {
   conversation: ConversationInboxItem;
   onSelect: () => void;
   selected: boolean;
+  onAddParticipant: (conversationId: string) => void;
+  onRemoveParticipant: (conversationId: string) => void;
 }) {
   const participant = props.conversation.participant;
   const name = getParticipantName(participant);
   const lastMessage = props.conversation.lastMessage?.text ?? 'No messages yet';
-  const lastMessagePrefix = props.conversation.lastMessage?.direction === 'outbound' ? 'You: ' : '';
+  const lastMessagePrefix =
+    props.conversation.lastMessage?.direction === 'outbound' ? 'You: ' : '';
+
+  const [contextMenuOpened, setContextMenuOpened] = useState(false);
 
   return (
-    <Button
-      color="blue"
-      fullWidth
-      h={76}
-      justify="flex-start"
-      onClick={props.onSelect}
-      px="xs"
-      radius={0}
-      variant={props.selected ? 'light' : 'subtle'}
+    <Menu
+      opened={contextMenuOpened}
+      onClose={() => setContextMenuOpened(false)}
+      onOpen={() => setContextMenuOpened(true)}
     >
-      <Group gap="sm" wrap="nowrap" w="100%">
-        <Box pos="relative">
-          <Avatar radius="xl">{getParticipantInitials(participant)}</Avatar>
-          <Box
-            bg={props.conversation.projection.active ? 'green' : 'gray'}
-            bottom={0}
-            h={10}
-            pos="absolute"
-            right={0}
-            style={{ border: '2px solid white', borderRadius: 999 }}
-            w={10}
-          />
-        </Box>
-        <Box flex={1} style={{ minWidth: 0 }}>
-          <Group justify="space-between" wrap="nowrap">
-            <Text fw={600} lineClamp={1} size="sm">
-              {name}
-            </Text>
-            {props.conversation.lastMessageAt && (
-              <Text c="dimmed" size="xs">
-                {dayjs(props.conversation.lastMessageAt).fromNow()}
+      <Menu.Target>
+        <Button
+          color="blue"
+          fullWidth
+          h={76}
+          justify="flex-start"
+          onClick={props.onSelect}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            setContextMenuOpened(true);
+          }}
+          px="xs"
+          radius={0}
+          variant={props.selected ? 'light' : 'subtle'}
+        >
+          <Group gap="sm" wrap="nowrap" w="100%">
+            <Box pos="relative">
+              <Avatar radius="xl">{getParticipantInitials(participant)}</Avatar>
+              <Box
+                bg={props.conversation.projection.active ? 'green' : 'gray'}
+                bottom={0}
+                h={10}
+                pos="absolute"
+                right={0}
+                style={{ border: '2px solid white', borderRadius: 999 }}
+                w={10}
+              />
+            </Box>
+            <Box flex={1} style={{ minWidth: 0 }}>
+              <Group justify="space-between" wrap="nowrap">
+                <Text fw={600} lineClamp={1} size="sm">
+                  {name}
+                </Text>
+                {props.conversation.lastMessageAt && (
+                  <Text c="dimmed" size="xs">
+                    {dayjs(props.conversation.lastMessageAt).fromNow()}
+                  </Text>
+                )}
+              </Group>
+              <Text c="dimmed" lineClamp={1} size="xs">
+                {lastMessagePrefix}
+                {lastMessage}
               </Text>
+            </Box>
+            {Boolean(props.conversation.unreadCount) && (
+              <Badge circle size="sm">
+                {props.conversation.unreadCount}
+              </Badge>
             )}
           </Group>
-          <Text c="dimmed" lineClamp={1} size="xs">
-            {lastMessagePrefix}
-            {lastMessage}
-          </Text>
-        </Box>
-        {Boolean(props.conversation.unreadCount) && (
-          <Badge circle size="sm">
-            {props.conversation.unreadCount}
-          </Badge>
-        )}
-      </Group>
-    </Button>
+        </Button>
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        <Menu.Item
+          leftSection={<UserPlus size={14} />}
+          onClick={(e) => {
+            e.stopPropagation();
+            setContextMenuOpened(false);
+            props.onAddParticipant(props.conversation.conversationId);
+          }}
+        >
+          Add Participant
+        </Menu.Item>
+        <Menu.Item
+          leftSection={<UserX size={14} />}
+          onClick={(e) => {
+            e.stopPropagation();
+            setContextMenuOpened(false);
+            props.onRemoveParticipant(props.conversation.conversationId);
+          }}
+        >
+          Remove Participant
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
   );
 }
 
@@ -344,11 +482,13 @@ function ConversationThread({
   const sendMessage = useSendConversationMessage();
   const messages = useMemo(
     () => (messagesQuery.data?.pages.flatMap((page) => page.items) ?? []).slice().reverse(),
-    [messagesQuery.data]
+    [messagesQuery.data],
   );
   const groupedMessages = useMemo(() => groupMessagesByDate(messages), [messages]);
   const senderId =
-    props.mode === 'admin' ? props.conversation?.moderator?.id : props.conversation?.participant.id;
+    props.mode === 'admin'
+      ? props.conversation?.moderator?.id
+      : props.conversation?.participant.id;
 
   useEffect(() => {
     const viewport = viewportRef.current;
@@ -368,7 +508,7 @@ function ConversationThread({
             top={24}
             variant="subtle"
           >
-            <Menu size={18} />
+            <ArrowLeft size={18} />
           </ActionIcon>
         )}
         <MessagesSquare size={42} />
@@ -438,7 +578,11 @@ function ConversationThread({
             <Center>
               <Button
                 leftSection={
-                  messagesQuery.isFetchingNextPage ? <Loader size={14} /> : <RefreshCw size={14} />
+                  messagesQuery.isFetchingNextPage ? (
+                    <Loader size={14} />
+                  ) : (
+                    <RefreshCw size={14} />
+                  )
                 }
                 onClick={fetchOlderMessages}
                 size="xs"

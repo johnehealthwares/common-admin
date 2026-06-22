@@ -64,3 +64,19 @@ export type ExchangeMessagesResponse = {
 };
 
 export type ChatMode = 'admin' | 'user';
+
+export type InboxMode = 'admin' | 'all' | 'individual' | 'group';
+
+export type ParticipantRole = 'USER' | 'PATIENT' | 'DOCTOR' | 'NURSE' | 'BOT';
+
+export type ConversationProjection = {
+  _id: string;
+  conversationId: string;
+  participant: Participant;
+  channelId: string;
+  role: ParticipantRole;
+  type: string;
+  isPrimary: boolean;
+  active: boolean;
+  lastMessageAt: string;
+};

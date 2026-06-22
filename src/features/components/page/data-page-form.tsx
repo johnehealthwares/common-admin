@@ -41,18 +41,24 @@ export function DataPageForm({ config }: DataPageFormProps) {
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
+  const isWizard = Boolean(tabGroups);
+
   const mutation = useMutation({
     mutationFn: async (values: Record<string, unknown>) => {
       const payload = buildCreatePayload ? buildCreatePayload(values) : values;
       const response = await apiProvider!.post(endpoint, payload);
       return response.data as Record<string, unknown>;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       void queryClient.invalidateQueries({
         queryKey: ['rxsoft-data-page', endpoint],
       });
-      notifications.show({ message: `${title} record created` });
-      navigate({ to: '..' });
+      if (isWizard) {
+        setFormState((prev) => ({ ...prev, id: data.id as string }));
+      } else {
+        notifications.show({ message: `${title} record created` });
+        navigate({ to: '..' });
+      }
     },
     onError: (error: any) => {
       notifications.show({
@@ -62,7 +68,21 @@ export function DataPageForm({ config }: DataPageFormProps) {
     },
   });
 
-  const isWizard = Boolean(tabGroups);
+  const handleStepSubmit = async (stepIndex: number): Promise<Record<string, unknown> | void> => {
+    const payload = buildCreatePayload ? buildCreatePayload(formState) : formState;
+    try {
+      const response = await apiProvider!.post(endpoint, payload);
+      const data = response.data as Record<string, unknown>;
+      setFormState((prev) => ({ ...prev, id: data.id as string }));
+      return data;
+    } catch (error: any) {
+      notifications.show({
+        color: 'red',
+        message: `Failed to create ${title.toLowerCase()} record - ${error.data?.message ?? error?.data?.error?.message ?? error?.response?.data?.message ?? error?.response?.data?.error?.message ?? error.message}`,
+      });
+      throw error;
+    }
+  };
 
   return (
     <RxPage title={modalTitle ?? `Create ${title}`} description={description}>
@@ -77,8 +97,9 @@ export function DataPageForm({ config }: DataPageFormProps) {
               tabGroups={tabGroups}
               formState={formState}
               updateField={updateField}
-              onSubmit={() => mutation.mutate(formState)}
+              onSubmit={isWizard ? () => { notifications.show({ message: `${title} record created` }); navigate({ to: '..' }); } : () => mutation.mutate(formState)}
               isPending={mutation.isPending}
+              onStepSubmit={handleStepSubmit}
             />
           ) : (
             <>

@@ -18,6 +18,13 @@ import {
   PricingMatrixRow,
   validatePricingRow,
 } from '../utils/pricing-matrix-helper';
+import {
+  loadStockMatrix,
+  saveStockRow,
+  mergeStockRowToSaved,
+  validateStockRow,
+  type StockMatrixRow,
+} from '../utils/stock-matrix-helper';
 import { useEffect } from 'react';
 
 function CategoryUomWatcher({
@@ -86,10 +93,7 @@ const itemCreateFieldGroups: FieldGroup[] = [
       { name: 'name', label: 'Item Name (Brand/Variety)', required: true, col: 6 },
       { name: 'code', label: 'Code', required: true, col: 6 },
       { name: 'barcode', label: 'Barcode', col: 6 },
-      { name: 'imageUrl', label: 'Image URL', col: 12, hidden: true },
-      { name: 'smallImageUrl', label: 'Small Image URL', col: 12, hidden: true },
-      { name: 'mediumImageUrl', label: 'Medium Image URL', col: 12, hidden: true },
-      { name: 'largeImageUrl', label: 'Large Image URL', col: 12, hidden: true },
+      { name: 'imageUrl', label: 'Image URL', col: 12, type: 'image', imageSize: 'large' },
     ],
   },
   {
@@ -349,18 +353,46 @@ const itemPriceListFieldGroups: FieldGroup[] = [
 export const stockFields: FieldGroup[] = [
   {
     title: 'Stock Setup',
-    mutationMode: 'row',
-    endpoint: {
-      url: '/stock-items',
-      method: 'post',
-      query: [{ formKey: 'id', paramKey: 'itemId' }],
-    },
+    renderer: 'matrix',
     formStateField: 'stockEntries',
+    parentId: 'itemId',
+    mergeRowToSaved: mergeStockRowToSaved,
+    defaultState: {
+      quantity: 0,
+    },
     columns: [
-      { key: 'locationId', label: 'Location' },
-      { key: 'uomId', label: 'UOM' },
-      { key: 'quantity', label: 'Quantity' },
+      { key: 'locationName', label: 'Location' },
+      {
+        key: 'quantityOnHand',
+        label: 'Quantity',
+        editable: true,
+        field: {
+          name: 'quantityOnHand',
+          label: 'Quantity',
+          type: 'number',
+          col: 3,
+          required: true,
+        },
+      },
+      {
+        key: 'status',
+        label: 'Status',
+        render: (row: any) => (
+          <Text size="sm" c={row.dirty ? 'orange' : row.exists ? 'green' : 'dimmed'}>
+            {row.dirty ? 'Unsaved' : row.exists ? 'Saved' : 'New'}
+          </Text>
+        ),
+      },
     ],
+    matrix: {
+      load: async ({ itemId }: { itemId: string }) => {
+        return loadStockMatrix(itemId);
+      },
+      save: async (row: StockMatrixRow & { itemId: string }) => {
+        return saveStockRow(row, row.itemId);
+      },
+      validate: validateStockRow,
+    },
     fields: [
       {
         name: 'itemId',
@@ -382,24 +414,11 @@ export const stockFields: FieldGroup[] = [
         col: 6,
       },
       {
-        name: 'uomId',
-        label: 'UOM',
-        placeholder: 'Select UOM',
-        type: 'async-select',
-        searchParam: {
-          endpoint: '/uoms',
-          minChars: 2,
-          queryParam: 'search',
-          valueKey: 'id',
-          labelKey: 'name',
-        },
-        col: 3,
-      },
-      {
-        name: 'quantity',
+        name: 'quantityOnHand',
         label: 'Quantity',
         type: 'number',
-        col: 2,
+        col: 3,
+        required: true,
       },
     ],
   },
@@ -724,7 +743,7 @@ export function buildItemPayload(values: Record<string, any>) {
     code: values.code,
     name: values.name,
     categoryId: (values.category as any).value,
-    genericProductCode: (values.genericProductCode as any).value,
+    genericProductCode: (values?.genericProductCode as any)?.value,
     baseUomId: (values.baseUom as any).value,
     purchaseUomId: (values as any).purchaseUom.value,
     saleUomId: (values as any).saleUom.value || undefined,

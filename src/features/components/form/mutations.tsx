@@ -59,6 +59,7 @@ export const useCreateMutation = ({
   return useMutation({
     mutationFn: async (values: Record<string, unknown>) => {
       const payload = buildCreatePayload ? buildCreatePayload(values) : values;
+      console.log({ stage: 'mutationFn-values', values, payload });
       const response = await effectiveApiProvider!.post(endpoint, payload);
       return response.data as Record<string, unknown>;
     },
@@ -96,7 +97,7 @@ export const useUpdateMutation = ({
 }: UpdateMutationProps) => {
   const contextApiProvider = useApiProvider();
   const effectiveApiProvider = apiProvider ?? contextApiProvider;
-
+  console.log('here..')
   return useMutation({
     mutationFn: async (values: Record<string, unknown>) => {
       if (!editingRow?.id) throw new Error('Missing record id');
@@ -105,6 +106,7 @@ export const useUpdateMutation = ({
         : buildCreatePayload
           ? buildCreatePayload(values)
           : values;
+      console.log({ stage: 'update-mutationFn-values', values, payload, editingRow });
       const response = await effectiveApiProvider!.put(
         `${endpoint}/${String(editingRow.id)}`,
         payload
@@ -120,6 +122,7 @@ export const useUpdateMutation = ({
       notifications.show({ message: `${title} record updated` });
     },
     onError: (error: any) => {
+      console.log({error})
       notifications.show({
         message: `Failed to update ${title.toLowerCase()} record - ${error?.data?.error?.message ?? error?.response?.data?.error?.message}`,
       });

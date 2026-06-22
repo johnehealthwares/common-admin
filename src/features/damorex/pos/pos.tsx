@@ -1,7 +1,8 @@
 import { Box, Grid, Paper, Stack } from '@mantine/core';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { CartTable } from './components/CartTable';
 import { HeldSalesDrawer } from './components/HeldSalesDrawer';
+import { InvoicePreviewModal } from './components/InvoicePreviewModal';
 import { PaymentModal } from './components/PaymentModal';
 import { PosSettingsDrawer } from './components/PosSettingsDrawer';
 import { PosToolbar } from './components/PosToolbar';
@@ -11,9 +12,9 @@ import { SaleTabs } from './components/SaleTabs';
 import { usePosStore } from './store/usePosStore';
 import type { Customer } from './types';
 import { calculateTotals } from './utils/calculation';
-import { printPosReceipt, printA4Receipt } from './utils/print';
+import { printPosReceipt, printA4Receipt, printInvoice } from './utils/print';
 import { useKeyboardShortcuts } from './utils/useKeyboardShortcuts';
-import { useOrganisationConfig, useUserPosConfig } from '../api/posApi';
+import { useOrganisationConfig, useUserPosConfig, useStockLocations } from '../api/posApi';
 
 export default function PosSalesPage() {
   const {
@@ -26,6 +27,7 @@ export default function PosSalesPage() {
     updateItem,
     removeItem,
     clearCart,
+    clearCustomer,
     setCustomer,
     setPriceList,
     setPricingMode,
@@ -36,10 +38,19 @@ export default function PosSalesPage() {
   const [paymentOpened, setPaymentOpened] = useState(false);
   const [heldSalesOpened, setHeldSalesOpened] = useState(false);
   const [settingsOpened, setSettingsOpened] = useState(false);
+  const [invoicePreviewOpened, setInvoicePreviewOpened] = useState(false);
   const saleResultRef = useRef<any>(null);
+  const defaultsAppliedForSessions = useRef(new Set<string>());
   const { data: orgConfig } = useOrganisationConfig();
   const { data: userPosConfig } = useUserPosConfig();
+  const { data: stockLocations = [] } = useStockLocations();
   const stockLocationId = userPosConfig?.stockLocationId as string | undefined;
+
+  const stockLocationName = useMemo(() => {
+    if (!stockLocationId) return undefined;
+    const loc = (Array.isArray(stockLocations) ? stockLocations : []).find((l: any) => l.id === stockLocationId);
+    return loc?.name;
+  }, [stockLocationId, stockLocations]);
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeSessionId) ?? sessions[0],
@@ -51,6 +62,11 @@ export default function PosSalesPage() {
     return calculateTotals(activeSession);
   }, [activeSession]);
 
+  const heldSalesCount = useMemo(
+    () => sessions.filter((s) => s.held).length,
+    [sessions]
+  );
+
   useKeyboardShortcuts({
     createSale: createSession,
     holdSale: () => {
@@ -58,6 +74,20 @@ export default function PosSalesPage() {
     },
     payment: () => setPaymentOpened(true),
   });
+
+  useEffect(() => {
+    if (!userPosConfig || !activeSession) return;
+    if (defaultsAppliedForSessions.current.has(activeSession.id)) return;
+    defaultsAppliedForSessions.current.add(activeSession.id);
+
+    if (userPosConfig.autoSelectPriceList && userPosConfig.defaultPriceListId && !activeSession.priceListId) {
+      setPriceList(activeSession.id, userPosConfig.defaultPriceListId, '');
+    }
+
+    if (userPosConfig.autoSelectCustomer && userPosConfig.defaultCustomerId && !activeSession.customerId) {
+      setCustomer(activeSession.id, { id: userPosConfig.defaultCustomerId, name: '' });
+    }
+  }, [userPosConfig, activeSession.id]);
 
   if (!activeSession) return null;
 
@@ -69,9 +99,28 @@ export default function PosSalesPage() {
     setPriceList(activeSession.id, priceListId, priceListName);
   }
 
-  function handleReset() {
-    clearCart(activeSession.id);
-    createSession(activeSession.id);
+  function handlePrintInvoice() {
+    setInvoicePreviewOpened(true);
+  }
+
+  function handleUpdateUom(itemId: string, newUomId: string, newUomName: string, newUomFactor: number) {
+    const item = activeSession.cart.find((i) => i.id === itemId);
+    if (!item) return;
+    const newQty = (item.quantity * item.uomFactor) / newUomFactor;
+    updateItem(activeSession.id, itemId, {
+      uomId: newUomId,
+      uomName: newUomName,
+      uomFactor: newUomFactor,
+      quantity: newQty,
+    });
+  }
+
+  function resetSession() {
+          createSession();
+  }
+  function nextCustomer() {
+    createSession();
+    closeSession(activeSession.id);
   }
 
   function handleHold() {
@@ -79,10 +128,8 @@ export default function PosSalesPage() {
     createSession();
   }
 
-  function handlePaymentComplete(saleResult?: any) {
+  function handlePaymentComplete() {
     completeSale(activeSession.id, totals.total, 0);
-    saleResultRef.current = saleResult;
-    createSession();
   }
 
   function handleSellPrint() {
@@ -95,11 +142,11 @@ export default function PosSalesPage() {
     saleResultRef.current = 'print_wholesale';
   }
 
-  function handlePaymentModalComplete(saleResult?: any) {
+  function handlePaymentModalComplete() {
     const printMode = saleResultRef.current;
     saleResultRef.current = null;
 
-    completeSale(activeSession.id, totals.total, 0);
+    handlePaymentComplete();
 
     if (printMode === 'print') {
       const items = activeSession.cart.map((item) => {
@@ -148,17 +195,44 @@ export default function PosSalesPage() {
         header: orgConfig?.posHeader ?? undefined,
       });
     }
-
-    createSession();
   }
 
   function handleLoadSale(saleId: string) {
-    // Navigate to the sale or load it into the current session
-    // For now, just set the sale code
     const sale = sessions.find((s) => s.id === saleId);
     if (sale) {
       setActiveSession(saleId);
     }
+  }
+
+  function handlePrintHeldInvoice(sessionId: string) {
+    const sale = sessions.find((s) => s.id === sessionId);
+    if (!sale || sale.cart.length === 0) return;
+
+    const subtotal = sale.cart.reduce((sum, item) => {
+      const price = sale.pricingMode === 'wholesale' ? item.wholesalePrice : item.retailPrice;
+      return sum + price * item.quantity * item.uomFactor;
+    }, 0);
+
+    const items = sale.cart.map((item) => {
+      const price = sale.pricingMode === 'wholesale' ? item.wholesalePrice : item.retailPrice;
+      return {
+        code: item.code,
+        name: item.name,
+        qty: item.quantity,
+        price,
+        total: price * item.quantity * item.uomFactor,
+      };
+    });
+
+    printInvoice({
+      saleNumber: sale.saleCode,
+      customerName: sale.customerName,
+      items,
+      subtotal,
+      discount: 0,
+      vat: 0,
+      total: subtotal,
+    });
   }
 
   return (
@@ -173,6 +247,7 @@ export default function PosSalesPage() {
               onChange={setActiveSession}
               onAdd={createSession}
               onClose={closeSession}
+              stockLocationName={stockLocationName}
             />
           </Paper>
 
@@ -182,17 +257,20 @@ export default function PosSalesPage() {
             onCustomerChange={handleCustomerChange}
             onPriceListChange={handlePriceListChange}
             onPricingModeChange={(mode) => setPricingMode(activeSession.id, mode)}
-            onReset={handleReset}
+            onReset={resetSession}
             onSettings={() => setSettingsOpened(true)}
             onLoadSale={handleLoadSale}
+            onHeldSalesOpen={() => setHeldSalesOpened(true)}
+            heldSalesCount={heldSalesCount}
           />
 
           {/* PRODUCT ENTRY */}
-          <ProductEntryTable
+          {activeSession.status !== 'completed' && (
+            <ProductEntryTable
             session={activeSession}
             onAddToCart={(item) => addItem(activeSession.id, item)}
             stockLocationId={stockLocationId}
-          />
+          />)}
 
           {/* MAIN AREA */}
           <Grid flex={1} gap={0}>
@@ -204,6 +282,7 @@ export default function PosSalesPage() {
                   updateItem(activeSession.id, itemId, { quantity: qty })
                 }
                 onRemoveItem={(itemId) => removeItem(activeSession.id, itemId)}
+                onUpdateUom={handleUpdateUom}
               />
             </Grid.Col>
 
@@ -212,20 +291,35 @@ export default function PosSalesPage() {
               <SalesSummary
                 itemCount={activeSession.cart.length}
                 totals={totals}
+                onCalculate={handlePrintInvoice}
                 onCheckout={() => {
                   saleResultRef.current = null;
                   setPaymentOpened(true);
                 }}
                 onHold={handleHold}
-                onNextCustomer={handleReset}
+                onNextCustomer={nextCustomer}
                 onSellPrint={handleSellPrint}
                 onPrintWholesale={handlePrintWholesale}
                 paidAmount={activeSession.paidAmount}
+                cartEmpty={activeSession.cart.length === 0 || activeSession.status === 'completed'}
+                sessionCompleted={activeSession.status === 'completed'}
               />
             </Grid.Col>
           </Grid>
         </Stack>
       </Box>
+
+      {/* INVOICE PREVIEW */}
+      <InvoicePreviewModal
+        opened={invoicePreviewOpened}
+        onClose={() => setInvoicePreviewOpened(false)}
+        session={activeSession}
+        onProceedToPayment={() => {
+          setInvoicePreviewOpened(false);
+          saleResultRef.current = null;
+          setPaymentOpened(true);
+        }}
+      />
 
       {/* PAYMENT */}
       <PaymentModal
@@ -241,6 +335,7 @@ export default function PosSalesPage() {
         opened={heldSalesOpened}
         onClose={() => setHeldSalesOpened(false)}
         onResume={(id) => setActiveSession(id)}
+        onPrintInvoice={handlePrintHeldInvoice}
       />
 
       {/* SETTINGS */}
