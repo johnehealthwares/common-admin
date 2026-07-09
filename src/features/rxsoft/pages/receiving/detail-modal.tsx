@@ -18,7 +18,7 @@ export function ReceiptDetailModal({
   const [unpostLineId, setUnpostLineId] = useState<string | null>(null);
 
   function handleUnpost() {
-    if (!unpostLineId || !password) return;
+    if (!unpostLineId || !password) {return;}
     onUnpost(unpostLineId, password);
     setUnpostLineId(null);
     setPassword('');
@@ -42,7 +42,7 @@ export function ReceiptDetailModal({
               <Table.Th>UOM</Table.Th>
               <Table.Th>Unit Cost</Table.Th>
               <Table.Th>Status</Table.Th>
-              <Table.Th></Table.Th>
+              <Table.Th />
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>

@@ -16,7 +16,7 @@ export function QuickAddSupplierModal({ opened, onClose, onSupplierCreated }: Pr
   const mutation = useCreateSupplier();
 
   async function handleSubmit() {
-    if (!name.trim()) return;
+    if (!name.trim()) {return;}
     const result = await mutation.mutateAsync({
       name: name.trim(),
       phone: phone.trim() || undefined,

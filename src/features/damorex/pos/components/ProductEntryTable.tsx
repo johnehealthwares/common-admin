@@ -1,11 +1,12 @@
 import { Button, Image, NumberInput, Paper, Select, Table, Text, UnstyledButton } from '@mantine/core';
 import { Plus } from 'lucide-react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { rxsoftApi } from '@/lib/rxsoft-api';
 import { usePriceListItems } from '../../api/posApi';
 import { SaleSession, CartItem } from '../types';
 import { StockAdjustModal } from './StockAdjustModal';
+import { getUomEffectiveFactor } from '../utils/calculation';
 
 interface UomOption {
   id: string;
@@ -13,6 +14,7 @@ interface UomOption {
   code: string | null;
   factor: number;
   uomType: string;
+  categoryId: string | null;
 }
 
 interface Props {
@@ -25,7 +27,6 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [uomId, setUomId] = useState<string | null>(null);
-  const [uomName, setUomName] = useState('');
 
   const [adjustModalOpen, setAdjustModalOpen] = useState(false);
   const [adjustItemId, setAdjustItemId] = useState('');
@@ -47,7 +48,7 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
 
   const uomMap = useMemo(() => {
     const map = new Map<string, UomOption>();
-    for (const u of allUoms) map.set(u.id, u);
+    for (const u of allUoms) {map.set(u.id, u);}
     return map;
   }, [allUoms]);
 
@@ -71,13 +72,22 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
   const effectivePrice = session.pricingMode === 'wholesale' ? wholesalePrice : retailPrice;
 
   const currentUom = uomId ? uomMap.get(uomId) : null;
-  const uomFactor = currentUom?.factor ?? 1;
+  const uomFactor = getUomEffectiveFactor(currentUom);
   const total = quantity * effectivePrice * uomFactor;
+
+  const unitPrice = effectivePrice * uomFactor;
+
+  const filteredUomOptions = useMemo(() => {
+    if (!uomId) return [];
+    const selectedUom = uomMap.get(uomId);
+    if (!selectedUom?.categoryId) return Array.from(uomMap.values());
+    return Array.from(uomMap.values()).filter((u) => u.categoryId === selectedUom.categoryId);
+  }, [uomId, uomMap]);
 
   const { data: stockQty = 0, refetch: refetchStock } = useQuery({
     queryKey: ['pos-stock-qty', selectedProductId, stockLocationId],
     queryFn: async () => {
-      if (!selectedProductId || !stockLocationId) return 0;
+      if (!selectedProductId || !stockLocationId) {return 0;}
       const { data: balances } = await rxsoftApi.get('/inventory/stock-balances', {
         params: { itemId: selectedProductId, locationId: stockLocationId, limit: 1 },
       });
@@ -88,16 +98,10 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
     staleTime: 0,
   });
 
-  useEffect(() => {
-    if (selectedProduct) {
-      setUomId(selectedProduct.uomId);
-      const u = uomMap.get(selectedProduct.uomId);
-      setUomName(u?.name || '');
-    }
-  }, [selectedProductId, uomMap]);
+  const adjustedStockQty = uomFactor > 0 ? stockQty / uomFactor : 0;
 
   function handleAdd() {
-    if (!selectedProductId || !quantity) return;
+    if (!selectedProductId || !quantity) {return;}
     const item: CartItem = {
       id: selectedProductId,
       code: itemCode,
@@ -118,12 +122,12 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
   }
 
   function openAdjustModal() {
-    if (!selectedProductId || !stockLocationId) return;
+    if (!selectedProductId || !stockLocationId) {return;}
     setAdjustItemId(selectedProductId);
     setAdjustItemName(selectedProduct?.label || itemCode);
     setAdjustUomId(uomId || selectedProduct?.uomId || '');
     setAdjustUomName(currentUom?.name || 'Unit');
-    setAdjustCurrentQty(stockQty);
+    setAdjustCurrentQty(adjustedStockQty);
     setAdjustModalOpen(true);
   }
 
@@ -135,12 +139,12 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
             <Table.Th w={50}>Image</Table.Th>
             <Table.Th>ITEM CODE</Table.Th>
             <Table.Th>ITEM NAME</Table.Th>
-            <Table.Th>RtPrice</Table.Th>
             <Table.Th>StockQty</Table.Th>
+            <Table.Th>RtPrice</Table.Th>
             <Table.Th>UOM</Table.Th>
             <Table.Th>QUANTITY</Table.Th>
             <Table.Th>TOTAL</Table.Th>
-            <Table.Th w={60}></Table.Th>
+            <Table.Th w={60} />
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -162,45 +166,36 @@ export function ProductEntryTable({ session, onAddToCart, stockLocationId }: Pro
                 onChange={(v) => {
                   setSelectedProductId(v);
                   const prod = productOptions.find((p: any) => p.value === v);
-                  if (prod) {
-                    setUomId(prod.uomId);
-                    const u = uomMap.get(prod.uomId);
-                    setUomName(u?.name || '');
-                  }
+                  if (prod) setUomId(prod.uomId);
                 }}
                 searchable
                 clearable
                 w={280}
               />
             </Table.Td>
-            <Table.Td>{retailPrice}</Table.Td>
-            <Table.Td>
+             <Table.Td>
               {stockLocationId && selectedProductId ? (
                 <UnstyledButton
                   onClick={openAdjustModal}
                   style={{ textDecoration: 'underline', cursor: 'pointer' }}
                 >
-                  {stockQty}
+                  {adjustedStockQty.toFixed(2)}
                 </UnstyledButton>
               ) : (
                 <Text size="xs" c="dimmed">-</Text>
               )}
             </Table.Td>
+            <Table.Td>{unitPrice.toFixed(2)}</Table.Td>
             <Table.Td>
               <Select
                 size="xs"
                 w={200}
-                data={Array.from(uomMap.values()).map((u) => ({
+                data={filteredUomOptions.map((u) => ({
                   value: u.id,
                   label: u.name,
                 }))}
                 value={uomId}
-                onChange={(v) => {
-                  setUomId(v);
-                  const u = v ? uomMap.get(v) : null;
-                  if (u) setUomName(u.name);
-                }}
-                disabled
+                onChange={(v) => setUomId(v)}
               />
             </Table.Td>
             <Table.Td>

@@ -70,7 +70,7 @@ function LoggedOutView({ onSuccess, onClose }: { onSuccess: () => void; onClose:
   const authRegister = useAuthStore((s) => s.register);
 
   const handleLogin = async () => {
-    if (!loginEmail || !loginPassword) return;
+    if (!loginEmail || !loginPassword) {return;}
     setLoginLoading(true);
     try {
       await authLogin(loginEmail, loginPassword);

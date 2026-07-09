@@ -40,7 +40,7 @@ export function toHL7Prescription(
   if (Array.isArray(input)) {
     for (const ci of input) {
       const p = ci.product;
-      if (!p) continue;
+      if (!p) {continue;}
       items.push({
         code: p.code,
         name: p.name,
@@ -60,7 +60,7 @@ export function toHL7Prescription(
     });
   }
 
-  if (!items.length) return '';
+  if (!items.length) {return '';}
 
   const orderRef = options?.orderRef ?? msgId();
   const patientId = options?.customerPhone ?? 'UNKNOWN';

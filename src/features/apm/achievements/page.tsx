@@ -86,7 +86,7 @@ export default function AchievementsPage() {
                       {(() => {
                         const cat = item.category ?? '';
                         const imgSrc = imageLUT[cat];
-                        if (!imgSrc || !['Economy', 'Infrastructure', 'Healthcare', 'Youth'].includes(cat)) return null;
+                        if (!imgSrc || !['Economy', 'Infrastructure', 'Healthcare', 'Youth'].includes(cat)) {return null;}
                         return (
                           <Box style={{ height: 220, overflow: 'hidden' }}>
                             <img

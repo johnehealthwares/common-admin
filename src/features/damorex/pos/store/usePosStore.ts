@@ -4,7 +4,7 @@ import { SaleSession, CartItem, Customer } from '../types';
 
 function generateSaleCode(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = '';
+  let code = 'WEBPOS-';
   for (let i = 0; i < 8; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -70,6 +70,7 @@ export const usePosStore = create<PosStore>()(
 
       closeSession: (id) =>
         set((state) => {
+          if (state.sessions.length <= 1) return state;
           const filtered = state.sessions.filter((s) => s.id !== id);
           return {
             sessions: filtered,
@@ -81,7 +82,7 @@ export const usePosStore = create<PosStore>()(
       addItem: (sessionId, item) =>
         set((state) => ({
           sessions: state.sessions.map((session) => {
-            if (session.id !== sessionId) return session;
+            if (session.id !== sessionId) {return session;}
             const existing = session.cart.find((i) => i.code === item.code);
             if (existing) {
               existing.quantity += item.quantity;

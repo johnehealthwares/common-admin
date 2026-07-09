@@ -114,7 +114,7 @@ export function CommunicationChannelsPage() {
   }
 
   async function handleDelete() {
-    if (!selectedRow?.id) return;
+    if (!selectedRow?.id) {return;}
     await deleteMutation.mutateAsync(String(selectedRow.id));
     setIsDeleteOpen(false);
   }

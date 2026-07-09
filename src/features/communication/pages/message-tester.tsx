@@ -84,7 +84,7 @@ export function MessageTesterPage() {
     }
 
     if (messageType === 'ORDER' && messageProtocol === 'CUSTOM_JSON')
-      return JSON.stringify(
+      {return JSON.stringify(
         {
           _id: 'order-123',
           documentationId: 'order-123',
@@ -100,7 +100,7 @@ export function MessageTesterPage() {
         },
         null,
         2
-      );
+      );}
 
     return JSON.stringify({}, null, 2);
   }, [messageType, messageProtocol, targetAE]);

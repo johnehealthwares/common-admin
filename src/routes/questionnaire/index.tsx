@@ -72,7 +72,7 @@ function PublicQuestionnairePage() {
   }
 
   async function loadConversationById(id = conversationId) {
-    if (!id) return;
+    if (!id) {return;}
 
     setLoading(true);
     try {
@@ -114,7 +114,7 @@ function PublicQuestionnairePage() {
   /* ================= EFFECTS ================= */
 
   useEffect(() => {
-    if (session) return;
+    if (session) {return;}
 
     const match = participants.find((p) => String(p.phone) === phoneSearch);
 
@@ -180,7 +180,7 @@ function PublicQuestionnairePage() {
     currentIndex: number;
     progress: number;
   }) {
-    if (!session?.id) return;
+    if (!session?.id) {return;}
     const nextQuestion = questions[payload.currentIndex];
     await conversationApi.patch(`/conversations/${session.id}`, {
       currentQuestionId: nextQuestion?.id,
@@ -196,7 +196,7 @@ function PublicQuestionnairePage() {
     answers: Record<string, AnswerValue>;
     questions: QuestionnaireQuestion[];
   }) {
-    if (!session?.id) return;
+    if (!session?.id) {return;}
 
     const summary = buildSummaryMessage(payload.answers, payload.questions);
 

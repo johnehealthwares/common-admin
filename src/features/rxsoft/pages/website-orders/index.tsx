@@ -58,7 +58,7 @@ export function RxWebsiteOrdersPage() {
     queryKey: ['website-orders', page, statusFilter],
     queryFn: async () => {
       const params: Record<string, any> = { page, limit };
-      if (statusFilter) params.status = statusFilter;
+      if (statusFilter) {params.status = statusFilter;}
       const { data } = await rxsoftApi.get('/website/admin/orders', { params });
       return data;
     },
@@ -276,7 +276,7 @@ function DetailModal({
   const { data: order, isLoading } = useQuery({
     queryKey: ['website-order-detail', orderId],
     queryFn: async () => {
-      if (!orderId) return null;
+      if (!orderId) {return null;}
       const { data } = await rxsoftApi.get(`/website/admin/orders/${orderId}`);
       return data;
     },
@@ -400,7 +400,7 @@ function DetailModal({
                 value={selectedStatus}
                 onChange={(v) => {
                   setSelectedStatus(v);
-                  if (v) statusUpdateMutation.mutate(v);
+                  if (v) {statusUpdateMutation.mutate(v);}
                 }}
                 data={allowed.map((s) => ({ value: s, label: statusLabel(s) }))}
                 style={{ width: 220 }}

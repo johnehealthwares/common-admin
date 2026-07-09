@@ -68,7 +68,7 @@ function AddParticipantForm({
   const addMutation = useMutation({
     mutationFn: async () => {
       const participant = await findParticipantByPhone(phone.trim());
-      if (!participant?.id) throw new Error('Participant not found');
+      if (!participant?.id) {throw new Error('Participant not found');}
       return addProjection({
         conversationId: conversationId!,
         participantId: participant.id,
@@ -166,7 +166,7 @@ function RemoveParticipantForm({
     },
   });
 
-  if (isLoading) return <Text>Loading participants...</Text>;
+  if (isLoading) {return <Text>Loading participants...</Text>;}
 
   const uniqueParticipants = projections
     ? projections.reduce<{ id: string; name: string; roles: string[] }[]>((acc, p) => {
@@ -197,7 +197,7 @@ function RemoveParticipantForm({
             <Table.Tr>
               <Table.Th>Participant</Table.Th>
               <Table.Th>Roles</Table.Th>
-              <Table.Th w={60}></Table.Th>
+              <Table.Th w={60} />
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>

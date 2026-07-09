@@ -24,7 +24,7 @@ export function printPosReceipt(sale: {
   const headerText = sale.header || 'DAMOREX PHARMACY';
 
   const win = window.open('', '_blank');
-  if (!win) return;
+  if (!win) {return;}
   win.document.write(`
     <html>
     <head>
@@ -103,7 +103,7 @@ export function printInvoice(sale: {
   const headerText = sale.header || 'DAMOREX PHARMACY';
 
   const win = window.open('', '_blank');
-  if (!win) return;
+  if (!win) {return;}
   win.document.write(`
     <html>
     <head>
@@ -183,7 +183,7 @@ export function printA4Receipt(sale: {
   const headerText = sale.header || 'DAMOREX PHARMACY';
 
   const win = window.open('', '_blank');
-  if (!win) return;
+  if (!win) {return;}
   win.document.write(`
     <html>
     <head>

@@ -37,8 +37,8 @@ export function AsyncSelectField({
 
   const debouncedInput = useDebouncedValue(inputValue, 300);
 
-  const shouldSearch =
-    debouncedInput === '' || debouncedInput.trim().length >= (field.searchParam?.minChars || 2);
+  // const shouldSearch =
+  //   debouncedInput === '' || debouncedInput.trim().length >= (field.searchParam?.minChars || 2);
 
   const mapToOption = (item: unknown): Option | null =>
     mapOption(item, field.searchParam?.valueKey, field.searchParam?.labelKey);
@@ -92,10 +92,12 @@ export function AsyncSelectField({
           }
         });
       }
+      const hasFilter = field.searchParam?.filter || (field.searchParam?.staticFilters?.length ?? 0) > 0;
       params =
-        field.searchParam.queryParam && field.searchParam?.filter
+        field.searchParam.queryParam && hasFilter
           ? { [field.searchParam.queryParam]: JSON.stringify(params) }
           : params;
+      console.log({params,field}, field.searchParam.queryParam , field.searchParam?.filter)
       const listResponse = await apiProvider.get(field.searchParam.endpoint, { params });
       const payload = getArrayPayload(listResponse.data);
 

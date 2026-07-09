@@ -71,7 +71,7 @@ type Concept = {
 };
 
 export function ConceptSummaryCard({ concept }: { concept?: Concept | null }) {
-  if (!concept) return null;
+  if (!concept) {return null;}
 
   const title = concept.fullName ?? concept.shortName ?? concept.code ?? 'Unknown concept';
 

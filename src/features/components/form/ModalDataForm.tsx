@@ -60,7 +60,6 @@ export const ModalDataForm = ({
               formState={formState}
               updateField={updateField}
               onSubmit={() => {
-                console.log({ stage: 'onSubmit-formState', formState });
                 mutation.mutate(formState);
               }}
               isPending={mutation.isPending}
@@ -91,7 +90,6 @@ export const ModalDataForm = ({
 
             <Button
               onClick={() => {
-                console.log({ stage: 'onSubmit-simple-formState', formState });
                 mutation.mutate(formState);
               }}
               disabled={mutation.isPending}

@@ -43,7 +43,6 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
   };
 
   const loadMatrix = useCallback(async () => {
-    console.log({parentId})
     if (!parentId) {
       syncRows([], []);
       return;
@@ -153,7 +152,7 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
       const nextOriginalRows = originalRows.map((item) => (item.id === row.id ? savedRow : item));
       syncRows(nextRows, nextOriginalRows);
       notifications.show({
-        title: fieldGroup.title + ' saved',
+        title: `${fieldGroup.title  } saved`,
         message: `${row.priceListName}  updated`,
         color: 'green',
       });
@@ -169,7 +168,7 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
       setRows(nextRows);
       updateField(rowsField, nextRows, index);
       notifications.show({
-        title: fieldGroup.title + ' save failed',
+        title: `${fieldGroup.title  } save failed`,
         message: String(message),
         color: 'red',
       });
@@ -205,7 +204,7 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
       });
       await loadMatrix();
       notifications.show({
-        title: title + ' saved',
+        title: `${title  } saved`,
         message: 'Manual price entry created',
         color: 'green',
       });
@@ -216,7 +215,7 @@ export function FieldGroupAdd({ title, fieldGroup, formState, updateField, index
         err?.message ??
         'Failed to save price';
       setError(String(message));
-      notifications.show({ title: title + ' save failed', message: String(message), color: 'red' });
+      notifications.show({ title: `${title  } save failed`, message: String(message), color: 'red' });
     } finally {
       setSavingRowId(null);
     }

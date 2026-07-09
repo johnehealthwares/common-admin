@@ -895,7 +895,7 @@ export default function ApmHomepage() {
 
 function AgendaSection() {
   const { data } = useHomepage();
-  if (!data?.infos) return null;
+  if (!data?.infos) {return null;}
 
   const categories = ['Economy', 'Infrastructure', 'Agriculture', 'Healthcare', 'Education', 'Security'];
   const agendaItems = categories.map((cat) => ({
@@ -946,7 +946,7 @@ function CitizensSpeakForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !message) return;
+    if (!name || !message) {return;}
     mutate(
       { name, email, subject: 'Citizen Feedback', message },
       { onSuccess: () => { setName(''); setEmail(''); setMessage(''); } },
@@ -1004,7 +1004,7 @@ function JoinMovementForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return;
+    if (!name || !phone) {return;}
     mutate(
       { name, phone, lga: lga || undefined },
       { onSuccess: () => { setName(''); setPhone(''); setLga(''); } },
@@ -1094,7 +1094,7 @@ function NewsletterForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email) {return;}
     mutate({ email }, { onSuccess: () => setEmail('') });
   };
 

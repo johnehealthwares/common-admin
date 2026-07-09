@@ -11,7 +11,7 @@ export function useEnhancedCodingConceptView<T>(view: View<T>, moduleId: string,
   const attributes = getAttributes(moduleId);
 
   return useMemo(() => {
-    if (!attributes) return null;
+    if (!attributes) {return null;}
     const dynamicFields = buildAttributeFields('conceptValues', attributes);
     const attributeGroup = {
       title: 'Attributes',

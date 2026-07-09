@@ -69,8 +69,15 @@ export async function markConversationRead(input: {
 
 export async function createConversation(input: {
   phone?: string;
+  participantId?: string;
   questionnaireId: string;
   channelId: string;
+  projections?: Array<{
+    participantId?: string;
+    phone?: string;
+    channelId?: string;
+    role: string;
+  }>;
 }) {
   const response = await conversationApi.post('/conversations', input);
   return response.data;

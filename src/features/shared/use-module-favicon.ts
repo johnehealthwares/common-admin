@@ -12,7 +12,7 @@ const moduleFavicons: Record<string, string> = {
 export function useModuleFavicon(moduleId: string | undefined) {
   useEffect(() => {
     const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
-    if (!link) return;
+    if (!link) {return;}
     const favicon = moduleFavicons[moduleId ?? ''] ?? moduleFavicons.admin;
     link.href = favicon;
   }, [moduleId]);

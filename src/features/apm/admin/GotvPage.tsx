@@ -21,9 +21,9 @@ export function GotvPage() {
 
   const params = useMemo(() => {
     const p: Record<string, string | number> = { page, limit: 20 };
-    if (search) p.search = search;
-    if (turnedOutFilter) p.turnedOut = turnedOutFilter;
-    if (contactedViaFilter) p.contactedVia = contactedViaFilter;
+    if (search) {p.search = search;}
+    if (turnedOutFilter) {p.turnedOut = turnedOutFilter;}
+    if (contactedViaFilter) {p.contactedVia = contactedViaFilter;}
     return p;
   }, [search, turnedOutFilter, contactedViaFilter, page]);
 

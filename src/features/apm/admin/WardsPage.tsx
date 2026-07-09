@@ -41,7 +41,7 @@ export function WardsPage() {
   };
 
   const handleSaveScore = () => {
-    if (!selectedWard) return;
+    if (!selectedWard) {return;}
     updateScore.mutate({
       entityType: 'ward',
       entityId: selectedWard.id,

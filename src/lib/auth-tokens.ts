@@ -1,6 +1,7 @@
 export type AuthUser = {
   id: string;
   username: string;
+  email?: string;
   roles: string[];
   phone?: string;
 };
@@ -14,6 +15,7 @@ export function decodeUserFromAccessToken(accessToken: string): AuthUser | null 
     const payload = JSON.parse(atob(payloadRaw)) as {
       sub?: string;
       username?: string;
+      email?: string;
       roles?: string[];
       phone?: string;
     };
@@ -25,6 +27,7 @@ export function decodeUserFromAccessToken(accessToken: string): AuthUser | null 
     return {
       id: payload.sub,
       username: payload.username,
+      email: payload.email,
       roles: payload.roles ?? [],
       phone: payload.phone,
     };

@@ -393,10 +393,10 @@ export default function CheckoutPage() {
             <Stepper.Step label="Cart Review" description="Review items">
               {/* No content here - rendered separately */}
             </Stepper.Step>
-            <Stepper.Step label="Delivery" description="Address & area"></Stepper.Step>
-            <Stepper.Step label="Prescription" description="Validate Rx"></Stepper.Step>
-            <Stepper.Step label="Payment" description="Pay"></Stepper.Step>
-            <Stepper.Step label="Confirmation" description="Done"></Stepper.Step>
+            <Stepper.Step label="Delivery" description="Address & area" />
+            <Stepper.Step label="Prescription" description="Validate Rx" />
+            <Stepper.Step label="Payment" description="Pay" />
+            <Stepper.Step label="Confirmation" description="Done" />
           </Stepper>
 
           <Progress value={((step + 1) / 5) * 100} color="green" size="sm" radius="xl" />
@@ -474,8 +474,8 @@ export default function CheckoutPage() {
                 color="gray"
                 leftSection={<ArrowLeft size={18} />}
                 onClick={() => {
-                  if (step === 0) navigate({ to: '/damorex/cart' });
-                  else setStep(step - 1);
+                  if (step === 0) {navigate({ to: '/damorex/cart' });}
+                  else {setStep(step - 1);}
                 }}
                 disabled={step === 3 && isPending}
               >

@@ -1,8 +1,9 @@
 import { ActionIcon, Button, Group, Modal, NumberInput, Select, Stack, Table, Text, Tooltip } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { Check, Loader, Save, Trash2, X } from 'lucide-react';
+import { Check, DollarSign, Save, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { rxsoftApi } from '@/lib/rxsoft-api';
+import { convertPriceBetweenUoms } from '@/lib/uom-utils';
 import { useItems, useItemUoms } from '../api/poApi';
 import { PoLineItem, PurchaseOrderStatus } from '../types';
 
@@ -17,6 +18,7 @@ interface Props {
   onSaveLine: (line: PoLineItem) => void;
   onReceiveLine: (line: PoLineItem) => void;
   onUnpostLine: (line: PoLineItem) => void;
+  onSetPrice: (line: PoLineItem) => void;
   savingLines: Set<string>;
 }
 
@@ -122,6 +124,41 @@ function UomChangeModal({
   );
 }
 
+interface PriceListItem {
+  id: string;
+  unitPrice: number;
+  currencyCode: string;
+  priceList: { id: string; code: string; name: string };
+}
+
+function PriceListCell({ itemId }: { itemId: string }) {
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: ['price-list-items', itemId],
+    queryFn: async () => {
+      if (!itemId) return [];
+      const { data } = await rxsoftApi.get('/price-lists/items', {
+        params: { itemId, limit: 10 },
+      });
+      return (data?.data ?? data ?? []) as PriceListItem[];
+    },
+    enabled: !!itemId,
+  });
+
+  if (!itemId) return <Text size="xs" c="dimmed">—</Text>;
+  if (isLoading) return <Text size="xs" c="dimmed">Loading...</Text>;
+  if (!items.length) return <Text size="xs" c="dimmed">No prices</Text>;
+
+  return (
+    <Stack gap={2}>
+      {items.map((p) => (
+        <Text key={p.id} size="xs">
+          {p.priceList?.name || p.priceList?.code}: {p.currencyCode} {p.unitPrice}
+        </Text>
+      ))}
+    </Stack>
+  );
+}
+
 export function PoLinesTable({
   lines,
   status,
@@ -133,6 +170,7 @@ export function PoLinesTable({
   onSaveLine,
   onReceiveLine,
   onUnpostLine,
+  onSetPrice,
   savingLines,
 }: Props) {
   const [itemSearch, setItemSearch] = useState('');
@@ -155,7 +193,7 @@ export function PoLinesTable({
 
   const uomMap = useMemo(() => {
     const map = new Map<string, UomData>();
-    for (const u of allUoms) map.set(u.id, u);
+    for (const u of allUoms) {map.set(u.id, u);}
     return map;
   }, [allUoms]);
 
@@ -180,9 +218,8 @@ export function PoLinesTable({
             <Table.Th>UOM</Table.Th>
             <Table.Th>Ordered Qty</Table.Th>
             <Table.Th>Received Qty</Table.Th>
-            <Table.Th>Purchase Cost</Table.Th>
-            <Table.Th>Discount %</Table.Th>
-            <Table.Th>Tax %</Table.Th>
+            <Table.Th>Unit Cost</Table.Th>
+            <Table.Th>Price List</Table.Th>
             <Table.Th>Subtotal</Table.Th>
             <Table.Th>Total</Table.Th>
             <Table.Th>Actions</Table.Th>
@@ -199,17 +236,10 @@ export function PoLinesTable({
 
             const itemEditable = isDraftStatus && !isSaved;
             const uomEditable = isDraftStatus;
-            const qtyEditable = isDraftStatus;
             const recvQtyEditable =
-              (isDraftStatus) ||
-              (isApprovedStatus) ||
-              (isPartiallyReceivedStatus && !isFullyReceived);
+              (isApprovedStatus || isPartiallyReceivedStatus) && !isFullyReceived;
             const costEditable =
-              isDraftStatus ||
-              isApprovedStatus ||
-              (isPartiallyReceivedStatus && !isFullyReceived);
-            const discountEditable = isDraftStatus;
-            const taxEditable = isDraftStatus;
+              (isApprovedStatus || isPartiallyReceivedStatus) && !isFullyReceived;
 
             const canDelete = !isReadOnly && isDraftStatus && lines.length > 1;
             const canSave = !isReadOnly && isDraftStatus && !isSaved && !!pendingPoId;
@@ -269,14 +299,7 @@ export function PoLinesTable({
                   />
                 </Table.Td>
                 <Table.Td>
-                  <NumberInput
-                    size="xs"
-                    min={0.001}
-                    value={line.orderedQty}
-                    onChange={(v) => onUpdateLine(line.id, { orderedQty: Number(v) || 0 })}
-                    w={80}
-                    disabled={!qtyEditable}
-                  />
+                  <Text size="xs">{line.orderedQty}</Text>
                 </Table.Td>
                 <Table.Td>
                   <NumberInput
@@ -300,26 +323,7 @@ export function PoLinesTable({
                   />
                 </Table.Td>
                 <Table.Td>
-                  <NumberInput
-                    size="xs"
-                    min={0}
-                    max={100}
-                    value={line.discountPercent}
-                    onChange={(v) => onUpdateLine(line.id, { discountPercent: Number(v) || 0 })}
-                    w={70}
-                    disabled={!discountEditable}
-                  />
-                </Table.Td>
-                <Table.Td>
-                  <NumberInput
-                    size="xs"
-                    min={0}
-                    max={100}
-                    value={line.taxPercent}
-                    onChange={(v) => onUpdateLine(line.id, { taxPercent: Number(v) || 0 })}
-                    w={70}
-                    disabled={!taxEditable}
-                  />
+                  <PriceListCell itemId={line.itemId} />
                 </Table.Td>
                 <Table.Td>
                   <Text size="xs">{line.lineSubtotal.toFixed(2)}</Text>
@@ -338,6 +342,13 @@ export function PoLinesTable({
                         loading={isSaving}
                       >
                         <Save size={14} />
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
+                  {isSaved && !isReadOnly && (
+                    <Tooltip label="Set price">
+                      <ActionIcon size="sm" color="cyan" variant="light" onClick={() => onSetPrice(line)}>
+                        <DollarSign size={14} />
                       </ActionIcon>
                     </Tooltip>
                   )}
@@ -374,7 +385,14 @@ export function PoLinesTable({
         onClose={() => setPendingUom(null)}
         onConfirm={() => {
           if (pendingUom) {
-            onUpdateLine(pendingUom.lineId, { uomId: pendingUom.newUomId });
+            const oldUom = uomMap.get(pendingUom.oldUomId);
+            const newUom = uomMap.get(pendingUom.newUomId);
+            const line = lines.find((l) => l.id === pendingUom.lineId);
+            const updates: Partial<PoLineItem> = { uomId: pendingUom.newUomId };
+            if (line && oldUom && newUom) {
+              updates.unitCost = +convertPriceBetweenUoms(line.unitCost, oldUom, newUom).toFixed(4);
+            }
+            onUpdateLine(pendingUom.lineId, updates);
             setPendingUom(null);
           }
         }}

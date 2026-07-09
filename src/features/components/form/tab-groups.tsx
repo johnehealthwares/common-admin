@@ -26,7 +26,7 @@ function TabGroupsComponent({
 
   const isStepDisabled = (stepIndex: number) => {
     const tab = tabGroups[stepIndex];
-    if (!tab?.waitFor) return false;
+    if (!tab?.waitFor) {return false;}
     return typeof tab.waitFor === 'function'
       ? !tab.waitFor(formState)
       : !formState[tab.waitFor];
@@ -35,7 +35,7 @@ function TabGroupsComponent({
   const hasUnsatisfiedWaitFor = useCallback(
     (stepIndex: number) => {
       const tab = tabGroups[stepIndex];
-      if (!tab?.waitFor) return false;
+      if (!tab?.waitFor) {return false;}
       return typeof tab.waitFor === 'function'
         ? !tab.waitFor(formState)
         : !formState[tab.waitFor];

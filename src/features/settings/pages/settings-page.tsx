@@ -31,7 +31,6 @@ const sidebarNavItems = [
     icon: Monitor,
   },
 ];
-
 export function Settings() {
   return (
     <Main>

@@ -1,6 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router';
-import DamorexPage from '@/features/damorex/page';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import { useAuthStore } from '@/stores/auth-store';
 
 export const Route = createFileRoute('/')({
-  component: DamorexPage,
+  beforeLoad: () => {
+    useAuthStore.getState().bootstrap();
+    const { user, modules: userModules } = useAuthStore.getState();
+    if (!user) {
+      throw redirect({ to: '/damorex' });
+    }
+
+    const hasRxsoft = userModules.some((m) => m.id === 'rxsoft');
+    if (hasRxsoft) {
+      throw redirect({ to: '/rxsoft/items' });
+    }
+
+    throw redirect({ to: '/damorex' });
+  },
 });

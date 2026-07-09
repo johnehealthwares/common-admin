@@ -1,7 +1,8 @@
 import { useQuery, useQueryClient, type QueryKey } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Select } from '@mantine/core';
+import { ActionIcon, Select, Tooltip } from '@mantine/core';
+import { HelpCircle } from 'lucide-react';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { ModuleContext, useModuleContext } from '@/context/module-context';
 import type { ModelConfig } from '@/features/shared/model-schema';
@@ -10,6 +11,8 @@ import { JsonPreviewDialog } from '../../rxsoft';
 import type { FilterValue } from '../../rxsoft/types';
 import { useFormContext } from '../form/form-context';
 import { ModalDataForm } from '../form/ModalDataForm';
+import { InfoDrawer } from './info-drawer';
+import { entityInfoMap } from '@/features/lis/schema/entity-info';
 import {
   useCreateMutation,
   useDeleteMutation,
@@ -73,6 +76,7 @@ export function DataPageShell(props: DataPageShellProps) {
     minSearchLength,
     debounceMs,
     metricsEndpoint,
+    metricsConfig,
     superAdminOrgFilter,
   } = config;
   const moduleContext = useModuleContext();
@@ -135,7 +139,11 @@ export function DataPageShell(props: DataPageShellProps) {
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
   const [jsonToPreview, setJsonToPreview] = useState<Record<string, unknown> | null>(null);
 
+  const [initialFormState, setInitialFormState] = useState<Record<string, unknown> | null>(null);
+
   const [filtersModalOpened, setFiltersModalOpened] = useState<boolean>(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const helpInfo = entityInfoMap[config.id] ?? null;
 
   const [appliedFilters, setAppliedFilters] = useState<Record<string, FilterValue | null>>({});
   const handleApplyFilter = (columnKey: string, filterValue: FilterValue | null) => {
@@ -201,6 +209,10 @@ export function DataPageShell(props: DataPageShellProps) {
     setPageIndex(1);
   }, [search]);
 
+  useEffect(() => {
+    if (!showModal) {setInitialFormState(null);}
+  }, [showModal]);
+
   // -----------------------------
   // DATA FETCH
   // -----------------------------
@@ -250,6 +262,7 @@ export function DataPageShell(props: DataPageShellProps) {
     setEditingRow,
     editingRow,
     apiProvider,
+    initialFormState: initialFormState ?? undefined,
   });
 
   const deleteMutation = useDeleteMutation({
@@ -272,7 +285,9 @@ export function DataPageShell(props: DataPageShellProps) {
 
   function openModal(row: Record<string, unknown> | null = null) {
     setEditingRow(row);
-    effectiveSetFormState(buildFormState && row ? buildFormState(row) : row || defaultState || {});
+    const initialState = buildFormState && row ? buildFormState(row) : row || defaultState || {};
+    effectiveSetFormState(initialState);
+    setInitialFormState(initialState);
     setShowModal(true);
   }
 
@@ -295,7 +310,28 @@ export function DataPageShell(props: DataPageShellProps) {
           mb="xs"
         />
       )}
-      {metricsEndpoint && <MetricsBar endpoint={metricsEndpoint} />}
+      {metricsConfig && (
+        <MetricsBar
+          metricsConfig={metricsConfig}
+          params={(() => {
+            const p: Record<string, string> = {};
+            const hasFilters = Object.keys(appliedFilters).length > 0;
+            if (hasFilters) {
+              const filterParams: Record<string, string> = {};
+              Object.entries(appliedFilters)
+                .filter(([, v]) => v)
+                .forEach(([key, val]) => {
+                  filterParams[key] = `${val!.filter.type}|${val!.value ?? ''}|${val!.valueTo ?? ''}`;
+                });
+              const filtStr = JSON.stringify(filterParams);
+              if (filtStr !== '{}') {p.search = filtStr;}
+            } else if (search) {
+              p.search = search;
+            }
+            return p;
+          })()}
+        />
+      )}
       <HeaderBar
         open={filtersModalOpened}
         setOpen={setFiltersModalOpened}
@@ -391,6 +427,8 @@ export function DataPageShell(props: DataPageShellProps) {
         open={jsonToPreview !== null}
         onOpenChange={(open) => setJsonToPreview(!open ? null : jsonToPreview)}
       />
+
+      <InfoDrawer opened={helpOpen} onClose={() => setHelpOpen(false)} info={helpInfo} />
     </>
   );
 
@@ -399,7 +437,21 @@ export function DataPageShell(props: DataPageShellProps) {
       {embedded ? (
         content
       ) : (
-        <RxPage title={title} description={description}>
+        <RxPage
+          title={title}
+          description={description}
+          actions={
+            helpInfo
+              ? [
+                  <Tooltip label={`About ${title}`} key="help">
+                    <ActionIcon variant="subtle" size="sm" onClick={() => setHelpOpen(true)}>
+                      <HelpCircle size={18} />
+                    </ActionIcon>
+                  </Tooltip>,
+                ]
+              : undefined
+          }
+        >
           {content}
         </RxPage>
       )}

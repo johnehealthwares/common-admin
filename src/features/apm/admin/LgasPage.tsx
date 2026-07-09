@@ -43,7 +43,7 @@ export function LgasPage() {
   };
 
   const handleSaveScore = () => {
-    if (!selectedLga) return;
+    if (!selectedLga) {return;}
     updateScore.mutate({
       entityType: 'lga',
       entityId: selectedLga.id,

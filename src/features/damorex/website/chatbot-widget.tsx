@@ -29,20 +29,20 @@ interface ChoiceMessage {
 
 function parseChoiceMessage(text: string): ChoiceMessage | null {
   const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
-  if (lines.length < 2) return null;
+  if (lines.length < 2) {return null;}
 
   const title = lines[0];
   const optionLines = lines.slice(1).filter((l) => l.includes(':'));
-  if (optionLines.length === 0) return null;
+  if (optionLines.length === 0) {return null;}
 
   const options: ChoiceOption[] = [];
   for (const line of optionLines) {
     const clean = line.replace(/\u200B/g, '').trim();
     const idx = clean.indexOf(':');
-    if (idx === -1) continue;
+    if (idx === -1) {continue;}
     const value = clean.slice(0, idx).trim();
     const label = clean.slice(idx + 1).trim();
-    if (!value || !label) continue;
+    if (!value || !label) {continue;}
     options.push({ value, label });
   }
 
@@ -50,7 +50,7 @@ function parseChoiceMessage(text: string): ChoiceMessage | null {
 }
 
 function getSenderPhone(): string {
-  const phone = useAuthStore.getState().user?.phone || localStorage.getItem(ANON_PHONE_KEY) ||  Math.floor(Date.now() / 1000) + '';
+  const phone = useAuthStore.getState().user?.phone || localStorage.getItem(ANON_PHONE_KEY) ||  `${Math.floor(Date.now() / 1000)  }`;
   localStorage.setItem(ANON_PHONE_KEY, phone);
   return phone;
 }
@@ -83,7 +83,7 @@ export function ChatbotWidget() {
 
   const handleSend = () => {
     const text = draft.trim();
-    if (!text) return;
+    if (!text) {return;}
     send(text);
     setDraft('');
   };
@@ -215,7 +215,7 @@ export function ChatbotWidget() {
                         opacity: answered ? 0.5 : 1,
                       }}
                       onClick={() => {
-                        if (!answered) send(opt.value);
+                        if (!answered) {send(opt.value);}
                       }}
                     >
                       {opt.label}

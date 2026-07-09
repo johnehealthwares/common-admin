@@ -29,8 +29,8 @@ interface StockBalance {
 }
 
 function getRowsFromResponse<T>(payload: unknown): T[] {
-  if (Array.isArray(payload)) return payload as T[];
-  if (payload && typeof payload === 'object' && Array.isArray((payload as any).data)) return (payload as any).data as T[];
+  if (Array.isArray(payload)) {return payload as T[];}
+  if (payload && typeof payload === 'object' && Array.isArray((payload as any).data)) {return (payload as any).data as T[];}
   return [];
 }
 
@@ -42,7 +42,6 @@ export async function loadStockMatrix(itemId?: string): Promise<StockMatrixRow[]
 
   const locations: StockLocation[] = getRowsFromResponse<StockLocation>(locationsResp.data);
   const balances: StockBalance[] = getRowsFromResponse<StockBalance>(balancesResp.data);
-  console.log({locations})
   const balanceMap = new Map(balances.map((b) => [b.locationId, b]));
 
   return locations.map((loc) => {

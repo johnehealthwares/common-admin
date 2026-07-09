@@ -22,9 +22,9 @@ export function ResultsPage() {
 
   const params = useMemo(() => {
     const p: Record<string, string | number> = { page, limit: 20 };
-    if (search) p.search = search;
-    if (statusFilter) p.status = statusFilter;
-    if (lgaFilter) p.lgaId = lgaFilter;
+    if (search) {p.search = search;}
+    if (statusFilter) {p.status = statusFilter;}
+    if (lgaFilter) {p.lgaId = lgaFilter;}
     return p;
   }, [search, statusFilter, lgaFilter, page]);
 

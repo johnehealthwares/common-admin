@@ -76,7 +76,7 @@ export function calculateOrderTotals(
     orderDiscountPercent > 0 ? (subtotal - discount) * (orderDiscountPercent / 100) : 0;
   const totalOrderDiscount = discount + orderDiscountAmount + orderDiscountFromPercent;
 
-  let grandBase = subtotal - totalOrderDiscount;
+  const grandBase = subtotal - totalOrderDiscount;
   let orderTax = 0;
 
   if (taxMode === TaxMode.INCLUSIVE) {

@@ -16,9 +16,9 @@ export function AgentsPage() {
 
   const params = useMemo(() => {
     const p: Record<string, string | number> = { page, limit: 20 };
-    if (search) p.search = search;
-    if (roleFilter) p.category = roleFilter;
-    if (trainingFilter) p.trainingStatus = trainingFilter;
+    if (search) {p.search = search;}
+    if (roleFilter) {p.category = roleFilter;}
+    if (trainingFilter) {p.trainingStatus = trainingFilter;}
     return p;
   }, [search, roleFilter, trainingFilter, page]);
 

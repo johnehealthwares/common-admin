@@ -47,7 +47,7 @@ export default function PosSalesPage() {
   const stockLocationId = userPosConfig?.stockLocationId as string | undefined;
 
   const stockLocationName = useMemo(() => {
-    if (!stockLocationId) return undefined;
+    if (!stockLocationId) {return undefined;}
     const loc = (Array.isArray(stockLocations) ? stockLocations : []).find((l: any) => l.id === stockLocationId);
     return loc?.name;
   }, [stockLocationId, stockLocations]);
@@ -58,7 +58,7 @@ export default function PosSalesPage() {
   );
 
   const totals = useMemo(() => {
-    if (!activeSession) return { subtotal: 0, discount: 0, vat: 0, total: 0 };
+    if (!activeSession) {return { subtotal: 0, discount: 0, vat: 0, total: 0 };}
     return calculateTotals(activeSession);
   }, [activeSession]);
 
@@ -70,14 +70,14 @@ export default function PosSalesPage() {
   useKeyboardShortcuts({
     createSale: createSession,
     holdSale: () => {
-      if (activeSession) holdSale(activeSession.id);
+      if (activeSession) {holdSale(activeSession.id);}
     },
     payment: () => setPaymentOpened(true),
   });
 
   useEffect(() => {
-    if (!userPosConfig || !activeSession) return;
-    if (defaultsAppliedForSessions.current.has(activeSession.id)) return;
+    if (!userPosConfig || !activeSession) {return;}
+    if (defaultsAppliedForSessions.current.has(activeSession.id)) {return;}
     defaultsAppliedForSessions.current.add(activeSession.id);
 
     if (userPosConfig.autoSelectPriceList && userPosConfig.defaultPriceListId && !activeSession.priceListId) {
@@ -89,7 +89,7 @@ export default function PosSalesPage() {
     }
   }, [userPosConfig, activeSession.id]);
 
-  if (!activeSession) return null;
+  if (!activeSession) {return null;}
 
   function handleCustomerChange(customerId: string, customerName: string) {
     setCustomer(activeSession.id, { id: customerId, name: customerName } as Customer);
@@ -105,7 +105,7 @@ export default function PosSalesPage() {
 
   function handleUpdateUom(itemId: string, newUomId: string, newUomName: string, newUomFactor: number) {
     const item = activeSession.cart.find((i) => i.id === itemId);
-    if (!item) return;
+    if (!item) {return;}
     const newQty = (item.quantity * item.uomFactor) / newUomFactor;
     updateItem(activeSession.id, itemId, {
       uomId: newUomId,
@@ -206,7 +206,7 @@ export default function PosSalesPage() {
 
   function handlePrintHeldInvoice(sessionId: string) {
     const sale = sessions.find((s) => s.id === sessionId);
-    if (!sale || sale.cart.length === 0) return;
+    if (!sale || sale.cart.length === 0) {return;}
 
     const subtotal = sale.cart.reduce((sum, item) => {
       const price = sale.pricingMode === 'wholesale' ? item.wholesalePrice : item.retailPrice;

@@ -30,7 +30,6 @@ function GenericViewPage() {
 
   const view = modelConfig ? deriveView(modelConfig) : null;
   const apiProvider = modelConfig?.apiProvider ?? useApiProvider();
-  console.log({view, page, apiProvider})
   const detailQuery = useQuery({
     queryKey: [page, id],
     enabled: !!view && !!apiProvider && page !== 'coding-concepts',
@@ -67,7 +66,7 @@ function CodingConceptDetailView({ id }: { id: string }) {
 
   const data = detailQuery.data?.data?.data;
 
-  if (!data) return <div>Loading...</div>;
+  if (!data) {return <div>Loading...</div>;}
 
   return <GenericViewComponent view={view as View<any>} data={data} />;
 }

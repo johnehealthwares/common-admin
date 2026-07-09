@@ -28,7 +28,7 @@ export function usePurchaseOrder(id?: string) {
   return useQuery({
     queryKey: poKeys.detail(id),
     queryFn: async () => {
-      if (!id) return null;
+      if (!id) {return null;}
       const { data } = await rxsoftApi.get(`/purchases/${id}`);
       return data as PurchaseOrder;
     },
@@ -134,7 +134,7 @@ export function useReceipts(poId?: string) {
   return useQuery({
     queryKey: receiptKeys.byPo(poId || ''),
     queryFn: async () => {
-      if (!poId) return [];
+      if (!poId) {return [];}
       const { data } = await rxsoftApi.get(`/purchases/${poId}/receipts`);
       return data?.data ?? data ?? [];
     },
@@ -159,7 +159,7 @@ export function useItemUoms(itemId: string | null) {
   return useQuery({
     queryKey: ['item-uoms', itemId],
     queryFn: async () => {
-      if (!itemId) return [];
+      if (!itemId) {return [];}
       const { data } = await rxsoftApi.get(`/items/${itemId}/uoms`);
       return (data?.data ?? data ?? []) as Array<{ id: string; code: string; name: string; factor: number }>;
     },

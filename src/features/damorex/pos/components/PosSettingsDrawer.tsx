@@ -19,7 +19,7 @@ export function PosSettingsDrawer({ opened, onClose }: Props) {
 
   const locationData = (Array.isArray(stockLocations) ? stockLocations : []).map((l: any) => ({
     value: l.id,
-    label: `${l.code ? l.code + ' - ' : ''}${l.name}`,
+    label: `${l.code ? `${l.code  } - ` : ''}${l.name}`,
   }));
 
   const customerData = (Array.isArray(customers) ? customers : []).map((c: any) => ({
@@ -33,7 +33,7 @@ export function PosSettingsDrawer({ opened, onClose }: Props) {
   }));
 
   useEffect(() => {
-    if (opened) stockInitialized.current = false;
+    if (opened) {stockInitialized.current = false;}
   }, [opened]);
 
   const handleStockLocationChange = useCallback((value: string | null) => {

@@ -26,7 +26,7 @@ export function isRouteAllowedForModule(pathname: string, moduleId: ModuleId): b
 
   const pathSegments = pathname.split('/').filter(Boolean);
   if (pathSegments.length > 1) {
-    const parentRoute = '/' + pathSegments[0];
+    const parentRoute = `/${  pathSegments[0]}`;
     if (routeModuleMap[parentRoute]) {
       return routeModuleMap[parentRoute].includes(moduleId);
     }
@@ -38,4 +38,18 @@ export function isRouteAllowedForModule(pathname: string, moduleId: ModuleId): b
 export function getModuleDashboard(moduleId: ModuleId): string {
   const mod = modules.find((m) => m.id === moduleId);
   return mod?.root ?? '/';
+}
+
+export function getModuleFromPath(pathname: string): ModuleId | null {
+  if (routeModuleMap[pathname]) {
+    const allowed = routeModuleMap[pathname];
+    return allowed[0] as ModuleId ?? null;
+  }
+  const sorted = [...modules].sort((a, b) => b.routes.length - a.routes.length);
+  for (const mod of sorted) {
+    if (mod.routes.some((route) => pathname.startsWith(route + '/') || pathname === route)) {
+      return mod.id;
+    }
+  }
+  return null;
 }

@@ -1,54 +1,96 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { websiteApi } from './api';
+import { persistTokens, getAccessToken, getRefreshToken, clearTokens } from '@/lib/auth-tokens';
 
-interface User {
-  sub: string;
+export interface WebsiteUser {
+  id: string;
   username: string;
   email: string;
   phone: string;
   roles: string[];
 }
 
-interface AuthStore {
-  user: User | null;
-  token: string | null;
+export interface WebsiteAuthStore {
+  user: WebsiteUser | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   isAuthenticated: boolean;
-  setUser: (user: User, token: string) => void;
+  setUser: (user: WebsiteUser, token: string, refreshToken: string) => void;
   logout: () => void;
   login: (username: string, password: string) => Promise<void>;
   register: (data: { username: string; email?: string; phone?: string; password: string }) => Promise<void>;
 }
 
-export const useAuthStore = create<AuthStore>()(
+function decodeToken(token: string): WebsiteUser {
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  return {
+    id: payload.sub,
+    username: payload.username,
+    email: payload.email || '',
+    phone: payload.phone || '',
+    roles: payload.roles || [],
+  };
+}
+
+function tryImportAdminSession(): { user: WebsiteUser; accessToken: string; refreshToken: string } | null {
+  const token = getAccessToken();
+  const refresh = getRefreshToken();
+  if (!token || !refresh) return null;
+  try {
+    return { user: decodeToken(token), accessToken: token, refreshToken: refresh };
+  } catch {
+    return null;
+  }
+}
+
+export const useAuthStore = create<WebsiteAuthStore>()(
   persist(
     (set) => ({
       user: null,
-      token: null,
+      accessToken: null,
+      refreshToken: null,
       isAuthenticated: false,
 
-      setUser: (user, token) => {
-        set({ user, token, isAuthenticated: true });
+      setUser: (user, token, refreshToken) => {
+        persistTokens(token, refreshToken);
+        set({ user, accessToken: token, refreshToken, isAuthenticated: true });
       },
 
       logout: () => {
-        set({ user: null, token: null, isAuthenticated: false });
+        clearTokens();
+        set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
       },
 
       login: async (username, password) => {
         const res = await websiteApi.login({ username, password });
-        const token = res.accessToken;
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        set({ user: { sub: payload.sub, username: payload.username, email: payload.email || '', phone: payload.phone || '', roles: payload.roles || [] }, token, isAuthenticated: true });
+        persistTokens(res.accessToken, res.refreshToken);
+        const user = decodeToken(res.accessToken);
+        set({ user, accessToken: res.accessToken, refreshToken: res.refreshToken, isAuthenticated: true });
       },
 
-      register: async (data) => { 
+      register: async (data) => {
         const res = await websiteApi.register(data);
-        const token = res.accessToken;
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        set({ user: { sub: payload.sub, username: payload.username, email: payload.email || '', phone: payload.phone || '', roles: payload.roles || [] }, token, isAuthenticated: true });
+        persistTokens(res.accessToken, res.refreshToken);
+        const user = decodeToken(res.accessToken);
+        set({ user, accessToken: res.accessToken, refreshToken: res.refreshToken, isAuthenticated: true });
       },
     }),
-    { name: 'damorex-auth' }
-  )
+    {
+      name: 'rxsoft-website-auth',
+      merge: (persisted, current) => {
+        const merged = { ...current, ...(persisted as Partial<WebsiteAuthStore>) };
+        if (!merged.accessToken) {
+          const session = tryImportAdminSession();
+          if (session) {
+            merged.user = session.user;
+            merged.accessToken = session.accessToken;
+            merged.refreshToken = session.refreshToken;
+            merged.isAuthenticated = true;
+          }
+        }
+        return merged;
+      },
+    },
+  ),
 );

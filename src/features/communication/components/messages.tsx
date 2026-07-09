@@ -117,7 +117,7 @@ export function MessagesPage() {
   };
 
   const handleDelete = async () => {
-    if (!selectedRow?.id) return;
+    if (!selectedRow?.id) {return;}
     await deleteMutation.mutateAsync(String(selectedRow.id));
     setIsDeleteOpen(false);
   };

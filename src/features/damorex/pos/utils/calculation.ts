@@ -1,5 +1,11 @@
 import { SaleSession } from '../types';
 
+export function getUomEffectiveFactor(uom: { uomType?: string; factor: number } | null | undefined): number {
+  if (!uom) return 1;
+  if (uom.uomType === 'smaller') return 1 / uom.factor;
+  return uom.factor;
+}
+
 export function calculateTotals(session: SaleSession) {
   const subtotal = session.cart.reduce((sum, item) => {
     const price = session.pricingMode === 'wholesale' ? item.wholesalePrice : item.retailPrice;

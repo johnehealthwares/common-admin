@@ -1,8 +1,9 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig, type AxiosRequestConfig } from 'axios';
 import { clearTokens, getAccessToken, getRefreshToken, persistTokens } from '@/lib/auth-tokens';
+import { IDENTITY_API_BASE_URL } from '@/lib/identity-api';
 
 export const CONVERSATION_API_BASE_URL =
-  (import.meta.env.VITE_CONVERSATION_API_URL as string | undefined) ?? 'http://localhost:8080/api';
+  (import.meta.env.VITE_CONVERSATION_API_URL as string | undefined) ?? 'http://localhost:8001/api';
 
 /** @deprecated Use CONVERSATION_API_BASE_URL instead */
 export const API_BASE_URL = CONVERSATION_API_BASE_URL;
@@ -69,7 +70,7 @@ conversationApi.interceptors.response.use(
         const refreshResponse = await axios.post<{
           accessToken: string;
           refreshToken: string;
-        }>(`${API_BASE_URL}/auth/refresh-token`, { refreshToken });
+        }>(`${IDENTITY_API_BASE_URL}/auth/refresh-token`, { refreshToken });
 
         persistTokens(refreshResponse.data.accessToken, refreshResponse.data.refreshToken);
         queued.forEach((entry) => entry.resolve(refreshResponse.data.accessToken));

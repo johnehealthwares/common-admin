@@ -1,9 +1,9 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { clearTokens, getAccessToken, getRefreshToken, persistTokens } from '@/lib/auth-tokens';
-import { RXSOFT_API_BASE_URL } from '@/lib/rxsoft-api';
+import { IDENTITY_API_BASE_URL } from '@/lib/identity-api';
 
 export const LIS_API_BASE_URL =
-  (import.meta.env.VITE_LIS_API_URL as string | undefined) ?? 'http://localhost:8091';
+  (import.meta.env.VITE_LIS_API_URL as string | undefined) ?? 'http://localhost:8002';
 
 export const lisApi = axios.create({
   baseURL: LIS_API_BASE_URL,
@@ -67,7 +67,7 @@ lisApi.interceptors.response.use(
         const refreshResponse = await axios.post<{
           accessToken: string;
           refreshToken: string;
-        }>(`${RXSOFT_API_BASE_URL}/auth/refresh-token`, { refreshToken });
+        }>(`${IDENTITY_API_BASE_URL}/auth/refresh-token`, { refreshToken });
 
         persistTokens(refreshResponse.data.accessToken, refreshResponse.data.refreshToken);
         queued.forEach((entry) => entry.resolve(refreshResponse.data.accessToken));

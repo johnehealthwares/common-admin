@@ -269,7 +269,7 @@ function CartItemRow({ productId, quantity }: { productId: string; quantity: num
         <Group justify="space-between" wrap="nowrap" align="center">
           <Group gap="md" wrap="nowrap">
             <Image
-              src={`https://placehold.co/80x80/16A34A/white?text=Rx`}
+              src="https://placehold.co/80x80/16A34A/white?text=Rx"
               alt={getProductName(productId)}
               w={72}
               h={72}

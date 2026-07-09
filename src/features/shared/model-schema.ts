@@ -1,6 +1,19 @@
 import type { AxiosInstance } from 'axios';
 import type { Column, Field, FieldGroup, TabGroup, View } from '@/features/rxsoft/types';
 
+export type MetricsItem = {
+  label: string;
+  value: string | number;
+  icon?: string;
+  color?: string;
+  format?: 'number' | 'currency';
+};
+
+export type MetricsConfig = {
+  endpoint: string;
+  items: (data: unknown) => MetricsItem[];
+};
+
 export type ModelConfig<T = any> = {
   id: string;
   title: string;
@@ -37,5 +50,6 @@ export type ModelConfig<T = any> = {
   minSearchLength?: number;
   debounceMs?: number;
   metricsEndpoint?: string;
+  metricsConfig?: MetricsConfig;
   superAdminOrgFilter?: boolean;
 };

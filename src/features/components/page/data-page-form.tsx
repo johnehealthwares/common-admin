@@ -3,7 +3,7 @@ import { notifications } from '@mantine/notifications';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Loader } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useModuleContext } from '@/context/module-context';
 import type { ModelConfig } from '@/features/shared/model-schema';
 import { FieldGroup } from '../form/FieldGroup';
@@ -12,9 +12,17 @@ import { RxPage } from './rx-page';
 
 type DataPageFormProps = {
   config: ModelConfig;
+  initialData?: Record<string, unknown> | null;
+  mode?: 'create' | 'edit';
+  onSave?: () => void;
 };
 
-export function DataPageForm({ config }: DataPageFormProps) {
+export function DataPageForm({
+  config,
+  initialData,
+  mode = 'create',
+  onSave,
+}: DataPageFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const moduleContext = useModuleContext();
@@ -28,6 +36,7 @@ export function DataPageForm({ config }: DataPageFormProps) {
     createFieldGroups,
     tabGroups,
     buildCreatePayload,
+    buildFormState,
     defaultState,
     modalTitle,
     renderCreateExtras,
@@ -35,7 +44,15 @@ export function DataPageForm({ config }: DataPageFormProps) {
 
   const fieldGroups = createFieldGroups ?? (createFields ? [{ fields: createFields }] : []);
 
-  const [formState, setFormState] = useState<Record<string, unknown>>(defaultState ?? {});
+  const [formState, setFormState] = useState<Record<string, unknown>>(
+    () => (mode === 'edit' && initialData && buildFormState ? buildFormState(initialData) : defaultState ?? {}),
+  );
+
+  useEffect(() => {
+    if (mode === 'edit' && initialData && buildFormState) {
+      setFormState(buildFormState(initialData));
+    }
+  }, [initialData, mode, buildFormState]);
 
   const updateField = (name: string, value: unknown) => {
     setFormState((prev) => ({ ...prev, [name]: value }));
@@ -46,6 +63,11 @@ export function DataPageForm({ config }: DataPageFormProps) {
   const mutation = useMutation({
     mutationFn: async (values: Record<string, unknown>) => {
       const payload = buildCreatePayload ? buildCreatePayload(values) : values;
+      if (mode === 'edit') {
+        const id = initialData?.id ?? (values as any).id;
+        const response = await apiProvider!.put(`${endpoint}/${String(id)}`, payload);
+        return response.data as Record<string, unknown>;
+      }
       const response = await apiProvider!.post(endpoint, payload);
       return response.data as Record<string, unknown>;
     },
@@ -56,14 +78,20 @@ export function DataPageForm({ config }: DataPageFormProps) {
       if (isWizard) {
         setFormState((prev) => ({ ...prev, id: data.id as string }));
       } else {
-        notifications.show({ message: `${title} record created` });
-        navigate({ to: '..' });
+        const action = mode === 'edit' ? 'updated' : 'created';
+        notifications.show({ message: `${title} record ${action}` });
+        if (onSave) {
+          onSave();
+        } else {
+          navigate({ to: '..' });
+        }
       }
     },
     onError: (error: any) => {
+      const action = mode === 'edit' ? 'update' : 'create';
       notifications.show({
         color: 'red',
-        message: `Failed to create ${title.toLowerCase()} record - ${error.data?.message ?? error?.data?.error?.message ?? error?.response?.data?.message ?? error?.response?.data?.error?.message ?? error.message}`,
+        message: `Failed to ${action} ${title.toLowerCase()} record - ${error.data?.message ?? error?.data?.error?.message ?? error?.response?.data?.message ?? error?.response?.data?.error?.message ?? error.message}`,
       });
     },
   });
@@ -71,24 +99,34 @@ export function DataPageForm({ config }: DataPageFormProps) {
   const handleStepSubmit = async (stepIndex: number): Promise<Record<string, unknown> | void> => {
     const payload = buildCreatePayload ? buildCreatePayload(formState) : formState;
     try {
+      if (mode === 'edit') {
+        const id = initialData?.id ?? (formState as any).id;
+        const response = await apiProvider!.put(`${endpoint}/${String(id)}`, payload);
+        return response.data as Record<string, unknown>;
+      }
       const response = await apiProvider!.post(endpoint, payload);
       const data = response.data as Record<string, unknown>;
       setFormState((prev) => ({ ...prev, id: data.id as string }));
       return data;
     } catch (error: any) {
+      const action = mode === 'edit' ? 'update' : 'create';
       notifications.show({
         color: 'red',
-        message: `Failed to create ${title.toLowerCase()} record - ${error.data?.message ?? error?.data?.error?.message ?? error?.response?.data?.message ?? error?.response?.data?.error?.message ?? error.message}`,
+        message: `Failed to ${action} ${title.toLowerCase()} record - ${error.data?.message ?? error?.data?.error?.message ?? error?.response?.data?.message ?? error?.response?.data?.error?.message ?? error.message}`,
       });
       throw error;
     }
   };
 
+  const pageTitle = mode === 'edit' ? `Edit ${title}` : modalTitle ?? `Create ${title}`;
+
   return (
-    <RxPage title={modalTitle ?? `Create ${title}`} description={description}>
+    <RxPage title={pageTitle} description={description}>
       <Stack gap="lg">
         <Text size="sm" c="dimmed">
-          Add a new record to the {title.toLowerCase()} module.
+          {mode === 'edit'
+            ? `Editing the ${title.toLowerCase()} record.`
+            : `Add a new record to the ${title.toLowerCase()} module.`}
         </Text>
 
         <Stack gap="xl">
@@ -97,7 +135,16 @@ export function DataPageForm({ config }: DataPageFormProps) {
               tabGroups={tabGroups}
               formState={formState}
               updateField={updateField}
-              onSubmit={isWizard ? () => { notifications.show({ message: `${title} record created` }); navigate({ to: '..' }); } : () => mutation.mutate(formState)}
+              onSubmit={
+                isWizard
+                  ? () => {
+                      const action = mode === 'edit' ? 'updated' : 'created';
+                      notifications.show({ message: `${title} record ${action}` });
+                      if (onSave) {onSave();}
+                      else {navigate({ to: '..' });}
+                    }
+                  : () => mutation.mutate(formState)
+              }
               isPending={mutation.isPending}
               onStepSubmit={handleStepSubmit}
             />
@@ -106,6 +153,7 @@ export function DataPageForm({ config }: DataPageFormProps) {
               {fieldGroups.map((fieldGroup, index) => (
                 <FieldGroup
                   key={index}
+                  title={fieldGroup.title}
                   index={index}
                   fieldGroup={fieldGroup}
                   formState={formState}
@@ -122,7 +170,7 @@ export function DataPageForm({ config }: DataPageFormProps) {
 
         {!isWizard && (
           <Group justify="flex-end">
-            <Button variant="outline" onClick={() => navigate({ to: '..' })}>
+            <Button variant="outline" onClick={() => (onSave ? onSave() : navigate({ to: '..' }))}>
               Cancel
             </Button>
             <Button
@@ -130,7 +178,7 @@ export function DataPageForm({ config }: DataPageFormProps) {
               disabled={mutation.isPending}
               leftSection={mutation.isPending ? <Loader size={16} /> : null}
             >
-              Create
+              {mode === 'edit' ? 'Update' : 'Create'}
             </Button>
           </Group>
         )}

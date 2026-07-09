@@ -3,7 +3,7 @@ import { getAccessToken } from '@/lib/auth-tokens';
 
 export const CODING_CONCEPT_API_BASE_URL =
   (import.meta.env.VITE_CODING_CONCEPT_API_URL as string | undefined) ??
-  'http://localhost:3011/api/v1';
+  'http://localhost:8004/api/v1';
 
 export const codingConceptApi = axios.create({
   baseURL: CODING_CONCEPT_API_BASE_URL,

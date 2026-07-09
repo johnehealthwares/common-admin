@@ -9,8 +9,8 @@ const MOCK_CHANNEL_ID = '69bd061c11bf835d976c4e2f';
 let cachedAnonPhone: string | null = localStorage.getItem(ANON_PHONE_KEY);
 
 function ensurePhone(phone: string): string {
-  if (phone) return phone;
-  if (cachedAnonPhone) return cachedAnonPhone;
+  if (phone) {return phone;}
+  if (cachedAnonPhone) {return cachedAnonPhone;}
   cachedAnonPhone = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   localStorage.setItem(ANON_PHONE_KEY, cachedAnonPhone);
   return cachedAnonPhone;
@@ -26,7 +26,7 @@ interface ChatMessage {
 let chatbotSocket: Socket | null = null;
 
 function getChatbotSocket(): Socket {
-  if (chatbotSocket) return chatbotSocket;
+  if (chatbotSocket) {return chatbotSocket;}
 
   const socketUrl =
     (import.meta.env.VITE_CONVERSATION_SOCKET_URL as string | undefined) ??
@@ -61,11 +61,11 @@ export function useChatbotSession(senderPhone: string) {
         conversationIdRef.current = msg.conversationId;
       }
 
-      if (conversationIdRef.current && msg.conversationId !== conversationIdRef.current) return;
+      if (conversationIdRef.current && msg.conversationId !== conversationIdRef.current) {return;}
 
       setMessages((prev) => {
         const exists = prev.some((m) => m.id === msg.id);
-        if (exists) return prev;
+        if (exists) {return prev;}
         return [...prev, { id: msg.id, text: msg.text, role: 'bot', createdAt: msg.createdAt }];
       });
     };
@@ -86,7 +86,7 @@ export function useChatbotSession(senderPhone: string) {
   useEffect(() => {
     const socket = getChatbotSocket();
     const convId = conversationIdRef.current;
-    if (!convId) return;
+    if (!convId) {return;}
 
     socket.emit('conversation.opened', { conversationId: convId });
 
@@ -98,7 +98,7 @@ export function useChatbotSession(senderPhone: string) {
   const send = useCallback(
     async (text: string, questionnaireCode?: string) => {
       const phone = ensurePhone(phoneRef.current);
-      if (!phone || sending) return;
+      if (!phone || sending) {return;}
 
       const optimisticId = `opt-${Date.now()}`;
       const createdAt = new Date().toISOString();
@@ -115,8 +115,8 @@ export function useChatbotSession(senderPhone: string) {
           senderPhone: phone,
           text,
         };
-        if (questionnaireCode) body.questionnaireCode = questionnaireCode;
-        if (conversationIdRef.current) body.conversationId = conversationIdRef.current;
+        if (questionnaireCode) {body.questionnaireCode = questionnaireCode;}
+        if (conversationIdRef.current) {body.conversationId = conversationIdRef.current;}
 
         await conversationApi.post('/webhooks/mock', body);
       } catch {

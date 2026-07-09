@@ -37,7 +37,7 @@ export function PoSettingsDrawer() {
           data={warehouseOpts}
           value={defaultWarehouseId || null}
           onChange={(v, opt) => {
-            if (v) setDefaultWarehouse(v, opt.label);
+            if (v) {setDefaultWarehouse(v, opt.label);}
           }}
           searchable
           clearable

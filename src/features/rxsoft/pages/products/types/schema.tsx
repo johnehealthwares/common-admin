@@ -108,20 +108,20 @@ const itemCreateFieldGroups: FieldGroup[] = [
           minChars: 2,
           queryParam: 'search',
           filter: {
-            type: 'CONTAINS',
-            field: 'uomType',
+            type: 'FUZZY_MATCH',
+            field: 'name',
           },
           labelKey: 'name',
           valueKey: 'id',
-          staticFilters: [
-            {
-              filter: {
-                type: FilterType.EQUALS,
-                name: 'uomType',
-              },
-              value: 'reference',
-            },
-          ],
+          // staticFilters: [
+          //   {
+          //     filter: {
+          //       type: FilterType.EQUALS,
+          //       name: 'uomType',
+          //     },
+          //     value: 'reference',
+          //   },
+          // ],
         },
         extraParams: (fs) => {
           const uomCatId = fs.categoryUomCategoryId as string | undefined;
@@ -140,6 +140,10 @@ const itemCreateFieldGroups: FieldGroup[] = [
           queryParam: 'search',
           labelKey: 'name',
           valueKey: 'id',
+          filter: {
+            type: 'FUZZY_MATCH',
+            field: 'name',
+          },
           staticFilters: [
             {
               filter: {
@@ -715,6 +719,17 @@ export const itemsConfig: ModelConfig = {
   columns: itemColumns,
   tabGroups,
   modalTitle: 'Add Item',
+  metricsEndpoint: '/items/metrics',
+  metricsConfig: {
+    endpoint: '/items/metrics',
+    items: (data: any) => [
+      { label: 'Total Items', value: data.total, icon: 'Package', color: 'blue' },
+      { label: 'Active', value: data.active, icon: 'CheckCircle', color: 'green' },
+      { label: 'Inactive', value: data.inactive, icon: 'XCircle', color: 'red' },
+      { label: 'No Category', value: data.noCategory, icon: 'AlertTriangle', color: 'orange' },
+      { label: 'No Generic Product', value: data.noGenericProductCode, icon: 'AlertTriangle', color: 'yellow' },
+    ],
+  },
   buildCreatePayload: buildItemPayload,
   buildUpdatePayload: buildItemPayload,
   buildFormState,

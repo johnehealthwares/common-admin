@@ -34,7 +34,7 @@ export function SelectField({
       data={options}
       placeholder={placeholder}
       disabled={disabled}
-      clearable={true}
+      clearable
       searchable={false}
       error={error}
     />

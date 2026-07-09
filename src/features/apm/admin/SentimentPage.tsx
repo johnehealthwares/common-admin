@@ -5,7 +5,7 @@ import { apmBlue, apmGreen, ink, muted, accent } from '../website/layout';
 export function SentimentPage() {
   const { data, isLoading } = useSentimentDashboard();
 
-  if (isLoading) return <Skeleton height={500} radius="md" />;
+  if (isLoading) {return <Skeleton height={500} radius="md" />;}
 
   const statCards = [
     { label: 'Total Feedback', value: data?.total ?? 0, color: apmBlue },

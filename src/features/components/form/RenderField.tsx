@@ -3,6 +3,7 @@ import { memo, useCallback } from 'react';
 import { LabelField } from '@/features/communication/components/shared';
 import { Field, Option } from '@/features/rxsoft/types';
 import { ImageUploader } from '@/features/rxsoft/pages/products/components/image-uploader';
+import { AccordionArrayField, AccordionSingleField } from './accordion-fields';
 import { AsyncSelectField } from './async-field';
 import { DebouncedTextInput } from './debounced-text-input';
 import { useFormField } from './form-context';
@@ -114,9 +115,7 @@ function RenderFieldComponent({
     const current: Option[] = field.toOptions
       ? field.toOptions(raw)
       : raw.map((item) => (typeof item === 'string' ? { value: item, label: item } : item));
-    console.log({current})
     const toggle = (option: Option) => {
-      console.log({option,})
       const index = current.findIndex((item) => item.value === option.value);
       const updated = index >= 0 ? current.filter((_, i) => i !== index) : [...current, option];
       handleChange(updated);
@@ -300,6 +299,21 @@ function RenderFieldComponent({
       updateField(field.name, fieldValue);
     }
     return null;
+  }
+
+  if (field.type === 'accordion-array') {
+    const items: any[] = (fieldValue as any[]) || [];
+    return <AccordionArrayField field={field} items={items} />;
+  }
+
+  if (field.type === 'accordion') {
+    return (
+      <AccordionSingleField
+        field={field}
+        value={fieldValue as string | null | undefined}
+        onChange={(v) => handleChange(v)}
+      />
+    );
   }
 
   return (

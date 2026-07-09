@@ -51,8 +51,8 @@ function buildCreatePayload(values: Record<string, unknown>) {
 
 function buildUpdatePayload(values: Record<string, unknown>, _row?: Record<string, unknown>) {
   const payload: Record<string, unknown> = {};
-  if (values.code) payload.code = values.code;
-  if (values.name) payload.name = values.name;
+  if (values.code) {payload.code = values.code;}
+  if (values.name) {payload.name = values.name;}
   if (values.permissionCodes) {
     payload.permissionCodes = String(values.permissionCodes)
       .split(',')

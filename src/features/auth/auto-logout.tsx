@@ -19,7 +19,7 @@ export function AutoLogout({ children }: { children: React.ReactNode }) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const resetTimer = () => {
-    if (timerRef.current) clearTimeout(timerRef.current);
+    if (timerRef.current) {clearTimeout(timerRef.current);}
     timerRef.current = setTimeout(() => {
       const currentPath = location.href;
       useAuthStore.getState().logout();
@@ -35,7 +35,7 @@ export function AutoLogout({ children }: { children: React.ReactNode }) {
     }
 
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      if (timerRef.current) {clearTimeout(timerRef.current);}
       for (const event of ACTIVITY_EVENTS) {
         window.removeEventListener(event, resetTimer);
       }

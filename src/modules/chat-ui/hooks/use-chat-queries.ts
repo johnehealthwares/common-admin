@@ -96,13 +96,13 @@ export function useSendConversationMessage() {
       return { queryKey, optimisticId: optimisticMessage.id };
     },
     onError: (_error, _input, context) => {
-      if (!context) return;
+      if (!context) {return;}
 
       queryClient.setQueryData<{
         pages: ExchangeMessagesResponse[];
         pageParams: Array<string | undefined>;
       }>(context.queryKey, (current) => {
-        if (!current) return current;
+        if (!current) {return current;}
 
         return {
           ...current,
@@ -122,7 +122,7 @@ export function useSendConversationMessage() {
         pages: ExchangeMessagesResponse[];
         pageParams: Array<string | undefined>;
       }>(chatKeys.messages(input.conversationId), (current) => {
-        if (!current) return current;
+        if (!current) {return current;}
 
         return {
           ...current,

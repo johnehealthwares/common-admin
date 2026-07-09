@@ -1,6 +1,7 @@
 import {
   AudioWaveform,
   Boxes,
+  Brain,
   ChartColumn,
   CircleDashed,
   MessageSquare,
@@ -38,7 +39,6 @@ import {
   Braces,
   Building2,
 } from 'lucide-react';
-import { lisResources } from '@/features/lis/schema/resources';
 import type { ModuleId } from '@/features/shared/module-data';
 import { NavItem, type SidebarData } from '../types';
 
@@ -255,6 +255,12 @@ export const sidebarData: SidebarData = {
       icon: Receipt,
       items: [
         {
+          title: 'Chart of Accounts',
+          url: '/rxsoft/gl-accounts',
+          icon: BookOpen,
+          modules: ['rxsoft', 'admin'],
+        },
+        {
           title: 'Journals',
           url: '/rxsoft/journals',
           icon: NotebookPen,
@@ -270,6 +276,24 @@ export const sidebarData: SidebarData = {
           title: 'Journal Entry Lines',
           url: '/rxsoft/journal-entry-lines',
           icon: NotebookPen,
+          modules: ['rxsoft', 'admin'],
+        },
+        {
+          title: 'Trial Balance',
+          url: '/rxsoft/reports/trial-balance',
+          icon: Scale,
+          modules: ['rxsoft', 'admin'],
+        },
+        {
+          title: 'Balance Sheet',
+          url: '/rxsoft/reports/balance-sheet',
+          icon: FileText,
+          modules: ['rxsoft', 'admin'],
+        },
+        {
+          title: 'Income Statement',
+          url: '/rxsoft/reports/income-statement',
+          icon: ChartColumn,
           modules: ['rxsoft', 'admin'],
         },
       ],
@@ -339,12 +363,6 @@ export const sidebarData: SidebarData = {
           modules: ['conversation', 'admin'],
         },
         {
-          title: 'Chats',
-          url: '/conversation/chats',
-          icon: MessageSquare,
-          modules: ['conversation', 'admin'],
-        },
-        {
           title: 'Participants',
           url: '/conversation/participants',
           icon: ContactRound,
@@ -356,6 +374,53 @@ export const sidebarData: SidebarData = {
           icon: CircleDashed,
           modules: ['conversation', 'admin'],
         },
+        {
+          title: 'Exchanges',
+          url: '/conversation/exchanges',
+          icon: FileText,
+          modules: ['conversation', 'admin'],
+        },
+        {
+          title: 'Broadcasts',
+          url: '/conversation/broadcasts',
+          icon: FileText,
+          modules: ['conversation', 'admin'],
+        },
+      ],
+    },
+    {
+      title: 'Chat',
+      icon: MessageSquare,
+      items: [
+        {
+          title: 'Chats',
+          url: '/conversation/chats',
+          icon: MessageSquare,
+          modules: ['conversation', 'admin'],
+        },
+      ],
+    },
+    {
+      title: 'Channels',
+      icon: Radio,
+      items: [
+        {
+          title: 'Channels',
+          url: '/conversation/channels',
+          icon: Radio,
+          modules: ['conversation', 'admin'],
+        },
+      ],
+    },
+    {
+      title: 'AI',
+      icon: Brain,
+      items: [],
+    },
+    {
+      title: 'Workflow',
+      icon: Workflow,
+      items: [
         {
           title: 'Workflows',
           url: '/conversation/workflows',
@@ -379,61 +444,6 @@ export const sidebarData: SidebarData = {
           url: '/conversation/workflow-events',
           icon: Waypoints,
           modules: ['conversation', 'admin'],
-        },
-        {
-          title: 'Channels',
-          url: '/conversation/channels',
-          icon: Radio,
-          modules: ['conversation', 'admin'],
-        },
-        {
-          title: 'Exchanges',
-          url: '/conversation/exchanges',
-          icon: FileText,
-          modules: ['conversation', 'admin'],
-        },
-
-        {
-          title: 'Messages',
-          url: '/communication/messages',
-          icon: MessageSquare,
-          modules: ['communication', 'admin'],
-        },
-        {
-          title: 'Notifications',
-          url: '/communication/notifications',
-          icon: MessageSquare,
-          modules: ['communication', 'admin'],
-        },
-        {
-          title: 'Broadcasts',
-          url: '/communication/broadcasts',
-          icon: Radio,
-          modules: ['communication', 'admin'],
-        },
-        {
-          title: 'Message Templates',
-          url: '/communication/message-templates',
-          icon: FileText,
-          modules: ['communication', 'admin'],
-        },
-        {
-          title: 'Notification Templates',
-          url: '/communication/notification-templates',
-          icon: FileText,
-          modules: ['communication', 'admin'],
-        },
-        {
-          title: 'Communication Channels',
-          url: '/communication/communication-channels',
-          icon: Radio,
-          modules: ['communication', 'admin'],
-        },
-        {
-          title: 'Message Logs',
-          url: '/communication/message-logs',
-          icon: FileText,
-          modules: ['communication', 'admin'],
         },
       ],
     },
@@ -583,14 +593,65 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: 'LIS',
-      icon: Microscope,
-      items: lisResources.map((lisResource) => ({
-        title: lisResource.title,
-        url: '/lis/' + lisResource.key,
-        icon: Microscope,
-        modules: ['lis', 'admin'],
-      })),
+      title: 'Tests',
+      icon: Scale,
+      items: [
+        { title: 'Test Definitions', url: '/lis/test-definitions', icon: Scale, modules: ['lis', 'admin'] },
+        { title: 'Reference Ranges', url: '/lis/reference-ranges', icon: Scale, modules: ['lis', 'admin'] },
+        { title: 'Test Categories', url: '/lis/test-categories', icon: Scale, modules: ['lis', 'admin'] },
+        { title: 'Test Sections', url: '/lis/test-sections', icon: Scale, modules: ['lis', 'admin'] },
+        { title: 'Methods', url: '/lis/methods', icon: Scale, modules: ['lis', 'admin'] },
+        { title: 'Panels', url: '/lis/panels', icon: Scale, modules: ['lis', 'admin'] },
+        { title: 'UOMs', url: '/lis/uoms', icon: Scale, modules: ['lis', 'admin'] },
+        { title: 'LOINC', url: '/lis/loinc', icon: Scale, modules: ['lis', 'admin'] },
+      ],
+    },
+    {
+      title: 'Orders',
+      icon: FileText,
+      items: [
+        { title: 'Orders', url: '/lis/orders', icon: FileText, modules: ['lis', 'admin'] },
+        { title: 'Patients', url: '/lis/patients', icon: FileText, modules: ['lis', 'admin'] },
+        { title: 'Priorities', url: '/lis/priorities', icon: FileText, modules: ['lis', 'admin'] },
+        { title: 'Programs', url: '/lis/programs', icon: FileText, modules: ['lis', 'admin'] },
+      ],
+    },
+    {
+      title: 'Results',
+      icon: NotebookPen,
+      items: [
+        { title: 'Results', url: '/lis/results', icon: NotebookPen, modules: ['lis', 'admin'] },
+        { title: 'Result Signatures', url: '/lis/result-signatures', icon: NotebookPen, modules: ['lis', 'admin'] },
+        { title: 'Validation Dashboard', url: '/lis/validation-dashboard', icon: NotebookPen, modules: ['lis', 'admin'] },
+      ],
+    },
+    {
+      title: 'Samples',
+      icon: Boxes,
+      items: [
+        { title: 'Samples', url: '/lis/samples', icon: Boxes, modules: ['lis', 'admin'] },
+        { title: 'Sample Types', url: '/lis/sample-types', icon: Boxes, modules: ['lis', 'admin'] },
+        { title: 'Locations', url: '/lis/locations', icon: Boxes, modules: ['lis', 'admin'] },
+        { title: 'Location Types', url: '/lis/location-types', icon: Boxes, modules: ['lis', 'admin'] },
+        { title: 'Rejection Reasons', url: '/lis/rejection-reasons', icon: Boxes, modules: ['lis', 'admin'] },
+      ],
+    },
+    {
+      title: 'Quality Control',
+      icon: ChartColumn,
+      items: [
+        { title: 'QC Lots', url: '/lis/qc-lots', icon: ChartColumn, modules: ['lis', 'admin'] },
+        { title: 'QC Results', url: '/lis/qc-results', icon: ChartColumn, modules: ['lis', 'admin'] },
+        { title: 'QC Alerts', url: '/lis/qc-alerts', icon: ChartColumn, modules: ['lis', 'admin'] },
+      ],
+    },
+    {
+      title: 'Configuration',
+      icon: Cog,
+      items: [
+        { title: 'Statuses', url: '/lis/statuses', icon: Cog, modules: ['lis', 'admin'] },
+        { title: 'Attribute Definitions', url: '/lis/attribute-definitions', icon: Cog, modules: ['lis', 'admin'] },
+      ],
     },
   ],
 };

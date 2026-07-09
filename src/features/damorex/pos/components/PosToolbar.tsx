@@ -61,7 +61,7 @@ export function PosToolbar({
           data={customerData}
           value={session.customerId || null}
           onChange={(value, option) => {
-            if (value) onCustomerChange(value, option.label);
+            if (value) {onCustomerChange(value, option.label);}
           }}
           onSearchChange={setCustomerSearch}
           searchable
@@ -84,7 +84,7 @@ export function PosToolbar({
           data={priceListData}
           value={session.priceListId || null}
           onChange={(value, option) => {
-            if (value) onPriceListChange(value, option.label);
+            if (value) {onPriceListChange(value, option.label);}
           }}
           onSearchChange={setPriceListSearch}
           searchable
@@ -103,7 +103,7 @@ export function PosToolbar({
           data={saleData}
           onSearchChange={setSaleSearch}
           onChange={(value) => {
-            if (value) onLoadSale(value);
+            if (value) {onLoadSale(value);}
           }}
           searchable
           clearable

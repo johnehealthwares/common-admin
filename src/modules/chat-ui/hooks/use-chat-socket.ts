@@ -19,17 +19,17 @@ export function useChatSocket(input: { conversationId?: string; participantId?: 
     const onConnect = () => setConnected(true);
     const onDisconnect = () => setConnected(false);
     const onMessage = (message: ExchangeMessage) => {
-      if (!message.conversationId) return;
+      if (!message.conversationId) {return;}
 
       queryClient.setQueryData<{
         pages: ExchangeMessagesResponse[];
         pageParams: Array<string | undefined>;
       }>(chatKeys.messages(message.conversationId), (current) => {
-        if (!current) return current;
+        if (!current) {return current;}
         const exists = current.pages.some((page) =>
           page.items.some((item) => item.id === message.id)
         );
-        if (exists) return current;
+        if (exists) {return current;}
 
         const [firstPage, ...restPages] = current.pages;
         return {
@@ -52,7 +52,7 @@ export function useChatSocket(input: { conversationId?: string; participantId?: 
         pages: ConversationInboxResponse[];
         pageParams: Array<string | undefined>;
       }>({ queryKey: ['conversation-inbox'] }, (current) => {
-        if (!current) return current;
+        if (!current) {return current;}
         return {
           ...current,
           pages: current.pages.map((page) => ({
@@ -87,7 +87,7 @@ export function useChatSocket(input: { conversationId?: string; participantId?: 
   }, [queryClient]);
 
   useEffect(() => {
-    if (!input.conversationId || !input.participantId) return;
+    if (!input.conversationId || !input.participantId) {return;}
 
     const socket = getConversationSocket();
     const payload = {

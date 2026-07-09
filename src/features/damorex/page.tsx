@@ -14,6 +14,7 @@ import {
   Loader,
   Paper,
   Rating,
+  ScrollArea,
   SimpleGrid,
   Stack,
   Tabs,
@@ -24,6 +25,7 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from '@tanstack/react-router';
+import productPlaceholder from './sample_images/generic_product_image.png';
 import {
   Baby,
   BadgeCheck,
@@ -59,6 +61,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useChatbotStore } from './website/chatbot-store';
+import { useProducts } from './website/hooks';
 import {
   toHL7Prescription,
   buildWhatsAppUrl,
@@ -262,6 +265,10 @@ export default function DamorexPage() {
   const [phone, setPhone] = useState('');
   const [subscribing, setSubscribing] = useState(false);
   const navigate = useNavigate();
+  const { data: trendingData } = useProducts({ limit: 4 });
+  const { data: catalogData } = useProducts({ limit: 8 });
+  const trendingProducts = trendingData?.data ?? [];
+  const catalogProducts = catalogData?.data ?? [];
 
   return (
     <WebsiteLayout>
@@ -762,6 +769,60 @@ export default function DamorexPage() {
         </Container>
       </Box>
 
+      <Box py={{ base: 40, md: 64 }}>
+        <Container size="xl">
+          <Stack gap="xl">
+            <Group justify="space-between" align="end">
+              <SectionHeading
+                eyebrow="Browse categories"
+                title="Explore by category"
+              />
+              <Button
+                visibleFrom="sm"
+                radius="xl"
+                variant="subtle"
+                color="green"
+                rightSection={<ChevronRight size={16} />}
+                styles={buttonStyles}
+                onClick={() => navigate({ to: '/damorex/categories' })}
+              >
+                View all
+              </Button>
+            </Group>
+            <ScrollArea offsetScrollbars type="never">
+              <Group gap="md" wrap="nowrap" style={{ minWidth: 'max-content', paddingBottom: 8 }}>
+                {categories.map((item) => (
+                  <Paper
+                    key={item.slug}
+                    radius={60}
+                    p={0}
+                    withBorder
+                    style={{
+                      width: 106,
+                      borderColor: line,
+                      cursor: 'pointer',
+                      transition: 'transform 220ms, box-shadow 220ms',
+                    }}
+                    onClick={() =>
+                      navigate({ to: `/damorex/categories/${item.slug}` })
+                    }
+                  >
+                    <Stack align="center" gap={4} py="md" px={6}>
+                      <ThemeIcon radius="xl" size={48} color="green" variant="light">
+                        <item.icon size={22} />
+                      </ThemeIcon>
+                      <Text size="xs" fw={800} ta="center" lh={1.2} style={{ wordBreak: 'break-word' }}>
+                        {item.title}
+                      </Text>
+                    </Stack>
+                  </Paper>
+                ))}
+              </Group>
+            </ScrollArea>
+          </Stack>
+        </Container>
+      </Box>
+
       <Container size="xl" py={{ base: 48, md: 76 }}>
         <Stack gap="xl">
           <Group justify="space-between" align="end">
@@ -894,6 +955,297 @@ export default function DamorexPage() {
                       Chat
                     </Button>
                   </Group>
+                </Stack>
+              </Card>
+            ))}
+          </SimpleGrid>
+        </Stack>
+      </Container>
+
+      <Container size="xl" py={{ base: 48, md: 76 }}>
+        <Stack gap="xl">
+          <Group justify="space-between" align="end">
+            <SectionHeading
+              eyebrow="Trending now"
+              title="Trending products for you!"
+            />
+            <Button
+              visibleFrom="sm"
+              radius="xl"
+              variant="subtle"
+              color="green"
+              rightSection={<ChevronRight size={16} />}
+              styles={buttonStyles}
+              onClick={() => navigate({ to: '/damorex/shop' })}
+            >
+              See All Product
+            </Button>
+          </Group>
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
+            {trendingProducts.length > 0 ? trendingProducts.slice(0, 4).map((product) => (
+              <Card
+                key={product.id}
+                className="lift-card"
+                radius={24}
+                withBorder
+                padding="md"
+                style={{
+                  borderColor: line,
+                  boxShadow: '0 18px 52px rgba(15, 23, 42, 0.06)',
+                }}
+              >
+                <Card.Section
+                  style={{
+                    background: '#F1F8F4',
+                    borderBottom: `1px solid ${line}`,
+                    position: 'relative',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => navigate({ to: `/damorex/shop/${product.id}`, params: { slug: product.id } })}
+                >
+                  <Image
+                    src={product.mediumImageUrl || product.imageUrl || productPlaceholder}
+                    alt={product.name}
+                    h={180}
+                    fit="contain"
+                    p="lg"
+                  />
+                </Card.Section>
+                <Stack mt="md" gap={6}>
+                  {product.category ? (
+                    <Badge radius="xl" color="green" variant="light" size="sm" w="fit-content">
+                      {product.category.name}
+                    </Badge>
+                  ) : null}
+                  <Text fw={900} lh={1.25} lineClamp={2}>
+                    {product.name}
+                  </Text>
+                  <Rating value={5} readOnly size="sm" />
+                  <Button
+                    radius="xl"
+                    color="green"
+                    fullWidth
+                    leftSection={<ShoppingCart size={16} />}
+                    styles={buttonStyles}
+                    style={{ background: green, marginTop: 4 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      useCartStore.getState().addItem(product.id);
+                      notifications.show({
+                        message: 'Added to cart',
+                        color: 'green',
+                        icon: <ShoppingCart size={18} />,
+                      });
+                    }}
+                  >
+                    Add to cart
+                  </Button>
+                </Stack>
+              </Card>
+            )) : Array.from({ length: 4 }).map((_, i) => (
+              <Card key={`trending-skel-${i}`} radius={24} withBorder padding="md" style={{ borderColor: line }}>
+                <Box style={{ background: '#F1F8F4', borderRadius: 16, height: 180 }} />
+                <Stack mt="md" gap={6}>
+                  <Box style={{ height: 12, background: '#E8F0EC', borderRadius: 8, width: '60%' }} />
+                  <Box style={{ height: 16, background: '#E8F0EC', borderRadius: 8, width: '80%' }} />
+                  <Box style={{ height: 12, background: '#E8F0EC', borderRadius: 8, width: '40%' }} />
+                  <Box style={{ height: 36, background: '#E8F0EC', borderRadius: 18, marginTop: 4 }} />
+                </Stack>
+              </Card>
+            ))}
+          </SimpleGrid>
+        </Stack>
+      </Container>
+
+      <Box py={{ base: 48, md: 64 }} style={{ background: soft }}>
+        <Container size="xl">
+          <Grid gutter="xl" align="stretch">
+            <Grid.Col span={{ base: 12, lg: 8 }}>
+              <Paper
+                radius={28}
+                p={{ base: 'lg', md: 'xl' }}
+                style={{
+                  background: 'linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%)',
+                  minHeight: 280,
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                <Stack gap="md" style={{ position: 'relative', zIndex: 1 }}>
+                  <Badge radius="xl" color="blue" variant="filled" size="lg" w="fit-content">
+                    Limited time offer
+                  </Badge>
+                  <Title order={3} className="damorex-heading" style={{ color: ink, letterSpacing: '-0.03em', maxWidth: 360 }}>
+                    Get 20% Off Your First Order
+                  </Title>
+                  <Text c={ink} lh={1.7} maw={400}>
+                    Use code <Text span fw={900}>WELCOME20</Text> at checkout. Valid for new customers on orders above ₦5,000.
+                  </Text>
+                  <PrimaryButton
+                    leftSection={<ShoppingCart size={18} />}
+                    onClick={() => navigate({ to: '/damorex/shop' })}
+                  >
+                    Shop Now
+                  </PrimaryButton>
+                </Stack>
+                <Box
+                  style={{
+                    position: 'absolute',
+                    right: -40,
+                    top: -40,
+                    width: 240,
+                    height: 240,
+                    borderRadius: '50%',
+                    background: 'rgba(14, 165, 233, 0.10)',
+                  }}
+                />
+                <Box
+                  style={{
+                    position: 'absolute',
+                    right: 40,
+                    bottom: -30,
+                    width: 160,
+                    height: 160,
+                    borderRadius: '50%',
+                    background: 'rgba(14, 165, 233, 0.08)',
+                  }}
+                />
+              </Paper>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 4 }}>
+              <Stack gap="md">
+                <Paper
+                  radius={24}
+                  p="lg"
+                  style={{
+                    background: darkGreen,
+                    color: '#fff',
+                    minHeight: 126,
+                  }}
+                >
+                  <Group gap="sm" wrap="nowrap" h="100%">
+                    <ThemeIcon radius="xl" size={44} style={{ background: 'rgba(255,255,255,0.15)' }}>
+                      <Truck size={22} />
+                    </ThemeIcon>
+                    <Box>
+                      <Text fw={900} size="lg">Free Delivery</Text>
+                      <Text size="sm" c="rgba(255,255,255,0.82)" lh={1.5}>
+                        On orders over ₦10,000 within Lagos
+                      </Text>
+                    </Box>
+                  </Group>
+                </Paper>
+                <Paper
+                  radius={24}
+                  p="lg"
+                  withBorder
+                  style={{ borderColor: line, minHeight: 126 }}
+                >
+                  <Group gap="sm" wrap="nowrap" h="100%">
+                    <ThemeIcon radius="xl" size={44} color="green" variant="light">
+                      <ShieldCheck size={22} />
+                    </ThemeIcon>
+                    <Box>
+                      <Text fw={900} size="lg">Pharmacist Support</Text>
+                      <Text size="sm" c={muted} lh={1.5}>
+                        Free consultation with every order
+                      </Text>
+                    </Box>
+                  </Group>
+                </Paper>
+              </Stack>
+            </Grid.Col>
+          </Grid>
+        </Container>
+      </Box>
+
+      <Container size="xl" py={{ base: 48, md: 76 }}>
+        <Stack gap="xl">
+          <Group justify="space-between" align="end">
+            <SectionHeading
+              eyebrow="Product catalog"
+              title="Browse our full range"
+              text="Explore medicines, supplements, wellness products and more from Damorex."
+            />
+            <Button
+              visibleFrom="sm"
+              radius="xl"
+              variant="subtle"
+              color="green"
+              rightSection={<ChevronRight size={16} />}
+              styles={buttonStyles}
+              onClick={() => navigate({ to: '/damorex/shop' })}
+            >
+              View all products
+            </Button>
+          </Group>
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
+            {catalogProducts.length > 0 ? catalogProducts.slice(0, 8).map((product) => (
+              <Card
+                key={product.id}
+                className="lift-card"
+                radius={24}
+                withBorder
+                padding="md"
+                style={{
+                  borderColor: line,
+                  boxShadow: '0 18px 52px rgba(15, 23, 42, 0.06)',
+                  cursor: 'pointer',
+                }}
+                onClick={() => navigate({ to: `/damorex/shop/${product.id}`, params: { slug: product.id } })}
+              >
+                <Card.Section
+                  style={{
+                    background: '#F1F8F4',
+                    borderBottom: `1px solid ${line}`,
+                    position: 'relative',
+                  }}
+                >
+                  <Image src={product.mediumImageUrl || product.imageUrl || productPlaceholder} alt={product.name} h={170} fit="contain" p="lg" />
+                </Card.Section>
+                <Stack mt="md" gap={4}>
+                  {product.category ? (
+                    <Badge radius="xl" color="green" variant="light" size="sm" w="fit-content">
+                      {product.category.name}
+                    </Badge>
+                  ) : null}
+                  <Text fw={900} lh={1.25} lineClamp={2}>
+                    {product.name}
+                  </Text>
+                  {product.genericProduct ? (
+                    <Text size="sm" c={muted} lineClamp={1}>
+                      {product.genericProduct.name}
+                    </Text>
+                  ) : null}
+                  <Button
+                    radius="xl"
+                    color="green"
+                    fullWidth
+                    leftSection={<ShoppingCart size={16} />}
+                    styles={buttonStyles}
+                    style={{ background: green, marginTop: 6 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      useCartStore.getState().addItem(product.id);
+                      notifications.show({
+                        message: 'Added to cart',
+                        color: 'green',
+                        icon: <ShoppingCart size={18} />,
+                      });
+                    }}
+                  >
+                    Add to cart
+                  </Button>
+                </Stack>
+              </Card>
+            )) : Array.from({ length: 8 }).map((_, i) => (
+              <Card key={`catalog-skel-${i}`} radius={24} withBorder padding="md" style={{ borderColor: line }}>
+                <Box style={{ background: '#F1F8F4', borderRadius: 16, height: 170 }} />
+                <Stack mt="md" gap={4}>
+                  <Box style={{ height: 10, background: '#E8F0EC', borderRadius: 8, width: '50%' }} />
+                  <Box style={{ height: 14, background: '#E8F0EC', borderRadius: 8, width: '70%' }} />
+                  <Box style={{ height: 10, background: '#E8F0EC', borderRadius: 8, width: '40%' }} />
+                  <Box style={{ height: 36, background: '#E8F0EC', borderRadius: 18, marginTop: 6 }} />
                 </Stack>
               </Card>
             ))}
@@ -1036,6 +1388,77 @@ export default function DamorexPage() {
           </SimpleGrid>
         </Stack>
       </Container>
+
+      <Box py={{ base: 48, md: 76 }} style={{ background: '#0F172A', color: '#fff' }}>
+        <Container size="xl">
+          <Grid gutter={48} align="center">
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <Stack gap="lg">
+                <Badge radius="xl" color="green" variant="filled" size="lg" w="fit-content">
+                  About Damorex
+                </Badge>
+                <Title order={2} className="damorex-heading" style={{ color: '#fff', letterSpacing: '-0.03em' }}>
+                  Your Trusted Partner in Healthcare
+                </Title>
+                <Text c="rgba(255,255,255,0.76)" lh={1.7}>
+                  Damorex Pharmacy is a licensed online pharmacy dedicated to providing safe, authentic, and affordable
+                  medicines across Nigeria. With a network of branches and a team of licensed pharmacists, we ensure you
+                  receive the right care, every time.
+                </Text>
+                <Group gap={8}>
+                  {[
+                    { label: 'Licensed by PCN', icon: BadgeCheck },
+                    { label: '500+ Quality Medicines', icon: Pill },
+                    { label: 'Same-Day Delivery', icon: Truck },
+                    { label: '24/7 Pharmacist Support', icon: MessageCircle },
+                  ].map((item) => (
+                    <Badge
+                      key={item.label}
+                      radius="xl"
+                      color="gray"
+                      variant="outline"
+                      size="lg"
+                      leftSection={<item.icon size={14} />}
+                      style={{ borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.88)' }}
+                    >
+                      {item.label}
+                    </Badge>
+                  ))}
+                </Group>
+              </Stack>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <SimpleGrid cols={2} spacing="md">
+                {[
+                  { value: '10+', label: 'Years of Trust' },
+                  { value: '50K+', label: 'Happy Customers' },
+                  { value: '2,500+', label: 'Quality Medicines' },
+                  { value: '1K+', label: 'Daily Orders' },
+                ].map((stat) => (
+                  <Paper
+                    key={stat.label}
+                    radius={24}
+                    p="xl"
+                    style={{
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.10)',
+                    }}
+                  >
+                    <Stack align="center" gap={4}>
+                      <Text fw={950} size="xxxl" style={{ color: green, fontSize: 42, lineHeight: 1 }}>
+                        {stat.value}
+                      </Text>
+                      <Text c="rgba(255,255,255,0.76)" ta="center" fw={700}>
+                        {stat.label}
+                      </Text>
+                    </Stack>
+                  </Paper>
+                ))}
+              </SimpleGrid>
+            </Grid.Col>
+          </Grid>
+        </Container>
+      </Box>
 
       <Box py={{ base: 48, md: 76 }} style={{ background: '#F0F9F5' }}>
         <Container size="xl">
@@ -1321,7 +1744,7 @@ export default function DamorexPage() {
                   style={{ background: green }}
                   disabled={subscribing}
                   onClick={async () => {
-                    if (!email && !phone) return;
+                    if (!email && !phone) {return;}
                     setSubscribing(true);
                     try {
                       await websiteApi.subscribe({ email, phone: phone || undefined });

@@ -46,7 +46,7 @@ export const soft = '#F7FBF9';
 export const blue = '#0EA5E9';
 
 const navItems = [
-  { label: 'Home', path: '/' },
+  { label: 'Home', path: '/damorex' },
   { label: 'Shop Medicines', path: '/damorex/shop' },
   { label: 'Categories', path: '/damorex/categories' },
   { label: 'Health Concerns', path: '/damorex/health-concerns' },
@@ -134,7 +134,7 @@ export function WebsiteHeader() {
                 gap={10}
                 wrap="nowrap"
                 style={{ cursor: 'pointer' }}
-                onClick={() => navigate({ to: '/' })}
+                onClick={() => navigate({ to: '/damorex' })}
               >
                 <Box
                   style={{
@@ -314,7 +314,7 @@ export function WebsiteFooter() {
                 gap={10}
                 wrap="nowrap"
                 style={{ cursor: 'pointer' }}
-                onClick={() => navigate({ to: '/' })}
+                onClick={() => navigate({ to: '/damorex' })}
               >
                 <Box
                   style={{
@@ -378,24 +378,24 @@ export function WebsiteFooter() {
                     onClick={() => {
                       const path = link.toLowerCase().replace(/\s+/g, '-');
                       if (path === 'prescription-upload')
-                        navigate({ to: '/damorex/upload-prescription' });
+                        {navigate({ to: '/damorex/upload-prescription' });}
                       else if (path === 'consult-pharmacist')
-                        navigate({ to: '/damorex/consult-pharmacist' });
-                      else if (path === 'delivery') navigate({ to: '/damorex/delivery-areas' });
-                      else if (path === 'contact') navigate({ to: '/damorex/contact' });
-                      else if (path === 'about-us') navigate({ to: '/damorex/about' });
-                      else if (path === 'faqs') navigate({ to: '/damorex/faq' });
+                        {navigate({ to: '/damorex/consult-pharmacist' });}
+                      else if (path === 'delivery') {navigate({ to: '/damorex/delivery-areas' });}
+                      else if (path === 'contact') {navigate({ to: '/damorex/contact' });}
+                      else if (path === 'about-us') {navigate({ to: '/damorex/about' });}
+                      else if (path === 'faqs') {navigate({ to: '/damorex/faq' });}
                       else if (path === 'privacy-policy')
-                        navigate({ to: '/damorex/privacy-policy' });
-                      else if (path === 'terms') navigate({ to: '/damorex/terms' });
-                      else if (path === 'careers') navigate({ to: '/damorex/about' });
+                        {navigate({ to: '/damorex/privacy-policy' });}
+                      else if (path === 'terms') {navigate({ to: '/damorex/terms' });}
+                      else if (path === 'careers') {navigate({ to: '/damorex/about' });}
                       else if (
                         link === 'Medicines' ||
                         link === 'Supplements' ||
                         link === 'Wellness'
                       )
-                        navigate({ to: '/damorex/shop' });
-                      else navigate({ to: '/' });
+                        {navigate({ to: '/damorex/shop' });}
+                      else {navigate({ to: '/damorex' });}
                     }}
                     c="rgba(255,255,255,0.68)"
                     underline="never"

@@ -31,7 +31,7 @@ export function ImageUploader({
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {return;}
 
     setUploading(true);
     try {
@@ -43,13 +43,13 @@ export function ImageUploader({
       // upload failed
     } finally {
       setUploading(false);
-      if (inputRef.current) inputRef.current.value = '';
+      if (inputRef.current) {inputRef.current.value = '';}
     }
   };
 
   const handleRemove = () => {
     onChange('');
-    if (inputRef.current) inputRef.current.value = '';
+    if (inputRef.current) {inputRef.current.value = '';}
   };
 
   return (

@@ -93,7 +93,6 @@ import { Route as ApmAdminConversionRouteImport } from './routes/apm/admin/conve
 import { Route as ApmAdminContentRouteImport } from './routes/apm/admin/content'
 import { Route as ApmAdminCanvassingRouteImport } from './routes/apm/admin/canvassing'
 import { Route as ApmAdminAgentsRouteImport } from './routes/apm/admin/agents'
-import { Route as AuthenticatedLisResourceKeyRouteImport } from './routes/_authenticated/lis/$resourceKey'
 import { Route as AuthenticatedCommunicationTraceExplorerRouteImport } from './routes/_authenticated/communication/trace-explorer'
 import { Route as AuthenticatedCommunicationMessageTesterRouteImport } from './routes/_authenticated/communication/message-tester'
 import { Route as AuthenticatedCommunicationFlowGraphRouteImport } from './routes/_authenticated/communication/flow-graph'
@@ -104,6 +103,7 @@ import { Route as AuthenticatedCodingConceptMatchRouteImport } from './routes/_a
 import { Route as AuthenticatedPageCreateRouteImport } from './routes/_authenticated/$page/create'
 import { Route as AuthenticatedPageIdRouteImport } from './routes/_authenticated/$page/$id'
 import { Route as AuthenticatedRxsoftSettingsRouteRouteImport } from './routes/_authenticated/rxsoft/settings/route'
+import { Route as AuthenticatedConversationBroadcastsRouteRouteImport } from './routes/_authenticated/conversation/broadcasts/route'
 import { Route as AuthenticatedCommunicationRoutingRouteRouteImport } from './routes/_authenticated/communication/routing/route'
 import { Route as AuthenticatedCommunicationNotificationsRouteRouteImport } from './routes/_authenticated/communication/notifications/route'
 import { Route as AuthenticatedCommunicationNotificationTemplatesRouteRouteImport } from './routes/_authenticated/communication/notification-templates/route'
@@ -112,7 +112,6 @@ import { Route as AuthenticatedCommunicationMessageTemplatesRouteRouteImport } f
 import { Route as AuthenticatedCommunicationMessageLogsRouteRouteImport } from './routes/_authenticated/communication/message-logs/route'
 import { Route as AuthenticatedCommunicationMappingRouteRouteImport } from './routes/_authenticated/communication/mapping/route'
 import { Route as AuthenticatedCommunicationCommunicationChannelsRouteRouteImport } from './routes/_authenticated/communication/communication-channels/route'
-import { Route as AuthenticatedCommunicationBroadcastsRouteRouteImport } from './routes/_authenticated/communication/broadcasts/route'
 import { Route as AuthenticatedCommunicationAesRouteRouteImport } from './routes/_authenticated/communication/aes/route'
 import { Route as AuthenticatedRxsoftWebsiteOrdersIndexRouteImport } from './routes/_authenticated/rxsoft/website-orders/index'
 import { Route as AuthenticatedRxsoftWarehousesIndexRouteImport } from './routes/_authenticated/rxsoft/warehouses/index'
@@ -139,18 +138,45 @@ import { Route as AuthenticatedRxsoftJournalEntryLinesIndexRouteImport } from '.
 import { Route as AuthenticatedRxsoftJournalEntriesIndexRouteImport } from './routes/_authenticated/rxsoft/journal-entries/index'
 import { Route as AuthenticatedRxsoftItemsIndexRouteImport } from './routes/_authenticated/rxsoft/items/index'
 import { Route as AuthenticatedRxsoftInventoryIndexRouteImport } from './routes/_authenticated/rxsoft/inventory/index'
+import { Route as AuthenticatedRxsoftGlAccountsIndexRouteImport } from './routes/_authenticated/rxsoft/gl-accounts/index'
 import { Route as AuthenticatedRxsoftDrugComponentsIndexRouteImport } from './routes/_authenticated/rxsoft/drug-components/index'
 import { Route as AuthenticatedRxsoftDashboardIndexRouteImport } from './routes/_authenticated/rxsoft/dashboard/index'
 import { Route as AuthenticatedRxsoftCustomersIndexRouteImport } from './routes/_authenticated/rxsoft/customers/index'
 import { Route as AuthenticatedRxsoftCategoriesIndexRouteImport } from './routes/_authenticated/rxsoft/categories/index'
 import { Route as AuthenticatedRxsoftBranchesIndexRouteImport } from './routes/_authenticated/rxsoft/branches/index'
 import { Route as AuthenticatedRxsoftAuditLogsIndexRouteImport } from './routes/_authenticated/rxsoft/audit-logs/index'
+import { Route as AuthenticatedLisValidationDashboardIndexRouteImport } from './routes/_authenticated/lis/validation-dashboard/index'
+import { Route as AuthenticatedLisUomsIndexRouteImport } from './routes/_authenticated/lis/uoms/index'
+import { Route as AuthenticatedLisTestSectionsIndexRouteImport } from './routes/_authenticated/lis/test-sections/index'
+import { Route as AuthenticatedLisTestDefinitionsIndexRouteImport } from './routes/_authenticated/lis/test-definitions/index'
+import { Route as AuthenticatedLisTestCategoriesIndexRouteImport } from './routes/_authenticated/lis/test-categories/index'
+import { Route as AuthenticatedLisStatusesIndexRouteImport } from './routes/_authenticated/lis/statuses/index'
+import { Route as AuthenticatedLisSamplesIndexRouteImport } from './routes/_authenticated/lis/samples/index'
+import { Route as AuthenticatedLisSampleTypesIndexRouteImport } from './routes/_authenticated/lis/sample-types/index'
+import { Route as AuthenticatedLisResultsIndexRouteImport } from './routes/_authenticated/lis/results/index'
+import { Route as AuthenticatedLisResultSignaturesIndexRouteImport } from './routes/_authenticated/lis/result-signatures/index'
+import { Route as AuthenticatedLisRejectionReasonsIndexRouteImport } from './routes/_authenticated/lis/rejection-reasons/index'
+import { Route as AuthenticatedLisReferenceRangesIndexRouteImport } from './routes/_authenticated/lis/reference-ranges/index'
+import { Route as AuthenticatedLisQcResultsIndexRouteImport } from './routes/_authenticated/lis/qc-results/index'
+import { Route as AuthenticatedLisQcLotsIndexRouteImport } from './routes/_authenticated/lis/qc-lots/index'
+import { Route as AuthenticatedLisQcAlertsIndexRouteImport } from './routes/_authenticated/lis/qc-alerts/index'
+import { Route as AuthenticatedLisProgramsIndexRouteImport } from './routes/_authenticated/lis/programs/index'
+import { Route as AuthenticatedLisPrioritiesIndexRouteImport } from './routes/_authenticated/lis/priorities/index'
+import { Route as AuthenticatedLisPatientsIndexRouteImport } from './routes/_authenticated/lis/patients/index'
+import { Route as AuthenticatedLisPanelsIndexRouteImport } from './routes/_authenticated/lis/panels/index'
+import { Route as AuthenticatedLisOrdersIndexRouteImport } from './routes/_authenticated/lis/orders/index'
+import { Route as AuthenticatedLisMethodsIndexRouteImport } from './routes/_authenticated/lis/methods/index'
+import { Route as AuthenticatedLisLoincIndexRouteImport } from './routes/_authenticated/lis/loinc/index'
+import { Route as AuthenticatedLisLocationsIndexRouteImport } from './routes/_authenticated/lis/locations/index'
+import { Route as AuthenticatedLisLocationTypesIndexRouteImport } from './routes/_authenticated/lis/location-types/index'
+import { Route as AuthenticatedLisAttributeDefinitionsIndexRouteImport } from './routes/_authenticated/lis/attribute-definitions/index'
 import { Route as AuthenticatedConversationWorkflowsIndexRouteImport } from './routes/_authenticated/conversation/workflows/index'
 import { Route as AuthenticatedConversationWorkflowInstancesIndexRouteImport } from './routes/_authenticated/conversation/workflow-instances/index'
 import { Route as AuthenticatedConversationWorkflowEventsIndexRouteImport } from './routes/_authenticated/conversation/workflow-events/index'
 import { Route as AuthenticatedConversationWorkflowConfigurationIndexRouteImport } from './routes/_authenticated/conversation/workflow-configuration/index'
 import { Route as AuthenticatedConversationQuestionsIndexRouteImport } from './routes/_authenticated/conversation/questions/index'
 import { Route as AuthenticatedConversationQuestionnairesIndexRouteImport } from './routes/_authenticated/conversation/questionnaires/index'
+import { Route as AuthenticatedConversationProjectionsIndexRouteImport } from './routes/_authenticated/conversation/projections/index'
 import { Route as AuthenticatedConversationParticipantsIndexRouteImport } from './routes/_authenticated/conversation/participants/index'
 import { Route as AuthenticatedConversationExchangesIndexRouteImport } from './routes/_authenticated/conversation/exchanges/index'
 import { Route as AuthenticatedConversationChatsIndexRouteImport } from './routes/_authenticated/conversation/chats/index'
@@ -167,14 +193,20 @@ import { Route as AuthenticatedRxsoftSettingsDisplayRouteImport } from './routes
 import { Route as AuthenticatedRxsoftSettingsAppearanceRouteImport } from './routes/_authenticated/rxsoft/settings/appearance'
 import { Route as AuthenticatedRxsoftSettingsAccountRouteImport } from './routes/_authenticated/rxsoft/settings/account'
 import { Route as AuthenticatedRxsoftItemsCreateRouteImport } from './routes/_authenticated/rxsoft/items/create'
+import { Route as AuthenticatedConversationConversationIdEditRouteImport } from './routes/_authenticated/conversation/$conversationId/edit'
+import { Route as AuthenticatedPageIdEditRouteImport } from './routes/_authenticated/$page/$id/edit'
 import { Route as AuthenticatedModuleIdPageCreateRouteImport } from './routes/_authenticated/$moduleId/$page/create'
 import { Route as AuthenticatedModuleIdPageIdRouteImport } from './routes/_authenticated/$moduleId/$page/$id'
+import { Route as AuthenticatedRxsoftReportsTrialBalanceIndexRouteImport } from './routes/_authenticated/rxsoft/reports/trial-balance/index'
+import { Route as AuthenticatedRxsoftReportsIncomeStatementIndexRouteImport } from './routes/_authenticated/rxsoft/reports/income-statement/index'
+import { Route as AuthenticatedRxsoftReportsBalanceSheetIndexRouteImport } from './routes/_authenticated/rxsoft/reports/balance-sheet/index'
 import { Route as AuthenticatedCodingConceptFacilitiesWardsIndexRouteImport } from './routes/_authenticated/coding-concept/facilities/wards/index'
 import { Route as AuthenticatedCodingConceptFacilitiesTypesIndexRouteImport } from './routes/_authenticated/coding-concept/facilities/types/index'
 import { Route as AuthenticatedCodingConceptFacilitiesStatesIndexRouteImport } from './routes/_authenticated/coding-concept/facilities/states/index'
 import { Route as AuthenticatedCodingConceptFacilitiesLgasIndexRouteImport } from './routes/_authenticated/coding-concept/facilities/lgas/index'
 import { Route as AuthenticatedCodingConceptFacilitiesLevelsIndexRouteImport } from './routes/_authenticated/coding-concept/facilities/levels/index'
 import { Route as AuthenticatedRxsoftUomsUomIdEditRouteImport } from './routes/_authenticated/rxsoft/uoms/$uomId/edit'
+import { Route as AuthenticatedConversationPageIdEditRouteImport } from './routes/_authenticated/conversation/$page/$id/edit'
 import { Route as AuthenticatedRxsoftRolesIdPermissionsIndexRouteImport } from './routes/_authenticated/rxsoft/roles/$id/permissions/index'
 
 const ClerkRouteRoute = ClerkRouteRouteImport.update({
@@ -602,12 +634,6 @@ const ApmAdminAgentsRoute = ApmAdminAgentsRouteImport.update({
   path: '/agents',
   getParentRoute: () => ApmAdminRouteRoute,
 } as any)
-const AuthenticatedLisResourceKeyRoute =
-  AuthenticatedLisResourceKeyRouteImport.update({
-    id: '/lis/$resourceKey',
-    path: '/lis/$resourceKey',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedCommunicationTraceExplorerRoute =
   AuthenticatedCommunicationTraceExplorerRouteImport.update({
     id: '/communication/trace-explorer',
@@ -666,6 +692,12 @@ const AuthenticatedRxsoftSettingsRouteRoute =
     path: '/rxsoft/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedConversationBroadcastsRouteRoute =
+  AuthenticatedConversationBroadcastsRouteRouteImport.update({
+    id: '/conversation/broadcasts',
+    path: '/conversation/broadcasts',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCommunicationRoutingRouteRoute =
   AuthenticatedCommunicationRoutingRouteRouteImport.update({
     id: '/communication/routing',
@@ -712,12 +744,6 @@ const AuthenticatedCommunicationCommunicationChannelsRouteRoute =
   AuthenticatedCommunicationCommunicationChannelsRouteRouteImport.update({
     id: '/communication/communication-channels',
     path: '/communication/communication-channels',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedCommunicationBroadcastsRouteRoute =
-  AuthenticatedCommunicationBroadcastsRouteRouteImport.update({
-    id: '/communication/broadcasts',
-    path: '/communication/broadcasts',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCommunicationAesRouteRoute =
@@ -876,6 +902,12 @@ const AuthenticatedRxsoftInventoryIndexRoute =
     path: '/rxsoft/inventory/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedRxsoftGlAccountsIndexRoute =
+  AuthenticatedRxsoftGlAccountsIndexRouteImport.update({
+    id: '/rxsoft/gl-accounts/',
+    path: '/rxsoft/gl-accounts/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedRxsoftDrugComponentsIndexRoute =
   AuthenticatedRxsoftDrugComponentsIndexRouteImport.update({
     id: '/rxsoft/drug-components/',
@@ -912,6 +944,156 @@ const AuthenticatedRxsoftAuditLogsIndexRoute =
     path: '/rxsoft/audit-logs/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedLisValidationDashboardIndexRoute =
+  AuthenticatedLisValidationDashboardIndexRouteImport.update({
+    id: '/lis/validation-dashboard/',
+    path: '/lis/validation-dashboard/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisUomsIndexRoute =
+  AuthenticatedLisUomsIndexRouteImport.update({
+    id: '/lis/uoms/',
+    path: '/lis/uoms/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisTestSectionsIndexRoute =
+  AuthenticatedLisTestSectionsIndexRouteImport.update({
+    id: '/lis/test-sections/',
+    path: '/lis/test-sections/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisTestDefinitionsIndexRoute =
+  AuthenticatedLisTestDefinitionsIndexRouteImport.update({
+    id: '/lis/test-definitions/',
+    path: '/lis/test-definitions/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisTestCategoriesIndexRoute =
+  AuthenticatedLisTestCategoriesIndexRouteImport.update({
+    id: '/lis/test-categories/',
+    path: '/lis/test-categories/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisStatusesIndexRoute =
+  AuthenticatedLisStatusesIndexRouteImport.update({
+    id: '/lis/statuses/',
+    path: '/lis/statuses/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisSamplesIndexRoute =
+  AuthenticatedLisSamplesIndexRouteImport.update({
+    id: '/lis/samples/',
+    path: '/lis/samples/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisSampleTypesIndexRoute =
+  AuthenticatedLisSampleTypesIndexRouteImport.update({
+    id: '/lis/sample-types/',
+    path: '/lis/sample-types/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisResultsIndexRoute =
+  AuthenticatedLisResultsIndexRouteImport.update({
+    id: '/lis/results/',
+    path: '/lis/results/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisResultSignaturesIndexRoute =
+  AuthenticatedLisResultSignaturesIndexRouteImport.update({
+    id: '/lis/result-signatures/',
+    path: '/lis/result-signatures/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisRejectionReasonsIndexRoute =
+  AuthenticatedLisRejectionReasonsIndexRouteImport.update({
+    id: '/lis/rejection-reasons/',
+    path: '/lis/rejection-reasons/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisReferenceRangesIndexRoute =
+  AuthenticatedLisReferenceRangesIndexRouteImport.update({
+    id: '/lis/reference-ranges/',
+    path: '/lis/reference-ranges/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisQcResultsIndexRoute =
+  AuthenticatedLisQcResultsIndexRouteImport.update({
+    id: '/lis/qc-results/',
+    path: '/lis/qc-results/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisQcLotsIndexRoute =
+  AuthenticatedLisQcLotsIndexRouteImport.update({
+    id: '/lis/qc-lots/',
+    path: '/lis/qc-lots/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisQcAlertsIndexRoute =
+  AuthenticatedLisQcAlertsIndexRouteImport.update({
+    id: '/lis/qc-alerts/',
+    path: '/lis/qc-alerts/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisProgramsIndexRoute =
+  AuthenticatedLisProgramsIndexRouteImport.update({
+    id: '/lis/programs/',
+    path: '/lis/programs/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisPrioritiesIndexRoute =
+  AuthenticatedLisPrioritiesIndexRouteImport.update({
+    id: '/lis/priorities/',
+    path: '/lis/priorities/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisPatientsIndexRoute =
+  AuthenticatedLisPatientsIndexRouteImport.update({
+    id: '/lis/patients/',
+    path: '/lis/patients/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisPanelsIndexRoute =
+  AuthenticatedLisPanelsIndexRouteImport.update({
+    id: '/lis/panels/',
+    path: '/lis/panels/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisOrdersIndexRoute =
+  AuthenticatedLisOrdersIndexRouteImport.update({
+    id: '/lis/orders/',
+    path: '/lis/orders/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisMethodsIndexRoute =
+  AuthenticatedLisMethodsIndexRouteImport.update({
+    id: '/lis/methods/',
+    path: '/lis/methods/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisLoincIndexRoute =
+  AuthenticatedLisLoincIndexRouteImport.update({
+    id: '/lis/loinc/',
+    path: '/lis/loinc/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisLocationsIndexRoute =
+  AuthenticatedLisLocationsIndexRouteImport.update({
+    id: '/lis/locations/',
+    path: '/lis/locations/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisLocationTypesIndexRoute =
+  AuthenticatedLisLocationTypesIndexRouteImport.update({
+    id: '/lis/location-types/',
+    path: '/lis/location-types/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLisAttributeDefinitionsIndexRoute =
+  AuthenticatedLisAttributeDefinitionsIndexRouteImport.update({
+    id: '/lis/attribute-definitions/',
+    path: '/lis/attribute-definitions/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedConversationWorkflowsIndexRoute =
   AuthenticatedConversationWorkflowsIndexRouteImport.update({
     id: '/conversation/workflows/',
@@ -946,6 +1128,12 @@ const AuthenticatedConversationQuestionnairesIndexRoute =
   AuthenticatedConversationQuestionnairesIndexRouteImport.update({
     id: '/conversation/questionnaires/',
     path: '/conversation/questionnaires/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedConversationProjectionsIndexRoute =
+  AuthenticatedConversationProjectionsIndexRouteImport.update({
+    id: '/conversation/projections/',
+    path: '/conversation/projections/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedConversationParticipantsIndexRoute =
@@ -1043,6 +1231,17 @@ const AuthenticatedRxsoftItemsCreateRoute =
     path: '/rxsoft/items/create',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedConversationConversationIdEditRoute =
+  AuthenticatedConversationConversationIdEditRouteImport.update({
+    id: '/conversation/$conversationId/edit',
+    path: '/conversation/$conversationId/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPageIdEditRoute = AuthenticatedPageIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => AuthenticatedPageIdRoute,
+} as any)
 const AuthenticatedModuleIdPageCreateRoute =
   AuthenticatedModuleIdPageCreateRouteImport.update({
     id: '/$page/create',
@@ -1054,6 +1253,24 @@ const AuthenticatedModuleIdPageIdRoute =
     id: '/$page/$id',
     path: '/$page/$id',
     getParentRoute: () => AuthenticatedModuleIdRoute,
+  } as any)
+const AuthenticatedRxsoftReportsTrialBalanceIndexRoute =
+  AuthenticatedRxsoftReportsTrialBalanceIndexRouteImport.update({
+    id: '/rxsoft/reports/trial-balance/',
+    path: '/rxsoft/reports/trial-balance/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedRxsoftReportsIncomeStatementIndexRoute =
+  AuthenticatedRxsoftReportsIncomeStatementIndexRouteImport.update({
+    id: '/rxsoft/reports/income-statement/',
+    path: '/rxsoft/reports/income-statement/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedRxsoftReportsBalanceSheetIndexRoute =
+  AuthenticatedRxsoftReportsBalanceSheetIndexRouteImport.update({
+    id: '/rxsoft/reports/balance-sheet/',
+    path: '/rxsoft/reports/balance-sheet/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCodingConceptFacilitiesWardsIndexRoute =
   AuthenticatedCodingConceptFacilitiesWardsIndexRouteImport.update({
@@ -1090,6 +1307,12 @@ const AuthenticatedRxsoftUomsUomIdEditRoute =
     id: '/edit',
     path: '/edit',
     getParentRoute: () => AuthenticatedRxsoftUomsUomIdRoute,
+  } as any)
+const AuthenticatedConversationPageIdEditRoute =
+  AuthenticatedConversationPageIdEditRouteImport.update({
+    id: '/conversation/$page/$id/edit',
+    path: '/conversation/$page/$id/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedRxsoftRolesIdPermissionsIndexRoute =
   AuthenticatedRxsoftRolesIdPermissionsIndexRouteImport.update({
@@ -1152,7 +1375,6 @@ export interface FileRoutesByFullPath {
   '/damorex/': typeof DamorexIndexRoute
   '/questionnaire/': typeof QuestionnaireIndexRoute
   '/communication/aes': typeof AuthenticatedCommunicationAesRouteRoute
-  '/communication/broadcasts': typeof AuthenticatedCommunicationBroadcastsRouteRoute
   '/communication/communication-channels': typeof AuthenticatedCommunicationCommunicationChannelsRouteRoute
   '/communication/mapping': typeof AuthenticatedCommunicationMappingRouteRoute
   '/communication/message-logs': typeof AuthenticatedCommunicationMessageLogsRouteRoute
@@ -1161,8 +1383,9 @@ export interface FileRoutesByFullPath {
   '/communication/notification-templates': typeof AuthenticatedCommunicationNotificationTemplatesRouteRoute
   '/communication/notifications': typeof AuthenticatedCommunicationNotificationsRouteRoute
   '/communication/routing': typeof AuthenticatedCommunicationRoutingRouteRoute
+  '/conversation/broadcasts': typeof AuthenticatedConversationBroadcastsRouteRoute
   '/rxsoft/settings': typeof AuthenticatedRxsoftSettingsRouteRouteWithChildren
-  '/$page/$id': typeof AuthenticatedPageIdRoute
+  '/$page/$id': typeof AuthenticatedPageIdRouteWithChildren
   '/$page/create': typeof AuthenticatedPageCreateRoute
   '/coding-concept/match': typeof AuthenticatedCodingConceptMatchRoute
   '/coding-concept/search': typeof AuthenticatedCodingConceptSearchRoute
@@ -1171,7 +1394,6 @@ export interface FileRoutesByFullPath {
   '/communication/flow-graph': typeof AuthenticatedCommunicationFlowGraphRoute
   '/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
-  '/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
   '/apm/admin/agents': typeof ApmAdminAgentsRoute
   '/apm/admin/canvassing': typeof ApmAdminCanvassingRoute
   '/apm/admin/content': typeof ApmAdminContentRoute
@@ -1203,6 +1425,8 @@ export interface FileRoutesByFullPath {
   '/damorex/purchases/': typeof DamorexPurchasesIndexRoute
   '/$moduleId/$page/$id': typeof AuthenticatedModuleIdPageIdRoute
   '/$moduleId/$page/create': typeof AuthenticatedModuleIdPageCreateRoute
+  '/$page/$id/edit': typeof AuthenticatedPageIdEditRoute
+  '/conversation/$conversationId/edit': typeof AuthenticatedConversationConversationIdEditRoute
   '/rxsoft/items/create': typeof AuthenticatedRxsoftItemsCreateRoute
   '/rxsoft/settings/account': typeof AuthenticatedRxsoftSettingsAccountRoute
   '/rxsoft/settings/appearance': typeof AuthenticatedRxsoftSettingsAppearanceRoute
@@ -1219,18 +1443,45 @@ export interface FileRoutesByFullPath {
   '/conversation/chats/': typeof AuthenticatedConversationChatsIndexRoute
   '/conversation/exchanges/': typeof AuthenticatedConversationExchangesIndexRoute
   '/conversation/participants/': typeof AuthenticatedConversationParticipantsIndexRoute
+  '/conversation/projections/': typeof AuthenticatedConversationProjectionsIndexRoute
   '/conversation/questionnaires/': typeof AuthenticatedConversationQuestionnairesIndexRoute
   '/conversation/questions/': typeof AuthenticatedConversationQuestionsIndexRoute
   '/conversation/workflow-configuration/': typeof AuthenticatedConversationWorkflowConfigurationIndexRoute
   '/conversation/workflow-events/': typeof AuthenticatedConversationWorkflowEventsIndexRoute
   '/conversation/workflow-instances/': typeof AuthenticatedConversationWorkflowInstancesIndexRoute
   '/conversation/workflows/': typeof AuthenticatedConversationWorkflowsIndexRoute
+  '/lis/attribute-definitions/': typeof AuthenticatedLisAttributeDefinitionsIndexRoute
+  '/lis/location-types/': typeof AuthenticatedLisLocationTypesIndexRoute
+  '/lis/locations/': typeof AuthenticatedLisLocationsIndexRoute
+  '/lis/loinc/': typeof AuthenticatedLisLoincIndexRoute
+  '/lis/methods/': typeof AuthenticatedLisMethodsIndexRoute
+  '/lis/orders/': typeof AuthenticatedLisOrdersIndexRoute
+  '/lis/panels/': typeof AuthenticatedLisPanelsIndexRoute
+  '/lis/patients/': typeof AuthenticatedLisPatientsIndexRoute
+  '/lis/priorities/': typeof AuthenticatedLisPrioritiesIndexRoute
+  '/lis/programs/': typeof AuthenticatedLisProgramsIndexRoute
+  '/lis/qc-alerts/': typeof AuthenticatedLisQcAlertsIndexRoute
+  '/lis/qc-lots/': typeof AuthenticatedLisQcLotsIndexRoute
+  '/lis/qc-results/': typeof AuthenticatedLisQcResultsIndexRoute
+  '/lis/reference-ranges/': typeof AuthenticatedLisReferenceRangesIndexRoute
+  '/lis/rejection-reasons/': typeof AuthenticatedLisRejectionReasonsIndexRoute
+  '/lis/result-signatures/': typeof AuthenticatedLisResultSignaturesIndexRoute
+  '/lis/results/': typeof AuthenticatedLisResultsIndexRoute
+  '/lis/sample-types/': typeof AuthenticatedLisSampleTypesIndexRoute
+  '/lis/samples/': typeof AuthenticatedLisSamplesIndexRoute
+  '/lis/statuses/': typeof AuthenticatedLisStatusesIndexRoute
+  '/lis/test-categories/': typeof AuthenticatedLisTestCategoriesIndexRoute
+  '/lis/test-definitions/': typeof AuthenticatedLisTestDefinitionsIndexRoute
+  '/lis/test-sections/': typeof AuthenticatedLisTestSectionsIndexRoute
+  '/lis/uoms/': typeof AuthenticatedLisUomsIndexRoute
+  '/lis/validation-dashboard/': typeof AuthenticatedLisValidationDashboardIndexRoute
   '/rxsoft/audit-logs/': typeof AuthenticatedRxsoftAuditLogsIndexRoute
   '/rxsoft/branches/': typeof AuthenticatedRxsoftBranchesIndexRoute
   '/rxsoft/categories/': typeof AuthenticatedRxsoftCategoriesIndexRoute
   '/rxsoft/customers/': typeof AuthenticatedRxsoftCustomersIndexRoute
   '/rxsoft/dashboard/': typeof AuthenticatedRxsoftDashboardIndexRoute
   '/rxsoft/drug-components/': typeof AuthenticatedRxsoftDrugComponentsIndexRoute
+  '/rxsoft/gl-accounts/': typeof AuthenticatedRxsoftGlAccountsIndexRoute
   '/rxsoft/inventory/': typeof AuthenticatedRxsoftInventoryIndexRoute
   '/rxsoft/items/': typeof AuthenticatedRxsoftItemsIndexRoute
   '/rxsoft/journal-entries/': typeof AuthenticatedRxsoftJournalEntriesIndexRoute
@@ -1256,12 +1507,16 @@ export interface FileRoutesByFullPath {
   '/rxsoft/users/': typeof AuthenticatedRxsoftUsersIndexRoute
   '/rxsoft/warehouses/': typeof AuthenticatedRxsoftWarehousesIndexRoute
   '/rxsoft/website-orders/': typeof AuthenticatedRxsoftWebsiteOrdersIndexRoute
+  '/conversation/$page/$id/edit': typeof AuthenticatedConversationPageIdEditRoute
   '/rxsoft/uoms/$uomId/edit': typeof AuthenticatedRxsoftUomsUomIdEditRoute
   '/coding-concept/facilities/levels/': typeof AuthenticatedCodingConceptFacilitiesLevelsIndexRoute
   '/coding-concept/facilities/lgas/': typeof AuthenticatedCodingConceptFacilitiesLgasIndexRoute
   '/coding-concept/facilities/states/': typeof AuthenticatedCodingConceptFacilitiesStatesIndexRoute
   '/coding-concept/facilities/types/': typeof AuthenticatedCodingConceptFacilitiesTypesIndexRoute
   '/coding-concept/facilities/wards/': typeof AuthenticatedCodingConceptFacilitiesWardsIndexRoute
+  '/rxsoft/reports/balance-sheet/': typeof AuthenticatedRxsoftReportsBalanceSheetIndexRoute
+  '/rxsoft/reports/income-statement/': typeof AuthenticatedRxsoftReportsIncomeStatementIndexRoute
+  '/rxsoft/reports/trial-balance/': typeof AuthenticatedRxsoftReportsTrialBalanceIndexRoute
   '/rxsoft/roles/$id/permissions/': typeof AuthenticatedRxsoftRolesIdPermissionsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -1317,7 +1572,6 @@ export interface FileRoutesByTo {
   '/damorex': typeof DamorexIndexRoute
   '/questionnaire': typeof QuestionnaireIndexRoute
   '/communication/aes': typeof AuthenticatedCommunicationAesRouteRoute
-  '/communication/broadcasts': typeof AuthenticatedCommunicationBroadcastsRouteRoute
   '/communication/communication-channels': typeof AuthenticatedCommunicationCommunicationChannelsRouteRoute
   '/communication/mapping': typeof AuthenticatedCommunicationMappingRouteRoute
   '/communication/message-logs': typeof AuthenticatedCommunicationMessageLogsRouteRoute
@@ -1326,7 +1580,8 @@ export interface FileRoutesByTo {
   '/communication/notification-templates': typeof AuthenticatedCommunicationNotificationTemplatesRouteRoute
   '/communication/notifications': typeof AuthenticatedCommunicationNotificationsRouteRoute
   '/communication/routing': typeof AuthenticatedCommunicationRoutingRouteRoute
-  '/$page/$id': typeof AuthenticatedPageIdRoute
+  '/conversation/broadcasts': typeof AuthenticatedConversationBroadcastsRouteRoute
+  '/$page/$id': typeof AuthenticatedPageIdRouteWithChildren
   '/$page/create': typeof AuthenticatedPageCreateRoute
   '/coding-concept/match': typeof AuthenticatedCodingConceptMatchRoute
   '/coding-concept/search': typeof AuthenticatedCodingConceptSearchRoute
@@ -1335,7 +1590,6 @@ export interface FileRoutesByTo {
   '/communication/flow-graph': typeof AuthenticatedCommunicationFlowGraphRoute
   '/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
-  '/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
   '/apm/admin/agents': typeof ApmAdminAgentsRoute
   '/apm/admin/canvassing': typeof ApmAdminCanvassingRoute
   '/apm/admin/content': typeof ApmAdminContentRoute
@@ -1367,6 +1621,8 @@ export interface FileRoutesByTo {
   '/damorex/purchases': typeof DamorexPurchasesIndexRoute
   '/$moduleId/$page/$id': typeof AuthenticatedModuleIdPageIdRoute
   '/$moduleId/$page/create': typeof AuthenticatedModuleIdPageCreateRoute
+  '/$page/$id/edit': typeof AuthenticatedPageIdEditRoute
+  '/conversation/$conversationId/edit': typeof AuthenticatedConversationConversationIdEditRoute
   '/rxsoft/items/create': typeof AuthenticatedRxsoftItemsCreateRoute
   '/rxsoft/settings/account': typeof AuthenticatedRxsoftSettingsAccountRoute
   '/rxsoft/settings/appearance': typeof AuthenticatedRxsoftSettingsAppearanceRoute
@@ -1383,18 +1639,45 @@ export interface FileRoutesByTo {
   '/conversation/chats': typeof AuthenticatedConversationChatsIndexRoute
   '/conversation/exchanges': typeof AuthenticatedConversationExchangesIndexRoute
   '/conversation/participants': typeof AuthenticatedConversationParticipantsIndexRoute
+  '/conversation/projections': typeof AuthenticatedConversationProjectionsIndexRoute
   '/conversation/questionnaires': typeof AuthenticatedConversationQuestionnairesIndexRoute
   '/conversation/questions': typeof AuthenticatedConversationQuestionsIndexRoute
   '/conversation/workflow-configuration': typeof AuthenticatedConversationWorkflowConfigurationIndexRoute
   '/conversation/workflow-events': typeof AuthenticatedConversationWorkflowEventsIndexRoute
   '/conversation/workflow-instances': typeof AuthenticatedConversationWorkflowInstancesIndexRoute
   '/conversation/workflows': typeof AuthenticatedConversationWorkflowsIndexRoute
+  '/lis/attribute-definitions': typeof AuthenticatedLisAttributeDefinitionsIndexRoute
+  '/lis/location-types': typeof AuthenticatedLisLocationTypesIndexRoute
+  '/lis/locations': typeof AuthenticatedLisLocationsIndexRoute
+  '/lis/loinc': typeof AuthenticatedLisLoincIndexRoute
+  '/lis/methods': typeof AuthenticatedLisMethodsIndexRoute
+  '/lis/orders': typeof AuthenticatedLisOrdersIndexRoute
+  '/lis/panels': typeof AuthenticatedLisPanelsIndexRoute
+  '/lis/patients': typeof AuthenticatedLisPatientsIndexRoute
+  '/lis/priorities': typeof AuthenticatedLisPrioritiesIndexRoute
+  '/lis/programs': typeof AuthenticatedLisProgramsIndexRoute
+  '/lis/qc-alerts': typeof AuthenticatedLisQcAlertsIndexRoute
+  '/lis/qc-lots': typeof AuthenticatedLisQcLotsIndexRoute
+  '/lis/qc-results': typeof AuthenticatedLisQcResultsIndexRoute
+  '/lis/reference-ranges': typeof AuthenticatedLisReferenceRangesIndexRoute
+  '/lis/rejection-reasons': typeof AuthenticatedLisRejectionReasonsIndexRoute
+  '/lis/result-signatures': typeof AuthenticatedLisResultSignaturesIndexRoute
+  '/lis/results': typeof AuthenticatedLisResultsIndexRoute
+  '/lis/sample-types': typeof AuthenticatedLisSampleTypesIndexRoute
+  '/lis/samples': typeof AuthenticatedLisSamplesIndexRoute
+  '/lis/statuses': typeof AuthenticatedLisStatusesIndexRoute
+  '/lis/test-categories': typeof AuthenticatedLisTestCategoriesIndexRoute
+  '/lis/test-definitions': typeof AuthenticatedLisTestDefinitionsIndexRoute
+  '/lis/test-sections': typeof AuthenticatedLisTestSectionsIndexRoute
+  '/lis/uoms': typeof AuthenticatedLisUomsIndexRoute
+  '/lis/validation-dashboard': typeof AuthenticatedLisValidationDashboardIndexRoute
   '/rxsoft/audit-logs': typeof AuthenticatedRxsoftAuditLogsIndexRoute
   '/rxsoft/branches': typeof AuthenticatedRxsoftBranchesIndexRoute
   '/rxsoft/categories': typeof AuthenticatedRxsoftCategoriesIndexRoute
   '/rxsoft/customers': typeof AuthenticatedRxsoftCustomersIndexRoute
   '/rxsoft/dashboard': typeof AuthenticatedRxsoftDashboardIndexRoute
   '/rxsoft/drug-components': typeof AuthenticatedRxsoftDrugComponentsIndexRoute
+  '/rxsoft/gl-accounts': typeof AuthenticatedRxsoftGlAccountsIndexRoute
   '/rxsoft/inventory': typeof AuthenticatedRxsoftInventoryIndexRoute
   '/rxsoft/items': typeof AuthenticatedRxsoftItemsIndexRoute
   '/rxsoft/journal-entries': typeof AuthenticatedRxsoftJournalEntriesIndexRoute
@@ -1420,12 +1703,16 @@ export interface FileRoutesByTo {
   '/rxsoft/users': typeof AuthenticatedRxsoftUsersIndexRoute
   '/rxsoft/warehouses': typeof AuthenticatedRxsoftWarehousesIndexRoute
   '/rxsoft/website-orders': typeof AuthenticatedRxsoftWebsiteOrdersIndexRoute
+  '/conversation/$page/$id/edit': typeof AuthenticatedConversationPageIdEditRoute
   '/rxsoft/uoms/$uomId/edit': typeof AuthenticatedRxsoftUomsUomIdEditRoute
   '/coding-concept/facilities/levels': typeof AuthenticatedCodingConceptFacilitiesLevelsIndexRoute
   '/coding-concept/facilities/lgas': typeof AuthenticatedCodingConceptFacilitiesLgasIndexRoute
   '/coding-concept/facilities/states': typeof AuthenticatedCodingConceptFacilitiesStatesIndexRoute
   '/coding-concept/facilities/types': typeof AuthenticatedCodingConceptFacilitiesTypesIndexRoute
   '/coding-concept/facilities/wards': typeof AuthenticatedCodingConceptFacilitiesWardsIndexRoute
+  '/rxsoft/reports/balance-sheet': typeof AuthenticatedRxsoftReportsBalanceSheetIndexRoute
+  '/rxsoft/reports/income-statement': typeof AuthenticatedRxsoftReportsIncomeStatementIndexRoute
+  '/rxsoft/reports/trial-balance': typeof AuthenticatedRxsoftReportsTrialBalanceIndexRoute
   '/rxsoft/roles/$id/permissions': typeof AuthenticatedRxsoftRolesIdPermissionsIndexRoute
 }
 export interface FileRoutesById {
@@ -1486,7 +1773,6 @@ export interface FileRoutesById {
   '/damorex/': typeof DamorexIndexRoute
   '/questionnaire/': typeof QuestionnaireIndexRoute
   '/_authenticated/communication/aes': typeof AuthenticatedCommunicationAesRouteRoute
-  '/_authenticated/communication/broadcasts': typeof AuthenticatedCommunicationBroadcastsRouteRoute
   '/_authenticated/communication/communication-channels': typeof AuthenticatedCommunicationCommunicationChannelsRouteRoute
   '/_authenticated/communication/mapping': typeof AuthenticatedCommunicationMappingRouteRoute
   '/_authenticated/communication/message-logs': typeof AuthenticatedCommunicationMessageLogsRouteRoute
@@ -1495,8 +1781,9 @@ export interface FileRoutesById {
   '/_authenticated/communication/notification-templates': typeof AuthenticatedCommunicationNotificationTemplatesRouteRoute
   '/_authenticated/communication/notifications': typeof AuthenticatedCommunicationNotificationsRouteRoute
   '/_authenticated/communication/routing': typeof AuthenticatedCommunicationRoutingRouteRoute
+  '/_authenticated/conversation/broadcasts': typeof AuthenticatedConversationBroadcastsRouteRoute
   '/_authenticated/rxsoft/settings': typeof AuthenticatedRxsoftSettingsRouteRouteWithChildren
-  '/_authenticated/$page/$id': typeof AuthenticatedPageIdRoute
+  '/_authenticated/$page/$id': typeof AuthenticatedPageIdRouteWithChildren
   '/_authenticated/$page/create': typeof AuthenticatedPageCreateRoute
   '/_authenticated/coding-concept/match': typeof AuthenticatedCodingConceptMatchRoute
   '/_authenticated/coding-concept/search': typeof AuthenticatedCodingConceptSearchRoute
@@ -1505,7 +1792,6 @@ export interface FileRoutesById {
   '/_authenticated/communication/flow-graph': typeof AuthenticatedCommunicationFlowGraphRoute
   '/_authenticated/communication/message-tester': typeof AuthenticatedCommunicationMessageTesterRoute
   '/_authenticated/communication/trace-explorer': typeof AuthenticatedCommunicationTraceExplorerRoute
-  '/_authenticated/lis/$resourceKey': typeof AuthenticatedLisResourceKeyRoute
   '/apm/admin/agents': typeof ApmAdminAgentsRoute
   '/apm/admin/canvassing': typeof ApmAdminCanvassingRoute
   '/apm/admin/content': typeof ApmAdminContentRoute
@@ -1537,6 +1823,8 @@ export interface FileRoutesById {
   '/damorex/purchases/': typeof DamorexPurchasesIndexRoute
   '/_authenticated/$moduleId/$page/$id': typeof AuthenticatedModuleIdPageIdRoute
   '/_authenticated/$moduleId/$page/create': typeof AuthenticatedModuleIdPageCreateRoute
+  '/_authenticated/$page/$id/edit': typeof AuthenticatedPageIdEditRoute
+  '/_authenticated/conversation/$conversationId/edit': typeof AuthenticatedConversationConversationIdEditRoute
   '/_authenticated/rxsoft/items/create': typeof AuthenticatedRxsoftItemsCreateRoute
   '/_authenticated/rxsoft/settings/account': typeof AuthenticatedRxsoftSettingsAccountRoute
   '/_authenticated/rxsoft/settings/appearance': typeof AuthenticatedRxsoftSettingsAppearanceRoute
@@ -1553,18 +1841,45 @@ export interface FileRoutesById {
   '/_authenticated/conversation/chats/': typeof AuthenticatedConversationChatsIndexRoute
   '/_authenticated/conversation/exchanges/': typeof AuthenticatedConversationExchangesIndexRoute
   '/_authenticated/conversation/participants/': typeof AuthenticatedConversationParticipantsIndexRoute
+  '/_authenticated/conversation/projections/': typeof AuthenticatedConversationProjectionsIndexRoute
   '/_authenticated/conversation/questionnaires/': typeof AuthenticatedConversationQuestionnairesIndexRoute
   '/_authenticated/conversation/questions/': typeof AuthenticatedConversationQuestionsIndexRoute
   '/_authenticated/conversation/workflow-configuration/': typeof AuthenticatedConversationWorkflowConfigurationIndexRoute
   '/_authenticated/conversation/workflow-events/': typeof AuthenticatedConversationWorkflowEventsIndexRoute
   '/_authenticated/conversation/workflow-instances/': typeof AuthenticatedConversationWorkflowInstancesIndexRoute
   '/_authenticated/conversation/workflows/': typeof AuthenticatedConversationWorkflowsIndexRoute
+  '/_authenticated/lis/attribute-definitions/': typeof AuthenticatedLisAttributeDefinitionsIndexRoute
+  '/_authenticated/lis/location-types/': typeof AuthenticatedLisLocationTypesIndexRoute
+  '/_authenticated/lis/locations/': typeof AuthenticatedLisLocationsIndexRoute
+  '/_authenticated/lis/loinc/': typeof AuthenticatedLisLoincIndexRoute
+  '/_authenticated/lis/methods/': typeof AuthenticatedLisMethodsIndexRoute
+  '/_authenticated/lis/orders/': typeof AuthenticatedLisOrdersIndexRoute
+  '/_authenticated/lis/panels/': typeof AuthenticatedLisPanelsIndexRoute
+  '/_authenticated/lis/patients/': typeof AuthenticatedLisPatientsIndexRoute
+  '/_authenticated/lis/priorities/': typeof AuthenticatedLisPrioritiesIndexRoute
+  '/_authenticated/lis/programs/': typeof AuthenticatedLisProgramsIndexRoute
+  '/_authenticated/lis/qc-alerts/': typeof AuthenticatedLisQcAlertsIndexRoute
+  '/_authenticated/lis/qc-lots/': typeof AuthenticatedLisQcLotsIndexRoute
+  '/_authenticated/lis/qc-results/': typeof AuthenticatedLisQcResultsIndexRoute
+  '/_authenticated/lis/reference-ranges/': typeof AuthenticatedLisReferenceRangesIndexRoute
+  '/_authenticated/lis/rejection-reasons/': typeof AuthenticatedLisRejectionReasonsIndexRoute
+  '/_authenticated/lis/result-signatures/': typeof AuthenticatedLisResultSignaturesIndexRoute
+  '/_authenticated/lis/results/': typeof AuthenticatedLisResultsIndexRoute
+  '/_authenticated/lis/sample-types/': typeof AuthenticatedLisSampleTypesIndexRoute
+  '/_authenticated/lis/samples/': typeof AuthenticatedLisSamplesIndexRoute
+  '/_authenticated/lis/statuses/': typeof AuthenticatedLisStatusesIndexRoute
+  '/_authenticated/lis/test-categories/': typeof AuthenticatedLisTestCategoriesIndexRoute
+  '/_authenticated/lis/test-definitions/': typeof AuthenticatedLisTestDefinitionsIndexRoute
+  '/_authenticated/lis/test-sections/': typeof AuthenticatedLisTestSectionsIndexRoute
+  '/_authenticated/lis/uoms/': typeof AuthenticatedLisUomsIndexRoute
+  '/_authenticated/lis/validation-dashboard/': typeof AuthenticatedLisValidationDashboardIndexRoute
   '/_authenticated/rxsoft/audit-logs/': typeof AuthenticatedRxsoftAuditLogsIndexRoute
   '/_authenticated/rxsoft/branches/': typeof AuthenticatedRxsoftBranchesIndexRoute
   '/_authenticated/rxsoft/categories/': typeof AuthenticatedRxsoftCategoriesIndexRoute
   '/_authenticated/rxsoft/customers/': typeof AuthenticatedRxsoftCustomersIndexRoute
   '/_authenticated/rxsoft/dashboard/': typeof AuthenticatedRxsoftDashboardIndexRoute
   '/_authenticated/rxsoft/drug-components/': typeof AuthenticatedRxsoftDrugComponentsIndexRoute
+  '/_authenticated/rxsoft/gl-accounts/': typeof AuthenticatedRxsoftGlAccountsIndexRoute
   '/_authenticated/rxsoft/inventory/': typeof AuthenticatedRxsoftInventoryIndexRoute
   '/_authenticated/rxsoft/items/': typeof AuthenticatedRxsoftItemsIndexRoute
   '/_authenticated/rxsoft/journal-entries/': typeof AuthenticatedRxsoftJournalEntriesIndexRoute
@@ -1590,12 +1905,16 @@ export interface FileRoutesById {
   '/_authenticated/rxsoft/users/': typeof AuthenticatedRxsoftUsersIndexRoute
   '/_authenticated/rxsoft/warehouses/': typeof AuthenticatedRxsoftWarehousesIndexRoute
   '/_authenticated/rxsoft/website-orders/': typeof AuthenticatedRxsoftWebsiteOrdersIndexRoute
+  '/_authenticated/conversation/$page/$id/edit': typeof AuthenticatedConversationPageIdEditRoute
   '/_authenticated/rxsoft/uoms/$uomId/edit': typeof AuthenticatedRxsoftUomsUomIdEditRoute
   '/_authenticated/coding-concept/facilities/levels/': typeof AuthenticatedCodingConceptFacilitiesLevelsIndexRoute
   '/_authenticated/coding-concept/facilities/lgas/': typeof AuthenticatedCodingConceptFacilitiesLgasIndexRoute
   '/_authenticated/coding-concept/facilities/states/': typeof AuthenticatedCodingConceptFacilitiesStatesIndexRoute
   '/_authenticated/coding-concept/facilities/types/': typeof AuthenticatedCodingConceptFacilitiesTypesIndexRoute
   '/_authenticated/coding-concept/facilities/wards/': typeof AuthenticatedCodingConceptFacilitiesWardsIndexRoute
+  '/_authenticated/rxsoft/reports/balance-sheet/': typeof AuthenticatedRxsoftReportsBalanceSheetIndexRoute
+  '/_authenticated/rxsoft/reports/income-statement/': typeof AuthenticatedRxsoftReportsIncomeStatementIndexRoute
+  '/_authenticated/rxsoft/reports/trial-balance/': typeof AuthenticatedRxsoftReportsTrialBalanceIndexRoute
   '/_authenticated/rxsoft/roles/$id/permissions/': typeof AuthenticatedRxsoftRolesIdPermissionsIndexRoute
 }
 export interface FileRouteTypes {
@@ -1654,7 +1973,6 @@ export interface FileRouteTypes {
     | '/damorex/'
     | '/questionnaire/'
     | '/communication/aes'
-    | '/communication/broadcasts'
     | '/communication/communication-channels'
     | '/communication/mapping'
     | '/communication/message-logs'
@@ -1663,6 +1981,7 @@ export interface FileRouteTypes {
     | '/communication/notification-templates'
     | '/communication/notifications'
     | '/communication/routing'
+    | '/conversation/broadcasts'
     | '/rxsoft/settings'
     | '/$page/$id'
     | '/$page/create'
@@ -1673,7 +1992,6 @@ export interface FileRouteTypes {
     | '/communication/flow-graph'
     | '/communication/message-tester'
     | '/communication/trace-explorer'
-    | '/lis/$resourceKey'
     | '/apm/admin/agents'
     | '/apm/admin/canvassing'
     | '/apm/admin/content'
@@ -1705,6 +2023,8 @@ export interface FileRouteTypes {
     | '/damorex/purchases/'
     | '/$moduleId/$page/$id'
     | '/$moduleId/$page/create'
+    | '/$page/$id/edit'
+    | '/conversation/$conversationId/edit'
     | '/rxsoft/items/create'
     | '/rxsoft/settings/account'
     | '/rxsoft/settings/appearance'
@@ -1721,18 +2041,45 @@ export interface FileRouteTypes {
     | '/conversation/chats/'
     | '/conversation/exchanges/'
     | '/conversation/participants/'
+    | '/conversation/projections/'
     | '/conversation/questionnaires/'
     | '/conversation/questions/'
     | '/conversation/workflow-configuration/'
     | '/conversation/workflow-events/'
     | '/conversation/workflow-instances/'
     | '/conversation/workflows/'
+    | '/lis/attribute-definitions/'
+    | '/lis/location-types/'
+    | '/lis/locations/'
+    | '/lis/loinc/'
+    | '/lis/methods/'
+    | '/lis/orders/'
+    | '/lis/panels/'
+    | '/lis/patients/'
+    | '/lis/priorities/'
+    | '/lis/programs/'
+    | '/lis/qc-alerts/'
+    | '/lis/qc-lots/'
+    | '/lis/qc-results/'
+    | '/lis/reference-ranges/'
+    | '/lis/rejection-reasons/'
+    | '/lis/result-signatures/'
+    | '/lis/results/'
+    | '/lis/sample-types/'
+    | '/lis/samples/'
+    | '/lis/statuses/'
+    | '/lis/test-categories/'
+    | '/lis/test-definitions/'
+    | '/lis/test-sections/'
+    | '/lis/uoms/'
+    | '/lis/validation-dashboard/'
     | '/rxsoft/audit-logs/'
     | '/rxsoft/branches/'
     | '/rxsoft/categories/'
     | '/rxsoft/customers/'
     | '/rxsoft/dashboard/'
     | '/rxsoft/drug-components/'
+    | '/rxsoft/gl-accounts/'
     | '/rxsoft/inventory/'
     | '/rxsoft/items/'
     | '/rxsoft/journal-entries/'
@@ -1758,12 +2105,16 @@ export interface FileRouteTypes {
     | '/rxsoft/users/'
     | '/rxsoft/warehouses/'
     | '/rxsoft/website-orders/'
+    | '/conversation/$page/$id/edit'
     | '/rxsoft/uoms/$uomId/edit'
     | '/coding-concept/facilities/levels/'
     | '/coding-concept/facilities/lgas/'
     | '/coding-concept/facilities/states/'
     | '/coding-concept/facilities/types/'
     | '/coding-concept/facilities/wards/'
+    | '/rxsoft/reports/balance-sheet/'
+    | '/rxsoft/reports/income-statement/'
+    | '/rxsoft/reports/trial-balance/'
     | '/rxsoft/roles/$id/permissions/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1819,7 +2170,6 @@ export interface FileRouteTypes {
     | '/damorex'
     | '/questionnaire'
     | '/communication/aes'
-    | '/communication/broadcasts'
     | '/communication/communication-channels'
     | '/communication/mapping'
     | '/communication/message-logs'
@@ -1828,6 +2178,7 @@ export interface FileRouteTypes {
     | '/communication/notification-templates'
     | '/communication/notifications'
     | '/communication/routing'
+    | '/conversation/broadcasts'
     | '/$page/$id'
     | '/$page/create'
     | '/coding-concept/match'
@@ -1837,7 +2188,6 @@ export interface FileRouteTypes {
     | '/communication/flow-graph'
     | '/communication/message-tester'
     | '/communication/trace-explorer'
-    | '/lis/$resourceKey'
     | '/apm/admin/agents'
     | '/apm/admin/canvassing'
     | '/apm/admin/content'
@@ -1869,6 +2219,8 @@ export interface FileRouteTypes {
     | '/damorex/purchases'
     | '/$moduleId/$page/$id'
     | '/$moduleId/$page/create'
+    | '/$page/$id/edit'
+    | '/conversation/$conversationId/edit'
     | '/rxsoft/items/create'
     | '/rxsoft/settings/account'
     | '/rxsoft/settings/appearance'
@@ -1885,18 +2237,45 @@ export interface FileRouteTypes {
     | '/conversation/chats'
     | '/conversation/exchanges'
     | '/conversation/participants'
+    | '/conversation/projections'
     | '/conversation/questionnaires'
     | '/conversation/questions'
     | '/conversation/workflow-configuration'
     | '/conversation/workflow-events'
     | '/conversation/workflow-instances'
     | '/conversation/workflows'
+    | '/lis/attribute-definitions'
+    | '/lis/location-types'
+    | '/lis/locations'
+    | '/lis/loinc'
+    | '/lis/methods'
+    | '/lis/orders'
+    | '/lis/panels'
+    | '/lis/patients'
+    | '/lis/priorities'
+    | '/lis/programs'
+    | '/lis/qc-alerts'
+    | '/lis/qc-lots'
+    | '/lis/qc-results'
+    | '/lis/reference-ranges'
+    | '/lis/rejection-reasons'
+    | '/lis/result-signatures'
+    | '/lis/results'
+    | '/lis/sample-types'
+    | '/lis/samples'
+    | '/lis/statuses'
+    | '/lis/test-categories'
+    | '/lis/test-definitions'
+    | '/lis/test-sections'
+    | '/lis/uoms'
+    | '/lis/validation-dashboard'
     | '/rxsoft/audit-logs'
     | '/rxsoft/branches'
     | '/rxsoft/categories'
     | '/rxsoft/customers'
     | '/rxsoft/dashboard'
     | '/rxsoft/drug-components'
+    | '/rxsoft/gl-accounts'
     | '/rxsoft/inventory'
     | '/rxsoft/items'
     | '/rxsoft/journal-entries'
@@ -1922,12 +2301,16 @@ export interface FileRouteTypes {
     | '/rxsoft/users'
     | '/rxsoft/warehouses'
     | '/rxsoft/website-orders'
+    | '/conversation/$page/$id/edit'
     | '/rxsoft/uoms/$uomId/edit'
     | '/coding-concept/facilities/levels'
     | '/coding-concept/facilities/lgas'
     | '/coding-concept/facilities/states'
     | '/coding-concept/facilities/types'
     | '/coding-concept/facilities/wards'
+    | '/rxsoft/reports/balance-sheet'
+    | '/rxsoft/reports/income-statement'
+    | '/rxsoft/reports/trial-balance'
     | '/rxsoft/roles/$id/permissions'
   id:
     | '__root__'
@@ -1987,7 +2370,6 @@ export interface FileRouteTypes {
     | '/damorex/'
     | '/questionnaire/'
     | '/_authenticated/communication/aes'
-    | '/_authenticated/communication/broadcasts'
     | '/_authenticated/communication/communication-channels'
     | '/_authenticated/communication/mapping'
     | '/_authenticated/communication/message-logs'
@@ -1996,6 +2378,7 @@ export interface FileRouteTypes {
     | '/_authenticated/communication/notification-templates'
     | '/_authenticated/communication/notifications'
     | '/_authenticated/communication/routing'
+    | '/_authenticated/conversation/broadcasts'
     | '/_authenticated/rxsoft/settings'
     | '/_authenticated/$page/$id'
     | '/_authenticated/$page/create'
@@ -2006,7 +2389,6 @@ export interface FileRouteTypes {
     | '/_authenticated/communication/flow-graph'
     | '/_authenticated/communication/message-tester'
     | '/_authenticated/communication/trace-explorer'
-    | '/_authenticated/lis/$resourceKey'
     | '/apm/admin/agents'
     | '/apm/admin/canvassing'
     | '/apm/admin/content'
@@ -2038,6 +2420,8 @@ export interface FileRouteTypes {
     | '/damorex/purchases/'
     | '/_authenticated/$moduleId/$page/$id'
     | '/_authenticated/$moduleId/$page/create'
+    | '/_authenticated/$page/$id/edit'
+    | '/_authenticated/conversation/$conversationId/edit'
     | '/_authenticated/rxsoft/items/create'
     | '/_authenticated/rxsoft/settings/account'
     | '/_authenticated/rxsoft/settings/appearance'
@@ -2054,18 +2438,45 @@ export interface FileRouteTypes {
     | '/_authenticated/conversation/chats/'
     | '/_authenticated/conversation/exchanges/'
     | '/_authenticated/conversation/participants/'
+    | '/_authenticated/conversation/projections/'
     | '/_authenticated/conversation/questionnaires/'
     | '/_authenticated/conversation/questions/'
     | '/_authenticated/conversation/workflow-configuration/'
     | '/_authenticated/conversation/workflow-events/'
     | '/_authenticated/conversation/workflow-instances/'
     | '/_authenticated/conversation/workflows/'
+    | '/_authenticated/lis/attribute-definitions/'
+    | '/_authenticated/lis/location-types/'
+    | '/_authenticated/lis/locations/'
+    | '/_authenticated/lis/loinc/'
+    | '/_authenticated/lis/methods/'
+    | '/_authenticated/lis/orders/'
+    | '/_authenticated/lis/panels/'
+    | '/_authenticated/lis/patients/'
+    | '/_authenticated/lis/priorities/'
+    | '/_authenticated/lis/programs/'
+    | '/_authenticated/lis/qc-alerts/'
+    | '/_authenticated/lis/qc-lots/'
+    | '/_authenticated/lis/qc-results/'
+    | '/_authenticated/lis/reference-ranges/'
+    | '/_authenticated/lis/rejection-reasons/'
+    | '/_authenticated/lis/result-signatures/'
+    | '/_authenticated/lis/results/'
+    | '/_authenticated/lis/sample-types/'
+    | '/_authenticated/lis/samples/'
+    | '/_authenticated/lis/statuses/'
+    | '/_authenticated/lis/test-categories/'
+    | '/_authenticated/lis/test-definitions/'
+    | '/_authenticated/lis/test-sections/'
+    | '/_authenticated/lis/uoms/'
+    | '/_authenticated/lis/validation-dashboard/'
     | '/_authenticated/rxsoft/audit-logs/'
     | '/_authenticated/rxsoft/branches/'
     | '/_authenticated/rxsoft/categories/'
     | '/_authenticated/rxsoft/customers/'
     | '/_authenticated/rxsoft/dashboard/'
     | '/_authenticated/rxsoft/drug-components/'
+    | '/_authenticated/rxsoft/gl-accounts/'
     | '/_authenticated/rxsoft/inventory/'
     | '/_authenticated/rxsoft/items/'
     | '/_authenticated/rxsoft/journal-entries/'
@@ -2091,12 +2502,16 @@ export interface FileRouteTypes {
     | '/_authenticated/rxsoft/users/'
     | '/_authenticated/rxsoft/warehouses/'
     | '/_authenticated/rxsoft/website-orders/'
+    | '/_authenticated/conversation/$page/$id/edit'
     | '/_authenticated/rxsoft/uoms/$uomId/edit'
     | '/_authenticated/coding-concept/facilities/levels/'
     | '/_authenticated/coding-concept/facilities/lgas/'
     | '/_authenticated/coding-concept/facilities/states/'
     | '/_authenticated/coding-concept/facilities/types/'
     | '/_authenticated/coding-concept/facilities/wards/'
+    | '/_authenticated/rxsoft/reports/balance-sheet/'
+    | '/_authenticated/rxsoft/reports/income-statement/'
+    | '/_authenticated/rxsoft/reports/trial-balance/'
     | '/_authenticated/rxsoft/roles/$id/permissions/'
   fileRoutesById: FileRoutesById
 }
@@ -2749,13 +3164,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApmAdminAgentsRouteImport
       parentRoute: typeof ApmAdminRouteRoute
     }
-    '/_authenticated/lis/$resourceKey': {
-      id: '/_authenticated/lis/$resourceKey'
-      path: '/lis/$resourceKey'
-      fullPath: '/lis/$resourceKey'
-      preLoaderRoute: typeof AuthenticatedLisResourceKeyRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/communication/trace-explorer': {
       id: '/_authenticated/communication/trace-explorer'
       path: '/communication/trace-explorer'
@@ -2826,6 +3234,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRxsoftSettingsRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/conversation/broadcasts': {
+      id: '/_authenticated/conversation/broadcasts'
+      path: '/conversation/broadcasts'
+      fullPath: '/conversation/broadcasts'
+      preLoaderRoute: typeof AuthenticatedConversationBroadcastsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/communication/routing': {
       id: '/_authenticated/communication/routing'
       path: '/communication/routing'
@@ -2880,13 +3295,6 @@ declare module '@tanstack/react-router' {
       path: '/communication/communication-channels'
       fullPath: '/communication/communication-channels'
       preLoaderRoute: typeof AuthenticatedCommunicationCommunicationChannelsRouteRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/communication/broadcasts': {
-      id: '/_authenticated/communication/broadcasts'
-      path: '/communication/broadcasts'
-      fullPath: '/communication/broadcasts'
-      preLoaderRoute: typeof AuthenticatedCommunicationBroadcastsRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/communication/aes': {
@@ -3071,6 +3479,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRxsoftInventoryIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/rxsoft/gl-accounts/': {
+      id: '/_authenticated/rxsoft/gl-accounts/'
+      path: '/rxsoft/gl-accounts'
+      fullPath: '/rxsoft/gl-accounts/'
+      preLoaderRoute: typeof AuthenticatedRxsoftGlAccountsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/rxsoft/drug-components/': {
       id: '/_authenticated/rxsoft/drug-components/'
       path: '/rxsoft/drug-components'
@@ -3113,6 +3528,181 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRxsoftAuditLogsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/lis/validation-dashboard/': {
+      id: '/_authenticated/lis/validation-dashboard/'
+      path: '/lis/validation-dashboard'
+      fullPath: '/lis/validation-dashboard/'
+      preLoaderRoute: typeof AuthenticatedLisValidationDashboardIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/uoms/': {
+      id: '/_authenticated/lis/uoms/'
+      path: '/lis/uoms'
+      fullPath: '/lis/uoms/'
+      preLoaderRoute: typeof AuthenticatedLisUomsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/test-sections/': {
+      id: '/_authenticated/lis/test-sections/'
+      path: '/lis/test-sections'
+      fullPath: '/lis/test-sections/'
+      preLoaderRoute: typeof AuthenticatedLisTestSectionsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/test-definitions/': {
+      id: '/_authenticated/lis/test-definitions/'
+      path: '/lis/test-definitions'
+      fullPath: '/lis/test-definitions/'
+      preLoaderRoute: typeof AuthenticatedLisTestDefinitionsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/test-categories/': {
+      id: '/_authenticated/lis/test-categories/'
+      path: '/lis/test-categories'
+      fullPath: '/lis/test-categories/'
+      preLoaderRoute: typeof AuthenticatedLisTestCategoriesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/statuses/': {
+      id: '/_authenticated/lis/statuses/'
+      path: '/lis/statuses'
+      fullPath: '/lis/statuses/'
+      preLoaderRoute: typeof AuthenticatedLisStatusesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/samples/': {
+      id: '/_authenticated/lis/samples/'
+      path: '/lis/samples'
+      fullPath: '/lis/samples/'
+      preLoaderRoute: typeof AuthenticatedLisSamplesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/sample-types/': {
+      id: '/_authenticated/lis/sample-types/'
+      path: '/lis/sample-types'
+      fullPath: '/lis/sample-types/'
+      preLoaderRoute: typeof AuthenticatedLisSampleTypesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/results/': {
+      id: '/_authenticated/lis/results/'
+      path: '/lis/results'
+      fullPath: '/lis/results/'
+      preLoaderRoute: typeof AuthenticatedLisResultsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/result-signatures/': {
+      id: '/_authenticated/lis/result-signatures/'
+      path: '/lis/result-signatures'
+      fullPath: '/lis/result-signatures/'
+      preLoaderRoute: typeof AuthenticatedLisResultSignaturesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/rejection-reasons/': {
+      id: '/_authenticated/lis/rejection-reasons/'
+      path: '/lis/rejection-reasons'
+      fullPath: '/lis/rejection-reasons/'
+      preLoaderRoute: typeof AuthenticatedLisRejectionReasonsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/reference-ranges/': {
+      id: '/_authenticated/lis/reference-ranges/'
+      path: '/lis/reference-ranges'
+      fullPath: '/lis/reference-ranges/'
+      preLoaderRoute: typeof AuthenticatedLisReferenceRangesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/qc-results/': {
+      id: '/_authenticated/lis/qc-results/'
+      path: '/lis/qc-results'
+      fullPath: '/lis/qc-results/'
+      preLoaderRoute: typeof AuthenticatedLisQcResultsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/qc-lots/': {
+      id: '/_authenticated/lis/qc-lots/'
+      path: '/lis/qc-lots'
+      fullPath: '/lis/qc-lots/'
+      preLoaderRoute: typeof AuthenticatedLisQcLotsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/qc-alerts/': {
+      id: '/_authenticated/lis/qc-alerts/'
+      path: '/lis/qc-alerts'
+      fullPath: '/lis/qc-alerts/'
+      preLoaderRoute: typeof AuthenticatedLisQcAlertsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/programs/': {
+      id: '/_authenticated/lis/programs/'
+      path: '/lis/programs'
+      fullPath: '/lis/programs/'
+      preLoaderRoute: typeof AuthenticatedLisProgramsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/priorities/': {
+      id: '/_authenticated/lis/priorities/'
+      path: '/lis/priorities'
+      fullPath: '/lis/priorities/'
+      preLoaderRoute: typeof AuthenticatedLisPrioritiesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/patients/': {
+      id: '/_authenticated/lis/patients/'
+      path: '/lis/patients'
+      fullPath: '/lis/patients/'
+      preLoaderRoute: typeof AuthenticatedLisPatientsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/panels/': {
+      id: '/_authenticated/lis/panels/'
+      path: '/lis/panels'
+      fullPath: '/lis/panels/'
+      preLoaderRoute: typeof AuthenticatedLisPanelsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/orders/': {
+      id: '/_authenticated/lis/orders/'
+      path: '/lis/orders'
+      fullPath: '/lis/orders/'
+      preLoaderRoute: typeof AuthenticatedLisOrdersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/methods/': {
+      id: '/_authenticated/lis/methods/'
+      path: '/lis/methods'
+      fullPath: '/lis/methods/'
+      preLoaderRoute: typeof AuthenticatedLisMethodsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/loinc/': {
+      id: '/_authenticated/lis/loinc/'
+      path: '/lis/loinc'
+      fullPath: '/lis/loinc/'
+      preLoaderRoute: typeof AuthenticatedLisLoincIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/locations/': {
+      id: '/_authenticated/lis/locations/'
+      path: '/lis/locations'
+      fullPath: '/lis/locations/'
+      preLoaderRoute: typeof AuthenticatedLisLocationsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/location-types/': {
+      id: '/_authenticated/lis/location-types/'
+      path: '/lis/location-types'
+      fullPath: '/lis/location-types/'
+      preLoaderRoute: typeof AuthenticatedLisLocationTypesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lis/attribute-definitions/': {
+      id: '/_authenticated/lis/attribute-definitions/'
+      path: '/lis/attribute-definitions'
+      fullPath: '/lis/attribute-definitions/'
+      preLoaderRoute: typeof AuthenticatedLisAttributeDefinitionsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/conversation/workflows/': {
       id: '/_authenticated/conversation/workflows/'
       path: '/conversation/workflows'
@@ -3153,6 +3743,13 @@ declare module '@tanstack/react-router' {
       path: '/conversation/questionnaires'
       fullPath: '/conversation/questionnaires/'
       preLoaderRoute: typeof AuthenticatedConversationQuestionnairesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/conversation/projections/': {
+      id: '/_authenticated/conversation/projections/'
+      path: '/conversation/projections'
+      fullPath: '/conversation/projections/'
+      preLoaderRoute: typeof AuthenticatedConversationProjectionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/conversation/participants/': {
@@ -3267,6 +3864,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRxsoftItemsCreateRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/conversation/$conversationId/edit': {
+      id: '/_authenticated/conversation/$conversationId/edit'
+      path: '/conversation/$conversationId/edit'
+      fullPath: '/conversation/$conversationId/edit'
+      preLoaderRoute: typeof AuthenticatedConversationConversationIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/$page/$id/edit': {
+      id: '/_authenticated/$page/$id/edit'
+      path: '/edit'
+      fullPath: '/$page/$id/edit'
+      preLoaderRoute: typeof AuthenticatedPageIdEditRouteImport
+      parentRoute: typeof AuthenticatedPageIdRoute
+    }
     '/_authenticated/$moduleId/$page/create': {
       id: '/_authenticated/$moduleId/$page/create'
       path: '/$page/create'
@@ -3280,6 +3891,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/$moduleId/$page/$id'
       preLoaderRoute: typeof AuthenticatedModuleIdPageIdRouteImport
       parentRoute: typeof AuthenticatedModuleIdRoute
+    }
+    '/_authenticated/rxsoft/reports/trial-balance/': {
+      id: '/_authenticated/rxsoft/reports/trial-balance/'
+      path: '/rxsoft/reports/trial-balance'
+      fullPath: '/rxsoft/reports/trial-balance/'
+      preLoaderRoute: typeof AuthenticatedRxsoftReportsTrialBalanceIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/rxsoft/reports/income-statement/': {
+      id: '/_authenticated/rxsoft/reports/income-statement/'
+      path: '/rxsoft/reports/income-statement'
+      fullPath: '/rxsoft/reports/income-statement/'
+      preLoaderRoute: typeof AuthenticatedRxsoftReportsIncomeStatementIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/rxsoft/reports/balance-sheet/': {
+      id: '/_authenticated/rxsoft/reports/balance-sheet/'
+      path: '/rxsoft/reports/balance-sheet'
+      fullPath: '/rxsoft/reports/balance-sheet/'
+      preLoaderRoute: typeof AuthenticatedRxsoftReportsBalanceSheetIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/coding-concept/facilities/wards/': {
       id: '/_authenticated/coding-concept/facilities/wards/'
@@ -3322,6 +3954,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/rxsoft/uoms/$uomId/edit'
       preLoaderRoute: typeof AuthenticatedRxsoftUomsUomIdEditRouteImport
       parentRoute: typeof AuthenticatedRxsoftUomsUomIdRoute
+    }
+    '/_authenticated/conversation/$page/$id/edit': {
+      id: '/_authenticated/conversation/$page/$id/edit'
+      path: '/conversation/$page/$id/edit'
+      fullPath: '/conversation/$page/$id/edit'
+      preLoaderRoute: typeof AuthenticatedConversationPageIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/rxsoft/roles/$id/permissions/': {
       id: '/_authenticated/rxsoft/roles/$id/permissions/'
@@ -3377,6 +4016,17 @@ const AuthenticatedRxsoftSettingsRouteRouteWithChildren =
     AuthenticatedRxsoftSettingsRouteRouteChildren,
   )
 
+interface AuthenticatedPageIdRouteChildren {
+  AuthenticatedPageIdEditRoute: typeof AuthenticatedPageIdEditRoute
+}
+
+const AuthenticatedPageIdRouteChildren: AuthenticatedPageIdRouteChildren = {
+  AuthenticatedPageIdEditRoute: AuthenticatedPageIdEditRoute,
+}
+
+const AuthenticatedPageIdRouteWithChildren =
+  AuthenticatedPageIdRoute._addFileChildren(AuthenticatedPageIdRouteChildren)
+
 interface AuthenticatedRxsoftUomsUomIdRouteChildren {
   AuthenticatedRxsoftUomsUomIdEditRoute: typeof AuthenticatedRxsoftUomsUomIdEditRoute
 }
@@ -3395,7 +4045,6 @@ const AuthenticatedRxsoftUomsUomIdRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedModuleIdRoute: typeof AuthenticatedModuleIdRouteWithChildren
   AuthenticatedCommunicationAesRouteRoute: typeof AuthenticatedCommunicationAesRouteRoute
-  AuthenticatedCommunicationBroadcastsRouteRoute: typeof AuthenticatedCommunicationBroadcastsRouteRoute
   AuthenticatedCommunicationCommunicationChannelsRouteRoute: typeof AuthenticatedCommunicationCommunicationChannelsRouteRoute
   AuthenticatedCommunicationMappingRouteRoute: typeof AuthenticatedCommunicationMappingRouteRoute
   AuthenticatedCommunicationMessageLogsRouteRoute: typeof AuthenticatedCommunicationMessageLogsRouteRoute
@@ -3404,8 +4053,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCommunicationNotificationTemplatesRouteRoute: typeof AuthenticatedCommunicationNotificationTemplatesRouteRoute
   AuthenticatedCommunicationNotificationsRouteRoute: typeof AuthenticatedCommunicationNotificationsRouteRoute
   AuthenticatedCommunicationRoutingRouteRoute: typeof AuthenticatedCommunicationRoutingRouteRoute
+  AuthenticatedConversationBroadcastsRouteRoute: typeof AuthenticatedConversationBroadcastsRouteRoute
   AuthenticatedRxsoftSettingsRouteRoute: typeof AuthenticatedRxsoftSettingsRouteRouteWithChildren
-  AuthenticatedPageIdRoute: typeof AuthenticatedPageIdRoute
+  AuthenticatedPageIdRoute: typeof AuthenticatedPageIdRouteWithChildren
   AuthenticatedPageCreateRoute: typeof AuthenticatedPageCreateRoute
   AuthenticatedCodingConceptMatchRoute: typeof AuthenticatedCodingConceptMatchRoute
   AuthenticatedCodingConceptSearchRoute: typeof AuthenticatedCodingConceptSearchRoute
@@ -3414,10 +4064,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCommunicationFlowGraphRoute: typeof AuthenticatedCommunicationFlowGraphRoute
   AuthenticatedCommunicationMessageTesterRoute: typeof AuthenticatedCommunicationMessageTesterRoute
   AuthenticatedCommunicationTraceExplorerRoute: typeof AuthenticatedCommunicationTraceExplorerRoute
-  AuthenticatedLisResourceKeyRoute: typeof AuthenticatedLisResourceKeyRoute
   AuthenticatedCodingConceptIndexRoute: typeof AuthenticatedCodingConceptIndexRoute
   AuthenticatedConversationIndexRoute: typeof AuthenticatedConversationIndexRoute
   AuthenticatedLisIndexRoute: typeof AuthenticatedLisIndexRoute
+  AuthenticatedConversationConversationIdEditRoute: typeof AuthenticatedConversationConversationIdEditRoute
   AuthenticatedRxsoftItemsCreateRoute: typeof AuthenticatedRxsoftItemsCreateRoute
   AuthenticatedRxsoftUomsUomIdRoute: typeof AuthenticatedRxsoftUomsUomIdRouteWithChildren
   AuthenticatedCodingConceptDrugComponentsIndexRoute: typeof AuthenticatedCodingConceptDrugComponentsIndexRoute
@@ -3428,18 +4078,45 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedConversationChatsIndexRoute: typeof AuthenticatedConversationChatsIndexRoute
   AuthenticatedConversationExchangesIndexRoute: typeof AuthenticatedConversationExchangesIndexRoute
   AuthenticatedConversationParticipantsIndexRoute: typeof AuthenticatedConversationParticipantsIndexRoute
+  AuthenticatedConversationProjectionsIndexRoute: typeof AuthenticatedConversationProjectionsIndexRoute
   AuthenticatedConversationQuestionnairesIndexRoute: typeof AuthenticatedConversationQuestionnairesIndexRoute
   AuthenticatedConversationQuestionsIndexRoute: typeof AuthenticatedConversationQuestionsIndexRoute
   AuthenticatedConversationWorkflowConfigurationIndexRoute: typeof AuthenticatedConversationWorkflowConfigurationIndexRoute
   AuthenticatedConversationWorkflowEventsIndexRoute: typeof AuthenticatedConversationWorkflowEventsIndexRoute
   AuthenticatedConversationWorkflowInstancesIndexRoute: typeof AuthenticatedConversationWorkflowInstancesIndexRoute
   AuthenticatedConversationWorkflowsIndexRoute: typeof AuthenticatedConversationWorkflowsIndexRoute
+  AuthenticatedLisAttributeDefinitionsIndexRoute: typeof AuthenticatedLisAttributeDefinitionsIndexRoute
+  AuthenticatedLisLocationTypesIndexRoute: typeof AuthenticatedLisLocationTypesIndexRoute
+  AuthenticatedLisLocationsIndexRoute: typeof AuthenticatedLisLocationsIndexRoute
+  AuthenticatedLisLoincIndexRoute: typeof AuthenticatedLisLoincIndexRoute
+  AuthenticatedLisMethodsIndexRoute: typeof AuthenticatedLisMethodsIndexRoute
+  AuthenticatedLisOrdersIndexRoute: typeof AuthenticatedLisOrdersIndexRoute
+  AuthenticatedLisPanelsIndexRoute: typeof AuthenticatedLisPanelsIndexRoute
+  AuthenticatedLisPatientsIndexRoute: typeof AuthenticatedLisPatientsIndexRoute
+  AuthenticatedLisPrioritiesIndexRoute: typeof AuthenticatedLisPrioritiesIndexRoute
+  AuthenticatedLisProgramsIndexRoute: typeof AuthenticatedLisProgramsIndexRoute
+  AuthenticatedLisQcAlertsIndexRoute: typeof AuthenticatedLisQcAlertsIndexRoute
+  AuthenticatedLisQcLotsIndexRoute: typeof AuthenticatedLisQcLotsIndexRoute
+  AuthenticatedLisQcResultsIndexRoute: typeof AuthenticatedLisQcResultsIndexRoute
+  AuthenticatedLisReferenceRangesIndexRoute: typeof AuthenticatedLisReferenceRangesIndexRoute
+  AuthenticatedLisRejectionReasonsIndexRoute: typeof AuthenticatedLisRejectionReasonsIndexRoute
+  AuthenticatedLisResultSignaturesIndexRoute: typeof AuthenticatedLisResultSignaturesIndexRoute
+  AuthenticatedLisResultsIndexRoute: typeof AuthenticatedLisResultsIndexRoute
+  AuthenticatedLisSampleTypesIndexRoute: typeof AuthenticatedLisSampleTypesIndexRoute
+  AuthenticatedLisSamplesIndexRoute: typeof AuthenticatedLisSamplesIndexRoute
+  AuthenticatedLisStatusesIndexRoute: typeof AuthenticatedLisStatusesIndexRoute
+  AuthenticatedLisTestCategoriesIndexRoute: typeof AuthenticatedLisTestCategoriesIndexRoute
+  AuthenticatedLisTestDefinitionsIndexRoute: typeof AuthenticatedLisTestDefinitionsIndexRoute
+  AuthenticatedLisTestSectionsIndexRoute: typeof AuthenticatedLisTestSectionsIndexRoute
+  AuthenticatedLisUomsIndexRoute: typeof AuthenticatedLisUomsIndexRoute
+  AuthenticatedLisValidationDashboardIndexRoute: typeof AuthenticatedLisValidationDashboardIndexRoute
   AuthenticatedRxsoftAuditLogsIndexRoute: typeof AuthenticatedRxsoftAuditLogsIndexRoute
   AuthenticatedRxsoftBranchesIndexRoute: typeof AuthenticatedRxsoftBranchesIndexRoute
   AuthenticatedRxsoftCategoriesIndexRoute: typeof AuthenticatedRxsoftCategoriesIndexRoute
   AuthenticatedRxsoftCustomersIndexRoute: typeof AuthenticatedRxsoftCustomersIndexRoute
   AuthenticatedRxsoftDashboardIndexRoute: typeof AuthenticatedRxsoftDashboardIndexRoute
   AuthenticatedRxsoftDrugComponentsIndexRoute: typeof AuthenticatedRxsoftDrugComponentsIndexRoute
+  AuthenticatedRxsoftGlAccountsIndexRoute: typeof AuthenticatedRxsoftGlAccountsIndexRoute
   AuthenticatedRxsoftInventoryIndexRoute: typeof AuthenticatedRxsoftInventoryIndexRoute
   AuthenticatedRxsoftItemsIndexRoute: typeof AuthenticatedRxsoftItemsIndexRoute
   AuthenticatedRxsoftJournalEntriesIndexRoute: typeof AuthenticatedRxsoftJournalEntriesIndexRoute
@@ -3464,11 +4141,15 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRxsoftUsersIndexRoute: typeof AuthenticatedRxsoftUsersIndexRoute
   AuthenticatedRxsoftWarehousesIndexRoute: typeof AuthenticatedRxsoftWarehousesIndexRoute
   AuthenticatedRxsoftWebsiteOrdersIndexRoute: typeof AuthenticatedRxsoftWebsiteOrdersIndexRoute
+  AuthenticatedConversationPageIdEditRoute: typeof AuthenticatedConversationPageIdEditRoute
   AuthenticatedCodingConceptFacilitiesLevelsIndexRoute: typeof AuthenticatedCodingConceptFacilitiesLevelsIndexRoute
   AuthenticatedCodingConceptFacilitiesLgasIndexRoute: typeof AuthenticatedCodingConceptFacilitiesLgasIndexRoute
   AuthenticatedCodingConceptFacilitiesStatesIndexRoute: typeof AuthenticatedCodingConceptFacilitiesStatesIndexRoute
   AuthenticatedCodingConceptFacilitiesTypesIndexRoute: typeof AuthenticatedCodingConceptFacilitiesTypesIndexRoute
   AuthenticatedCodingConceptFacilitiesWardsIndexRoute: typeof AuthenticatedCodingConceptFacilitiesWardsIndexRoute
+  AuthenticatedRxsoftReportsBalanceSheetIndexRoute: typeof AuthenticatedRxsoftReportsBalanceSheetIndexRoute
+  AuthenticatedRxsoftReportsIncomeStatementIndexRoute: typeof AuthenticatedRxsoftReportsIncomeStatementIndexRoute
+  AuthenticatedRxsoftReportsTrialBalanceIndexRoute: typeof AuthenticatedRxsoftReportsTrialBalanceIndexRoute
   AuthenticatedRxsoftRolesIdPermissionsIndexRoute: typeof AuthenticatedRxsoftRolesIdPermissionsIndexRoute
 }
 
@@ -3476,8 +4157,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedModuleIdRoute: AuthenticatedModuleIdRouteWithChildren,
   AuthenticatedCommunicationAesRouteRoute:
     AuthenticatedCommunicationAesRouteRoute,
-  AuthenticatedCommunicationBroadcastsRouteRoute:
-    AuthenticatedCommunicationBroadcastsRouteRoute,
   AuthenticatedCommunicationCommunicationChannelsRouteRoute:
     AuthenticatedCommunicationCommunicationChannelsRouteRoute,
   AuthenticatedCommunicationMappingRouteRoute:
@@ -3494,9 +4173,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedCommunicationNotificationsRouteRoute,
   AuthenticatedCommunicationRoutingRouteRoute:
     AuthenticatedCommunicationRoutingRouteRoute,
+  AuthenticatedConversationBroadcastsRouteRoute:
+    AuthenticatedConversationBroadcastsRouteRoute,
   AuthenticatedRxsoftSettingsRouteRoute:
     AuthenticatedRxsoftSettingsRouteRouteWithChildren,
-  AuthenticatedPageIdRoute: AuthenticatedPageIdRoute,
+  AuthenticatedPageIdRoute: AuthenticatedPageIdRouteWithChildren,
   AuthenticatedPageCreateRoute: AuthenticatedPageCreateRoute,
   AuthenticatedCodingConceptMatchRoute: AuthenticatedCodingConceptMatchRoute,
   AuthenticatedCodingConceptSearchRoute: AuthenticatedCodingConceptSearchRoute,
@@ -3509,10 +4190,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedCommunicationMessageTesterRoute,
   AuthenticatedCommunicationTraceExplorerRoute:
     AuthenticatedCommunicationTraceExplorerRoute,
-  AuthenticatedLisResourceKeyRoute: AuthenticatedLisResourceKeyRoute,
   AuthenticatedCodingConceptIndexRoute: AuthenticatedCodingConceptIndexRoute,
   AuthenticatedConversationIndexRoute: AuthenticatedConversationIndexRoute,
   AuthenticatedLisIndexRoute: AuthenticatedLisIndexRoute,
+  AuthenticatedConversationConversationIdEditRoute:
+    AuthenticatedConversationConversationIdEditRoute,
   AuthenticatedRxsoftItemsCreateRoute: AuthenticatedRxsoftItemsCreateRoute,
   AuthenticatedRxsoftUomsUomIdRoute:
     AuthenticatedRxsoftUomsUomIdRouteWithChildren,
@@ -3532,6 +4214,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedConversationExchangesIndexRoute,
   AuthenticatedConversationParticipantsIndexRoute:
     AuthenticatedConversationParticipantsIndexRoute,
+  AuthenticatedConversationProjectionsIndexRoute:
+    AuthenticatedConversationProjectionsIndexRoute,
   AuthenticatedConversationQuestionnairesIndexRoute:
     AuthenticatedConversationQuestionnairesIndexRoute,
   AuthenticatedConversationQuestionsIndexRoute:
@@ -3544,6 +4228,40 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedConversationWorkflowInstancesIndexRoute,
   AuthenticatedConversationWorkflowsIndexRoute:
     AuthenticatedConversationWorkflowsIndexRoute,
+  AuthenticatedLisAttributeDefinitionsIndexRoute:
+    AuthenticatedLisAttributeDefinitionsIndexRoute,
+  AuthenticatedLisLocationTypesIndexRoute:
+    AuthenticatedLisLocationTypesIndexRoute,
+  AuthenticatedLisLocationsIndexRoute: AuthenticatedLisLocationsIndexRoute,
+  AuthenticatedLisLoincIndexRoute: AuthenticatedLisLoincIndexRoute,
+  AuthenticatedLisMethodsIndexRoute: AuthenticatedLisMethodsIndexRoute,
+  AuthenticatedLisOrdersIndexRoute: AuthenticatedLisOrdersIndexRoute,
+  AuthenticatedLisPanelsIndexRoute: AuthenticatedLisPanelsIndexRoute,
+  AuthenticatedLisPatientsIndexRoute: AuthenticatedLisPatientsIndexRoute,
+  AuthenticatedLisPrioritiesIndexRoute: AuthenticatedLisPrioritiesIndexRoute,
+  AuthenticatedLisProgramsIndexRoute: AuthenticatedLisProgramsIndexRoute,
+  AuthenticatedLisQcAlertsIndexRoute: AuthenticatedLisQcAlertsIndexRoute,
+  AuthenticatedLisQcLotsIndexRoute: AuthenticatedLisQcLotsIndexRoute,
+  AuthenticatedLisQcResultsIndexRoute: AuthenticatedLisQcResultsIndexRoute,
+  AuthenticatedLisReferenceRangesIndexRoute:
+    AuthenticatedLisReferenceRangesIndexRoute,
+  AuthenticatedLisRejectionReasonsIndexRoute:
+    AuthenticatedLisRejectionReasonsIndexRoute,
+  AuthenticatedLisResultSignaturesIndexRoute:
+    AuthenticatedLisResultSignaturesIndexRoute,
+  AuthenticatedLisResultsIndexRoute: AuthenticatedLisResultsIndexRoute,
+  AuthenticatedLisSampleTypesIndexRoute: AuthenticatedLisSampleTypesIndexRoute,
+  AuthenticatedLisSamplesIndexRoute: AuthenticatedLisSamplesIndexRoute,
+  AuthenticatedLisStatusesIndexRoute: AuthenticatedLisStatusesIndexRoute,
+  AuthenticatedLisTestCategoriesIndexRoute:
+    AuthenticatedLisTestCategoriesIndexRoute,
+  AuthenticatedLisTestDefinitionsIndexRoute:
+    AuthenticatedLisTestDefinitionsIndexRoute,
+  AuthenticatedLisTestSectionsIndexRoute:
+    AuthenticatedLisTestSectionsIndexRoute,
+  AuthenticatedLisUomsIndexRoute: AuthenticatedLisUomsIndexRoute,
+  AuthenticatedLisValidationDashboardIndexRoute:
+    AuthenticatedLisValidationDashboardIndexRoute,
   AuthenticatedRxsoftAuditLogsIndexRoute:
     AuthenticatedRxsoftAuditLogsIndexRoute,
   AuthenticatedRxsoftBranchesIndexRoute: AuthenticatedRxsoftBranchesIndexRoute,
@@ -3555,6 +4273,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedRxsoftDashboardIndexRoute,
   AuthenticatedRxsoftDrugComponentsIndexRoute:
     AuthenticatedRxsoftDrugComponentsIndexRoute,
+  AuthenticatedRxsoftGlAccountsIndexRoute:
+    AuthenticatedRxsoftGlAccountsIndexRoute,
   AuthenticatedRxsoftInventoryIndexRoute:
     AuthenticatedRxsoftInventoryIndexRoute,
   AuthenticatedRxsoftItemsIndexRoute: AuthenticatedRxsoftItemsIndexRoute,
@@ -3596,6 +4316,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedRxsoftWarehousesIndexRoute,
   AuthenticatedRxsoftWebsiteOrdersIndexRoute:
     AuthenticatedRxsoftWebsiteOrdersIndexRoute,
+  AuthenticatedConversationPageIdEditRoute:
+    AuthenticatedConversationPageIdEditRoute,
   AuthenticatedCodingConceptFacilitiesLevelsIndexRoute:
     AuthenticatedCodingConceptFacilitiesLevelsIndexRoute,
   AuthenticatedCodingConceptFacilitiesLgasIndexRoute:
@@ -3606,6 +4328,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedCodingConceptFacilitiesTypesIndexRoute,
   AuthenticatedCodingConceptFacilitiesWardsIndexRoute:
     AuthenticatedCodingConceptFacilitiesWardsIndexRoute,
+  AuthenticatedRxsoftReportsBalanceSheetIndexRoute:
+    AuthenticatedRxsoftReportsBalanceSheetIndexRoute,
+  AuthenticatedRxsoftReportsIncomeStatementIndexRoute:
+    AuthenticatedRxsoftReportsIncomeStatementIndexRoute,
+  AuthenticatedRxsoftReportsTrialBalanceIndexRoute:
+    AuthenticatedRxsoftReportsTrialBalanceIndexRoute,
   AuthenticatedRxsoftRolesIdPermissionsIndexRoute:
     AuthenticatedRxsoftRolesIdPermissionsIndexRoute,
 }

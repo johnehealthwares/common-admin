@@ -133,27 +133,27 @@ function normalizeQuestions(questions: QuestionnaireQuestion[]) {
 }
 
 function isQuestionAnswered(value: AnswerValue) {
-  if (Array.isArray(value)) return value.length > 0;
-  if (typeof value === 'boolean') return true;
-  if (typeof value === 'number') return value > 0;
+  if (Array.isArray(value)) {return value.length > 0;}
+  if (typeof value === 'boolean') {return true;}
+  if (typeof value === 'number') {return value > 0;}
 
   return String(value ?? '').trim().length > 0;
 }
 
 function formatAnswer(value: AnswerValue) {
-  if (Array.isArray(value)) return value.join(', ');
-  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  if (Array.isArray(value)) {return value.join(', ');}
+  if (typeof value === 'boolean') {return value ? 'Yes' : 'No';}
 
   return value == null || value === '' ? 'Not answered' : String(value);
 }
 
 function getInputKind(question: QuestionnaireQuestion) {
-  if (question.renderMode === 'yes_no') return 'yes_no';
-  if (question.renderMode === 'star_rating') return 'star_rating';
-  if (question.questionType === 'boolean') return 'yes_no';
-  if (question.questionType === 'multi_choice') return 'checkbox';
-  if (question.questionType === 'single_choice') return 'radio';
-  if (question.renderMode === 'textarea') return 'textarea';
+  if (question.renderMode === 'yes_no') {return 'yes_no';}
+  if (question.renderMode === 'star_rating') {return 'star_rating';}
+  if (question.questionType === 'boolean') {return 'yes_no';}
+  if (question.questionType === 'multi_choice') {return 'checkbox';}
+  if (question.questionType === 'single_choice') {return 'radio';}
+  if (question.renderMode === 'textarea') {return 'textarea';}
 
   return 'input';
 }
@@ -179,7 +179,7 @@ export function Questionnaire({
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>(initialAnswers ?? {});
 
   const [currentIndex, setCurrentIndex] = useState(() => {
-    if (!initialCurrentQuestionId) return 0;
+    if (!initialCurrentQuestionId) {return 0;}
 
     const index = normalizedQuestions.findIndex(
       (question) => question.id === initialCurrentQuestionId
@@ -189,7 +189,7 @@ export function Questionnaire({
   });
 
   const [mode, setMode] = useState<'horizontal' | 'vertical'>(() => {
-    if (typeof window === 'undefined') return initialMode;
+    if (typeof window === 'undefined') {return initialMode;}
 
     const stored = window.localStorage.getItem(MODE_STORAGE_KEY);
 
@@ -218,7 +218,7 @@ export function Questionnaire({
   }, [mode]);
 
   useEffect(() => {
-    if (mode !== 'vertical' || !currentQuestion) return;
+    if (mode !== 'vertical' || !currentQuestion) {return;}
 
     const key = getQuestionKey(currentQuestion, currentIndex);
 
@@ -229,7 +229,7 @@ export function Questionnaire({
   }, [currentIndex, currentQuestion, mode]);
 
   async function saveProgress(nextIndex: number, nextAnswers: Record<string, AnswerValue>) {
-    if (!onSaveProgress || !currentQuestion) return;
+    if (!onSaveProgress || !currentQuestion) {return;}
 
     await onSaveProgress({
       currentQuestion,
@@ -242,7 +242,7 @@ export function Questionnaire({
   }
 
   async function goNext() {
-    if (!currentQuestion) return;
+    if (!currentQuestion) {return;}
 
     const key = getQuestionKey(currentQuestion, currentIndex);
 
@@ -315,7 +315,7 @@ export function Questionnaire({
   }
 
   async function goPrevious() {
-    if (currentIndex === 0) return;
+    if (currentIndex === 0) {return;}
 
     const nextIndex = currentIndex - 1;
 
@@ -725,7 +725,7 @@ function QuestionInput({
               disabled={!enabled}
               label={option.label}
               onChange={(event) => {
-                if (!enabled) return;
+                if (!enabled) {return;}
 
                 if (event.currentTarget.checked) {
                   onChange([...selected, optionValue]);

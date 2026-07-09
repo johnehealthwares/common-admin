@@ -2,12 +2,12 @@ import { AppShell } from '@mantine/core';
 import { Outlet, useLocation, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { LayoutProvider } from '@/context/layout-provider';
-import { useModuleId } from '@/context/module-context';
+import { useModuleId, useSetSelectedModule } from '@/context/module-context';
 import { AutoLogout } from '@/features/auth/auto-logout';
 import { useModuleFavicon } from '@/features/shared/use-module-favicon';
 import { useModuleTitle } from '@/features/shared/use-module-title';
 import { getCookie } from '@/lib/cookies';
-import { isRouteAllowedForModule, getModuleDashboard } from '@/lib/module-routing';
+import { isRouteAllowedForModule, getModuleDashboard, getModuleFromPath } from '@/lib/module-routing';
 import { AppSidebar } from './app-sidebar';
 
 type AuthenticatedLayoutProps = {
@@ -19,8 +19,17 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const moduleId = useModuleId();
+  const setSelectedModule = useSetSelectedModule();
   useModuleFavicon(moduleId);
   useModuleTitle(moduleId);
+
+  // Sync selected module from URL pathname
+  useEffect(() => {
+    const inferred = getModuleFromPath(pathname);
+    if (inferred && inferred !== moduleId) {
+      setSelectedModule(inferred);
+    }
+  }, [pathname, moduleId, setSelectedModule]);
 
   // Guard: Check if current route is allowed for active module
   useEffect(() => {

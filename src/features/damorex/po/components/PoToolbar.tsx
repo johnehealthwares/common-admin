@@ -45,7 +45,6 @@ export function PoToolbar({ onNew, onReset, onPrint, onSettings }: Props) {
     value: o.id,
     label: `${o.invoiceNumber || o.purchaseOrderNumber}:${o.supplier?.name || ''}:${o.receiptNumber || o.status}`,
   }));
-  console.log({pendingPOpts, orders})
 
   return (
     <>
@@ -116,7 +115,7 @@ export function PoToolbar({ onNew, onReset, onPrint, onSettings }: Props) {
           data={supplierOpts}
           value={supplierId || null}
           onChange={(v, opt) => {
-            if (v) setSupplier(v, opt.label);
+            if (v) {setSupplier(v, opt.label);}
           }}
           onSearchChange={setSupplierSearch}
           searchable
@@ -134,7 +133,7 @@ export function PoToolbar({ onNew, onReset, onPrint, onSettings }: Props) {
           data={warehouseOpts}
           value={warehouseId || null}
           onChange={(v, opt) => {
-            if (v) setWarehouse(v, opt.label);
+            if (v) {setWarehouse(v, opt.label);}
           }}
           onSearchChange={setWarehouseSearch}
           searchable

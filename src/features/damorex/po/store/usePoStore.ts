@@ -155,7 +155,7 @@ export const usePoStore = create<PoStoreState>((set, get) => ({
   addLine: (line) => {
     const active = get().activeTabId;
     const tab = get().tabs.find((t) => t.id === active);
-    if (!tab) return;
+    if (!tab) {return;}
     get().updateTab(active, {
       lines: [
         ...tab.lines,
@@ -167,10 +167,10 @@ export const usePoStore = create<PoStoreState>((set, get) => ({
   updateLine: (lineId, updates) => {
     const active = get().activeTabId;
     const tab = get().tabs.find((t) => t.id === active);
-    if (!tab) return;
+    if (!tab) {return;}
     get().updateTab(active, {
       lines: tab.lines.map((line) => {
-        if (line.id !== lineId) return line;
+        if (line.id !== lineId) {return line;}
         const updated = { ...line, ...updates };
         const raw = updated.orderedQty * updated.unitCost;
         const discount = raw * (updated.discountPercent / 100);
@@ -185,7 +185,7 @@ export const usePoStore = create<PoStoreState>((set, get) => ({
   removeLine: (lineId) => {
     const active = get().activeTabId;
     const tab = get().tabs.find((t) => t.id === active);
-    if (!tab) return;
+    if (!tab) {return;}
     get().updateTab(active, { lines: tab.lines.filter((l) => l.id !== lineId) });
   },
 

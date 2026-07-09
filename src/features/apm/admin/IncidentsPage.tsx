@@ -20,9 +20,9 @@ export function IncidentsPage() {
 
   const params = useMemo(() => {
     const p: Record<string, string | number> = { page, limit: 20 };
-    if (typeFilter) p.category = typeFilter;
-    if (severityFilter) p.severity = severityFilter;
-    if (statusFilter) p.status = statusFilter;
+    if (typeFilter) {p.category = typeFilter;}
+    if (severityFilter) {p.severity = severityFilter;}
+    if (statusFilter) {p.status = statusFilter;}
     return p;
   }, [typeFilter, severityFilter, statusFilter, page]);
 

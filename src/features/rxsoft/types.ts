@@ -247,7 +247,9 @@ export type Field = {
     | 'remote-select'
     | 'textarea'
     | 'image'
-    | 'multi-image';
+    | 'multi-image'
+    | 'accordion'
+    | 'accordion-array';
   hidden?: boolean;
   disabled?: boolean;
   placeholder?: string;
@@ -265,6 +267,9 @@ export type Field = {
   validate?: (value: unknown) => boolean | string;
   updateField?: (row: Record<string, unknown>, name: string, value: unknown) => void;
   extraParams?: (formState: Record<string, unknown>) => Record<string, unknown>;
+  itemLabelKey?: string;
+  itemRender?: (item: any) => React.ReactNode;
+  itemEditConfig?: any;
 };
 
 export type FieldGroup = {
@@ -419,6 +424,15 @@ export type ViewList<T> = {
   footer?: (rows: any[]) => ReactNode;
 };
 
+export type ViewAccordion<T> = {
+  key: keyof T | string;
+  title: string;
+  labelKey?: string;
+  renderLabel?: (item: any) => ReactNode;
+  itemEditConfig?: any;
+  itemFields?: string[];
+};
+
 export type View<T> = {
   endpoint: string;
   title?: string;
@@ -431,6 +445,9 @@ export type View<T> = {
 
   // table sections
   lists?: ViewList<T>[];
+
+  // accordion sections
+  accordions?: ViewAccordion<T>[];
 };
 export const RELATION_FILTER = (searchParam: SearchConfig): ColumnFilter[] => [
   {

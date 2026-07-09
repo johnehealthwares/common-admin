@@ -3,7 +3,7 @@ import { clearTokens, getAccessToken, getRefreshToken, persistTokens } from '@/l
 
 export const COMMUNICATION_API_BASE_URL =
   (import.meta.env.VITE_COMMUNICATION_API_URL as string | undefined) ??
-  'http://localhost:3000/api/v1';
+  'http://localhost:8003/api/v1';
 
 /** @deprecated Use COMMUNICATION_API_BASE_URL instead */
 export const API_BASE_URL = COMMUNICATION_API_BASE_URL;

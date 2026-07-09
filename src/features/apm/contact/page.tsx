@@ -15,7 +15,7 @@ export default function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !subject || !message) return;
+    if (!name || !email || !subject || !message) {return;}
     mutate(
       { name, email, phone: phone || undefined, subject, message },
       { onSuccess: () => { setName(''); setEmail(''); setPhone(''); setSubject(''); setMessage(''); } },

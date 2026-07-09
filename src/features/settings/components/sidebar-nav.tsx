@@ -35,7 +35,7 @@ export function SidebarNavItem({
   const hasChildren = Boolean(item.items?.length);
 
   const active = useMemo(() => {
-    if (!item.url) return false;
+    if (!item.url) {return false;}
 
     return (
       pathname === item.url ||
@@ -109,7 +109,6 @@ export function SidebarNavItem({
       </Tooltip>
     );
   }
-
   return (
     <Stack gap={4}>
       {/* ROOT ITEM */}

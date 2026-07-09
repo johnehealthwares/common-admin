@@ -26,7 +26,7 @@ export function printPo(po: {
     .join('');
 
   const win = window.open('', '_blank');
-  if (!win) return;
+  if (!win) {return;}
   win.document.write(`
     <html>
     <head>

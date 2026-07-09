@@ -42,7 +42,7 @@ export function PollingUnitsPage() {
   };
 
   const handleSave = () => {
-    if (!selectedPu) return;
+    if (!selectedPu) {return;}
     updatePu.mutate({ id: selectedPu.id, data: form }, { onSuccess: close });
   };
 

@@ -32,7 +32,7 @@ export function StockAdjustModal({
   const adjustmentMutation = useMutation({
     mutationFn: async () => {
       const delta = newQty - currentQty;
-      if (delta === 0) return;
+      if (delta === 0) {return;}
 
       await rxsoftApi.post('/inventory/adjust-quantity', {
         itemId,

@@ -1,5 +1,6 @@
 import { AppShell, Stack, ScrollArea, Box, Divider, Badge, Group, Text } from '@mantine/core';
 import { useState } from 'react';
+import { useLocation } from '@tanstack/react-router';
 import { useModuleId, useModuleName } from '@/context/module-context';
 import { SidebarNavItem } from '@/features/settings/components/sidebar-nav';
 import { useAuthStore } from '@/stores/auth-store';
@@ -11,17 +12,14 @@ export function AppSidebar() {
   const user = useAuthStore((state) => state.user);
   const moduleId = useModuleId();
   const moduleName = useModuleName();
+  const { pathname } = useLocation();
 
   const navGroups = filterNavGroupsByModule(sidebarData.navGroups, moduleId);
-  const [expandState, setExpandState] = useState<boolean[]>(sidebarData.navGroups.map(() => false));
+  const [expandState, setExpandState] = useState<boolean[]>(navGroups.map(() => false));
 
-  const resetExpandState = (index: number, espanded: boolean) => {
-    setExpandState(sidebarData.navGroups.map((_, inde) => {
-     const unespanded =  inde === index ? !espanded : false
-     return unespanded
-    }));
+  const resetExpandState = (index: number, expanded: boolean) => {
+    setExpandState(navGroups.map((_, i) => (i === index ? !expanded : false)));
   };
-
   return (
     <AppShell.Navbar
       p="sm"
@@ -67,7 +65,7 @@ export function AppSidebar() {
             <SidebarNavItem
               key={item.title}
               item={item}
-              pathname={'pathname'}
+              pathname={pathname}
               resetExpandState={resetExpandState}
               expanded={expandState[i]}
               index={i}

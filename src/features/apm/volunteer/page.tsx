@@ -16,7 +16,7 @@ export default function VolunteerPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return;
+    if (!name || !phone) {return;}
     mutate(
       { name, phone, email: email || undefined, lga: lga || undefined, ward: ward || undefined, skills: skills || undefined },
       { onSuccess: () => { setName(''); setPhone(''); setEmail(''); setLga(''); setWard(''); setSkills(''); } },

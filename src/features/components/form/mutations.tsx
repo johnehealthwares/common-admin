@@ -2,6 +2,7 @@ import { notifications } from '@mantine/notifications';
 import { useMutation } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
 import { useApiProvider } from '../../../context/module-context';
+import { getDirtyFields } from '../utils';
 
 type MutationProps = {
   endpoint: string;
@@ -31,6 +32,7 @@ type UpdateMutationProps = MutationProps & {
   editingRow: Record<string, unknown> | null;
   setEditingRow: (row: Record<string, unknown> | null) => void;
   setShowModal: (value: boolean) => void;
+  initialFormState?: Record<string, unknown>;
 };
 
 type DeteleMutationProps = MutationProps & {
@@ -59,7 +61,6 @@ export const useCreateMutation = ({
   return useMutation({
     mutationFn: async (values: Record<string, unknown>) => {
       const payload = buildCreatePayload ? buildCreatePayload(values) : values;
-      console.log({ stage: 'mutationFn-values', values, payload });
       const response = await effectiveApiProvider!.post(endpoint, payload);
       return response.data as Record<string, unknown>;
     },
@@ -94,19 +95,21 @@ export const useUpdateMutation = ({
   editingRow,
   setShowModal,
   apiProvider,
+  initialFormState,
 }: UpdateMutationProps) => {
   const contextApiProvider = useApiProvider();
   const effectiveApiProvider = apiProvider ?? contextApiProvider;
-  console.log('here..')
   return useMutation({
     mutationFn: async (values: Record<string, unknown>) => {
-      if (!editingRow?.id) throw new Error('Missing record id');
+      if (!editingRow?.id) {throw new Error('Missing record id');}
+      const changedValues = initialFormState
+        ? getDirtyFields(values, initialFormState)
+        : values;
       const payload = buildUpdatePayload
-        ? buildUpdatePayload(values, editingRow)
+        ? buildUpdatePayload(changedValues, editingRow)
         : buildCreatePayload
-          ? buildCreatePayload(values)
-          : values;
-      console.log({ stage: 'update-mutationFn-values', values, payload, editingRow });
+          ? buildCreatePayload(changedValues)
+          : changedValues;
       const response = await effectiveApiProvider!.put(
         `${endpoint}/${String(editingRow.id)}`,
         payload
@@ -122,7 +125,6 @@ export const useUpdateMutation = ({
       notifications.show({ message: `${title} record updated` });
     },
     onError: (error: any) => {
-      console.log({error})
       notifications.show({
         message: `Failed to update ${title.toLowerCase()} record - ${error?.data?.error?.message ?? error?.response?.data?.error?.message}`,
       });
@@ -166,7 +168,7 @@ export const useExportMutation = ({ csvEndpoint, title, apiProvider }: ExportMut
 
   return useMutation({
     mutationFn: async () => {
-      if (!csvEndpoint) return;
+      if (!csvEndpoint) {return;}
       // await downloadBlob(
       //     { method: 'GET', url: csvEndpoint },
       //     `${title.toLowerCase().replace(/\s+/g, '_')}.csv`

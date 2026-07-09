@@ -1,5 +1,5 @@
 import type { ModelConfig } from '../../../shared/model-schema';
-import { RELATION_FILTER, type Column, type Field } from '../../types';
+import { RELATION_FILTER, type Column, type Field, type View } from '../../types';
 
 const columns: Column[] = [
   { key: 'invoiceNumber', label: 'PO/Invoice' },
@@ -64,6 +64,34 @@ const createFields: Field[] = [
   { name: 'note', label: 'Note' },
 ];
 
+const purchasesView: View<any> = {
+  endpoint: '/purchases/:id',
+  title: 'Purchase Order',
+  fieldGroups: [
+    {
+      fields: [
+        { key: 'invoiceNumber', label: 'PO Number', col: 4 },
+        { key: 'supplier.name', label: 'Supplier', col: 4, render: (_, data) => data.supplier?.name ?? '-' },
+        { key: 'warehouse.name', label: 'Warehouse', col: 4, render: (_, data) => data.warehouse?.name ?? '-' },
+        { key: 'orderDate', label: 'Order Date', col: 3 },
+        { key: 'expectedDate', label: 'Expected Date', col: 3 },
+        { key: 'status', label: 'Status', col: 3 },
+        { key: 'currencyCode', label: 'Currency', col: 3 },
+        { key: 'totalCost', label: 'Total Cost', col: 3 },
+        { key: 'note', label: 'Note', col: 12 },
+      ],
+    },
+  ],
+  accordions: [
+    {
+      key: 'lines',
+      title: 'Purchase Lines',
+      renderLabel: (item) =>
+        `${item.itemName} \u2014 ${item.receivedQty} ${item.uomName} @ $${Number(item.unitCost).toFixed(2)} = $${Number(item.lineTotal).toFixed(2)}`,
+    },
+  ],
+};
+
 function buildCreatePayload(values: Record<string, unknown>) {
   return {
     supplierId: values.supplier ? (values.supplier as { value: string }).value : values.supplierId,
@@ -105,5 +133,7 @@ export const purchasesConfig: ModelConfig = {
   createFields,
   buildCreatePayload,
   buildFormState,
+  view: purchasesView,
+  detailPathBuilder: (row) => `/rxsoft/purchases/${String(row.id)}`,
   canDelete: true,
 };

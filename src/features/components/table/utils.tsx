@@ -8,7 +8,7 @@ import { RenderField } from '../form/RenderField';
 // ------------------------
 
 export const resolveAutoFilterValue = (filter: ColumnFilter): FilterValue | null => {
-  if (filter.filterValue) return filter.filterValue;
+  if (filter.filterValue) {return filter.filterValue;}
   const now = dayjs();
 
   const startOfDay = (d: dayjs.Dayjs) => d.startOf('day');

@@ -50,10 +50,10 @@ import {
   useSendConversationMessage,
 } from '../hooks/use-chat-queries';
 import { useChatSocket } from '../hooks/use-chat-socket';
-import { findParticipantByPhone, createParticipant } from '../services/chat-api';
+import { addProjection, findParticipantByPhone, createParticipant, listProjections } from '../services/chat-api';
 import { NewConversationModal } from '../components/new-conversation-modal';
 import { ParticipantModal } from '../components/participant-modal';
-import type { ChatMode, ConversationInboxItem, ExchangeMessage, InboxMode } from '../types';
+import type { ChatMode, ConversationInboxItem, ConversationProjection, ExchangeMessage, InboxMode } from '../types';
 import { getParticipantInitials, getParticipantName } from '../utils/participants';
 import { parseQuestionOptions } from '../utils/parse-options';
 
@@ -81,7 +81,7 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
   const userPhone = useAuthStore((state) => state.user?.phone);
 
   useEffect(() => {
-    if (!userPhone || adminParticipantLoaded) return;
+    if (!userPhone || adminParticipantLoaded) {return;}
 
     (async () => {
       try {
@@ -121,7 +121,7 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
   const markRead = useMarkConversationRead();
 
   useEffect(() => {
-    if (!selectedConversationId) return;
+    if (!selectedConversationId) {return;}
 
     markRead.mutate({
       conversationId: selectedConversationId,
@@ -135,37 +135,56 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
     setSelectedConversationId(conversationId);
   }, []);
 
+  const handleAddMe = useCallback(async (conversationId: string) => {
+    if (!adminParticipantId) {return;}
+    try {
+      const data = await listProjections(conversationId);
+      const alreadyAdded = data.some((p) => p.participant.id === adminParticipantId);
+      if (!alreadyAdded) {
+        await addProjection({
+          conversationId,
+          participantId: adminParticipantId,
+          channelId: '',
+          role: 'AGENT' as any,
+        });
+      }
+    } catch {
+      console.warn('Failed to add self to conversation');
+    }
+  }, [adminParticipantId]);
+
   const inbox = (
-    <InboxSidebar
-      connected={socket.connected}
-      conversations={conversations}
-      error={inboxQuery.isError}
-      fetchNextPage={() => inboxQuery.fetchNextPage()}
-      hasNextPage={inboxQuery.hasNextPage}
-      isFetchingNextPage={inboxQuery.isFetchingNextPage}
-      loading={inboxQuery.isLoading}
-      onRetry={() => inboxQuery.refetch()}
-      onSearch={setSearch}
-      onSelect={(conversation) => {
-        setSelectedConversationId(conversation.conversationId);
-        setSidebarOpen(false);
-      }}
-      search={search}
-      selectedConversationId={selectedConversationId}
-      mode={inboxMode}
-      onModeChange={setInboxMode}
-      onNewChat={openNewChat}
-      onAddParticipant={(convId) => {
-        setContextConversationId(convId);
-        setParticipantModalMode('add');
-        openParticipantModal();
-      }}
-      onRemoveParticipant={(convId) => {
-        setContextConversationId(convId);
-        setParticipantModalMode('remove');
-        openParticipantModal();
-      }}
-    />
+        <InboxSidebar
+          connected={socket.connected}
+          conversations={conversations}
+          error={inboxQuery.isError}
+          fetchNextPage={() => inboxQuery.fetchNextPage()}
+          hasNextPage={inboxQuery.hasNextPage}
+          isFetchingNextPage={inboxQuery.isFetchingNextPage}
+          loading={inboxQuery.isLoading}
+          onRetry={() => inboxQuery.refetch()}
+          onSearch={setSearch}
+          onSelect={(conversation) => {
+            setSelectedConversationId(conversation.conversationId);
+            setSidebarOpen(false);
+          }}
+          search={search}
+          selectedConversationId={selectedConversationId}
+          mode={inboxMode}
+          onModeChange={setInboxMode}
+          onNewChat={openNewChat}
+          onAddParticipant={(convId) => {
+            setContextConversationId(convId);
+            setParticipantModalMode('add');
+            openParticipantModal();
+          }}
+          onRemoveParticipant={(convId) => {
+            setContextConversationId(convId);
+            setParticipantModalMode('remove');
+            openParticipantModal();
+          }}
+          onAddMe={handleAddMe}
+        />
   );
 
   return (
@@ -195,6 +214,7 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
             showMobileBack={Boolean(isMobile)}
             typingParticipantId={socket.typingParticipantId}
             userPhone={userPhone}
+            adminParticipantId={adminParticipantId ?? undefined}
           />
         </Paper>
       </Group>
@@ -213,6 +233,8 @@ export function ChatUiPage({ mode = 'admin' }: ChatUiPageProps) {
         opened={newChatOpened}
         onClose={closeNewChat}
         onCreated={handleNewChatCreated}
+        adminParticipantId={adminParticipantId ?? undefined}
+        adminPhone={userPhone}
       />
 
       <ParticipantModal
@@ -246,6 +268,7 @@ function InboxSidebar(props: {
   onNewChat: () => void;
   onAddParticipant: (conversationId: string) => void;
   onRemoveParticipant: (conversationId: string) => void;
+  onAddMe: (conversationId: string) => void;
 }) {
   return (
     <Stack h="100%" gap="sm" p="sm">
@@ -348,6 +371,7 @@ function InboxSidebar(props: {
                 selected={conversation.conversationId === props.selectedConversationId}
                 onAddParticipant={props.onAddParticipant}
                 onRemoveParticipant={props.onRemoveParticipant}
+                onAddMe={(convId) => props.onAddMe(convId)}
               />
               <Divider />
             </Fragment>
@@ -370,6 +394,7 @@ function ConversationListItem(props: {
   selected: boolean;
   onAddParticipant: (conversationId: string) => void;
   onRemoveParticipant: (conversationId: string) => void;
+  onAddMe: (conversationId: string) => void;
 }) {
   const participant = props.conversation.participant;
   const name = getParticipantName(participant);
@@ -444,6 +469,16 @@ function ConversationListItem(props: {
           onClick={(e) => {
             e.stopPropagation();
             setContextMenuOpened(false);
+            props.onAddMe(props.conversation.conversationId);
+          }}
+        >
+          Add Me
+        </Menu.Item>
+        <Menu.Item
+          leftSection={<UserPlus size={14} />}
+          onClick={(e) => {
+            e.stopPropagation();
+            setContextMenuOpened(false);
             props.onAddParticipant(props.conversation.conversationId);
           }}
         >
@@ -464,10 +499,7 @@ function ConversationListItem(props: {
   );
 }
 
-function ConversationThread({
-  userPhone,
-  ...props
-}: {
+function ConversationThread(props: {
   connected: boolean;
   conversation?: ConversationInboxItem;
   mode: ChatMode;
@@ -475,8 +507,10 @@ function ConversationThread({
   showMobileBack: boolean;
   typingParticipantId?: string;
   userPhone?: string;
+  adminParticipantId?: string;
 }) {
   const [draft, setDraft] = useState('');
+  const [projections, setProjections] = useState<ConversationProjection[]>([]);
   const viewportRef = useRef<HTMLDivElement>(null);
   const messagesQuery = useConversationMessages(props.conversation?.conversationId);
   const sendMessage = useSendConversationMessage();
@@ -490,9 +524,18 @@ function ConversationThread({
       ? props.conversation?.moderator?.id
       : props.conversation?.participant.id;
 
+  const hasMyProjection = projections.some((p) => p.participant.id === props.adminParticipantId);
+  const isCompleted = props.conversation?.status === 'COMPLETED';
+  const inputDisabled = isCompleted || (!hasMyProjection && !!props.adminParticipantId);
+
+  useEffect(() => {
+    if (!props.conversation?.conversationId) {return;}
+    listProjections(props.conversation.conversationId).then(setProjections).catch(() => setProjections([]));
+  }, [props.conversation?.conversationId]);
+
   useEffect(() => {
     const viewport = viewportRef.current;
-    if (!viewport || messagesQuery.isFetchingNextPage) return;
+    if (!viewport || messagesQuery.isFetchingNextPage) {return;}
     viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
   }, [messages.length, props.conversation?.conversationId]);
 
@@ -523,12 +566,12 @@ function ConversationThread({
   const conversation = props.conversation;
 
   const submit = () => {
-    if (!draft.trim() || !senderId || sendMessage.isPending) return;
+    if (!draft.trim() || !senderId || sendMessage.isPending || inputDisabled) {return;}
 
     sendMessage.mutate({
       conversationId: conversation.conversationId,
       channelId: conversation.channelId,
-      senderPhone: userPhone ?? (conversation.participant.phone || ''),
+      senderPhone: props.userPhone ?? (conversation.participant.phone || ''),
       text: draft.trim(),
     });
     setDraft('');
@@ -540,7 +583,7 @@ function ConversationThread({
     await messagesQuery.fetchNextPage();
 
     window.setTimeout(() => {
-      if (!viewport) return;
+      if (!viewport) {return;}
       viewport.scrollTop = viewport.scrollHeight - previousHeight;
     }, 0);
   };
@@ -636,7 +679,7 @@ function ConversationThread({
                     sendMessage.mutate({
                       conversationId: conversation.conversationId,
                       channelId: conversation.channelId,
-                      senderPhone: userPhone ?? (conversation.participant.phone || ''),
+                      senderPhone: props.userPhone ?? (conversation.participant.phone || ''),
                       text: value,
                     });
                   }}
@@ -654,14 +697,21 @@ function ConversationThread({
       </ScrollArea>
 
       <Box bg="white" p="md">
+        {isCompleted && (
+          <Text c="dimmed" size="sm" mb="xs" ta="center">This conversation has ended.</Text>
+        )}
+        {!isCompleted && !hasMyProjection && !!props.adminParticipantId && (
+          <Text c="dimmed" size="sm" mb="xs" ta="center">Right-click the conversation and select <b>Add Me</b> to join.</Text>
+        )}
         <Group align="flex-end" gap="xs" wrap="nowrap">
           <Tooltip label="Attach file">
-            <ActionIcon aria-label="Attach file" size="lg" variant="subtle">
+            <ActionIcon aria-label="Attach file" disabled={inputDisabled} size="lg" variant="subtle">
               <Paperclip size={18} />
             </ActionIcon>
           </Tooltip>
           <Textarea
             autosize
+            disabled={inputDisabled}
             maxRows={4}
             minRows={1}
             onChange={(event) => setDraft(event.currentTarget.value)}
@@ -671,12 +721,12 @@ function ConversationThread({
                 submit();
               }
             }}
-            placeholder="Type a message"
+            placeholder={inputDisabled ? '' : 'Type a message'}
             style={{ flex: 1 }}
             value={draft}
           />
           <Button
-            disabled={!draft.trim() || !senderId}
+            disabled={!draft.trim() || !senderId || inputDisabled}
             leftSection={<Send size={16} />}
             loading={sendMessage.isPending}
             onClick={submit}

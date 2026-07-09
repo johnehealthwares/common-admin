@@ -195,6 +195,14 @@ export const modelRegistry: Record<string, () => Promise<{ default: ModelConfig 
     import('@/features/lis/schema/resources').then((m) => ({
       default: resourceToModelConfig(m.getLisResourceByKey('loinc')!),
     })),
+  questionnaires: () =>
+    import('@/features/rxsoft/pages/conversation/components/conversation-page-schemas').then((m) => ({
+      default: m.questionnairePageSchema as unknown as ModelConfig,
+    })),
+  workflows: () =>
+    import('@/features/rxsoft/pages/conversation/components/conversation-page-schemas').then((m) => ({
+      default: m.workflowPageSchema as unknown as ModelConfig,
+    })),
 };
 
 function resourceToModelConfig(resource: {
@@ -220,6 +228,6 @@ function resourceToModelConfig(resource: {
 
 export function getModelConfig(resourceKey: string): Promise<ModelConfig | null> {
   const loader = modelRegistry[resourceKey];
-  if (!loader) return Promise.resolve(null);
+  if (!loader) {return Promise.resolve(null);}
   return loader().then((m) => m.default);
 }

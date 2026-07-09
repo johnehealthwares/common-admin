@@ -59,7 +59,7 @@ export function useSale(id?: string) {
   return useQuery({
     queryKey: id ? salesKeys.detail(id) : (['sales', 'undefined'] as const),
     queryFn: async () => {
-      if (!id) return null;
+      if (!id) {return null;}
       const { data } = await rxsoftApi.get(`/sales/${id}`);
       return data;
     },
@@ -81,7 +81,7 @@ export function useSearchSales(search?: string) {
   return useQuery({
     queryKey: ['sales', 'search', debounced] as const,
     queryFn: async () => {
-      if (!debounced) return [];
+      if (!debounced) {return [];}
       const { data } = await rxsoftApi.get('/sales', {
         params: { search: debounced, limit: 10 },
       });
@@ -122,7 +122,7 @@ export function usePriceListItems(priceListId?: string) {
   return useQuery({
     queryKey: priceListKeys.items(priceListId),
     queryFn: async () => {
-      if (!priceListId) return [];
+      if (!priceListId) {return [];}
       const { data } = await rxsoftApi.get(`/price-lists/${priceListId}/items`, {
         params: { limit: 100000 },
       });

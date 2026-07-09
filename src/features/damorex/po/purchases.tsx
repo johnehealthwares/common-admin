@@ -1,10 +1,12 @@
 import { ActionIcon, Box, Button, Group, Paper, Stack, Text } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { PoLinesTable } from './components/PoLinesTable';
 import { PoSettingsDrawer } from './components/PoSettingsDrawer';
 import { PoSummary } from './components/PoSummary';
 import { PoToolbar } from './components/PoToolbar';
+import { SetPriceModal } from './components/SetPriceModal';
 import { usePoStore } from './store/usePoStore';
 import { useAddPoLine, useCreatePurchaseOrder, useReceiveGoods, useUnpostGoods, useUpdatePurchaseOrder } from './api/poApi';
 import { printPo } from './utils/print';
@@ -27,6 +29,7 @@ export default function PurchasesPage() {
   const [unpostModal, setUnpostModal] = useState(false);
   const [unpostTargetLine, setUnpostTargetLine] = useState<string | null>(null);
   const [savingLines, setSavingLines] = useState<Set<string>>(new Set());
+  const [setPriceLine, setSetPriceLine] = useState<any>(null);
 
   useEffect(() => {
     if (!usePoStore.getState().activeTabId && tabs.length > 0) {
@@ -47,12 +50,20 @@ export default function PurchasesPage() {
   const unpostMutation = useUnpostGoods();
 
   async function handleSaveDraft() {
-    const result = await createMutation.mutateAsync({
+    if (!supplierId) {
+      notifications.show({ title: 'Validation', message: 'Please select a supplier', color: 'red' });
+      return;
+    }
+    if (!warehouseId) {
+      notifications.show({ title: 'Validation', message: 'Please select a warehouse', color: 'red' });
+      return;
+    }
+    const payload = {
       supplierId,
       warehouseId,
       expectedDate: expectedDate || undefined,
       note: note || undefined,
-      status: 'draft',
+      status: 'draft' as const,
       lines: lines.map((l) => ({
         itemId: l.itemId,
         orderedQty: l.orderedQty,
@@ -61,7 +72,10 @@ export default function PurchasesPage() {
         discountPercent: l.discountPercent,
         taxPercent: l.taxPercent,
       })),
-    });
+    };
+    const result = pendingPoId
+      ? await updateMutation.mutateAsync({ id: pendingPoId, payload })
+      : await createMutation.mutateAsync(payload);
     const poId = result.id;
     usePoStore.getState().setPendingPo(poId, result.invoiceNumber || result.purchaseOrderNumber, 'draft');
     usePoStore.getState().updateTab(activeTabId, {
@@ -86,12 +100,20 @@ export default function PurchasesPage() {
   }
 
   async function handleSubmitApprove() {
-    const result = await createMutation.mutateAsync({
+    if (!supplierId) {
+      notifications.show({ title: 'Validation', message: 'Please select a supplier', color: 'red' });
+      return;
+    }
+    if (!warehouseId) {
+      notifications.show({ title: 'Validation', message: 'Please select a warehouse', color: 'red' });
+      return;
+    }
+    const payload = {
       supplierId,
       warehouseId,
       expectedDate: expectedDate || undefined,
       note: note || undefined,
-      status: 'approved',
+      status: 'approved' as const,
       lines: lines.map((l) => ({
         itemId: l.itemId,
         orderedQty: l.orderedQty,
@@ -100,7 +122,10 @@ export default function PurchasesPage() {
         discountPercent: l.discountPercent,
         taxPercent: l.taxPercent,
       })),
-    });
+    };
+    const result = pendingPoId
+      ? await updateMutation.mutateAsync({ id: pendingPoId, payload })
+      : await createMutation.mutateAsync(payload);
     usePoStore.getState().setPendingPo(result.id, result.invoiceNumber || result.purchaseOrderNumber, 'approved');
     usePoStore.getState().updateTab(activeTabId, {
       lines: (result.lines || []).map((l: any) => ({
@@ -124,7 +149,7 @@ export default function PurchasesPage() {
   }
 
   async function handleSaveLine(line: any) {
-    if (!pendingPoId) return;
+    if (!pendingPoId) {return;}
     setSavingLines((prev) => new Set(prev).add(line.id));
     try {
       const result = await addLineMutation.mutateAsync({
@@ -155,7 +180,7 @@ export default function PurchasesPage() {
   }
 
   async function handleReceiveLine(line: any) {
-    if (!pendingPoId) return;
+    if (!pendingPoId) {return;}
     const payload = {
       purchaseOrderId: pendingPoId,
       receivedDate: new Date(receivedDate || new Date()).toISOString(),
@@ -169,8 +194,11 @@ export default function PurchasesPage() {
         },
       ],
     };
-    await receiveMutation.mutateAsync({ poId: pendingPoId, payload });
+    const result = await receiveMutation.mutateAsync({ poId: pendingPoId, payload });
     usePoStore.getState().updateLine(line.id, { isPosted: true });
+    if (result?.poStatus) {
+      usePoStore.getState().setPendingPo(pendingPoId, undefined, result.poStatus);
+    }
     if (autoPrint) {
       printPo({
         purchaseOrderNumber: receiptNumber,
@@ -195,8 +223,18 @@ export default function PurchasesPage() {
     setUnpostModal(true);
   }
 
+  function handleSetPriceLine(line: any) {
+    setSetPriceLine(line);
+  }
+
+  function handleSetPriceConfirm(unitCost: number) {
+    if (!setPriceLine) return;
+    usePoStore.getState().updateLine(setPriceLine.id, { unitCost });
+    setSetPriceLine(null);
+  }
+
   async function handleConfirmUnpost(password: string) {
-    if (!pendingPoId || !unpostTargetLine) return;
+    if (!pendingPoId || !unpostTargetLine) {return;}
     const receiptLineId = unpostTargetLine;
     await unpostMutation.mutateAsync({
       poId: pendingPoId,
@@ -283,6 +321,7 @@ export default function PurchasesPage() {
                   onSaveLine={handleSaveLine}
                   onReceiveLine={handleReceiveLine}
                   onUnpostLine={handleUnpostLine}
+                  onSetPrice={handleSetPriceLine}
                   savingLines={savingLines}
                 />
                 {(!status || status === 'draft') && (
@@ -322,6 +361,14 @@ export default function PurchasesPage() {
         onClose={() => { setUnpostModal(false); setUnpostTargetLine(null); }}
         onConfirm={handleConfirmUnpost}
         loading={unpostMutation.isPending}
+      />
+
+      <SetPriceModal
+        opened={!!setPriceLine}
+        onClose={() => setSetPriceLine(null)}
+        onConfirm={handleSetPriceConfirm}
+        itemId={setPriceLine?.itemId || ''}
+        currentUnitCost={setPriceLine?.unitCost || 0}
       />
     </Box>
   );

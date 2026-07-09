@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { rxsoftApi } from '@/lib/rxsoft-api';
 import { SaleSession } from '../types';
+import { getUomEffectiveFactor } from '../utils/calculation';
 
 interface UomOption {
   id: string;
@@ -11,6 +12,7 @@ interface UomOption {
   code: string | null;
   factor: number;
   uomType: string;
+  categoryId: string | null;
 }
 
 interface Props {
@@ -30,13 +32,9 @@ export function CartTable({ session, onUpdateQty, onRemoveItem, onUpdateUom }: P
     staleTime: 300_000,
   });
 
-  const uomOptions = useMemo(() => {
-    return allUoms.map((u) => ({ value: u.id, label: u.name }));
-  }, [allUoms]);
-
   const uomMap = useMemo(() => {
     const map = new Map<string, UomOption>();
-    for (const u of allUoms) map.set(u.id, u);
+    for (const u of allUoms) {map.set(u.id, u);}
     return map;
   }, [allUoms]);
 
@@ -54,7 +52,7 @@ export function CartTable({ session, onUpdateQty, onRemoveItem, onUpdateUom }: P
               <Table.Th>UOM</Table.Th>
               <Table.Th>QTY</Table.Th>
               <Table.Th>TotalCost</Table.Th>
-               {session.status !== 'completed' &&(<Table.Th></Table.Th>)}
+               {session.status !== 'completed' &&(<Table.Th />)}
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -77,14 +75,19 @@ export function CartTable({ session, onUpdateQty, onRemoveItem, onUpdateUom }: P
                   <Table.Td c="lime">
                     <Select
                       size="xs"
-                      data={uomOptions}
+                      data={(() => {
+                        const current = uomMap.get(item.uomId);
+                        if (!current?.categoryId) return Array.from(uomMap.values()).map((u) => ({ value: u.id, label: u.name }));
+                        return Array.from(uomMap.values())
+                          .filter((u) => u.categoryId === current.categoryId)
+                          .map((u) => ({ value: u.id, label: u.name }));
+                      })()}
                       value={item.uomId}
-                      disabled
                       onChange={(v) => {
-                        if (!v || v === item.uomId) return;
+                        if (!v || v === item.uomId) {return;}
                         const u = uomMap.get(v);
-                        if (!u) return;
-                        onUpdateUom(item.id, u.id, u.name, u.factor);
+                        if (!u) {return;}
+                        onUpdateUom(item.id, u.id, u.name, getUomEffectiveFactor(u));
                       }}
                       w={90}
                       styles={{

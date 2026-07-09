@@ -162,34 +162,34 @@ function buildCreatePayload(values: Record<string, unknown>) {
 }
 
 function buildUpdatePayload(values: Record<string, unknown>, _row?: Record<string, unknown>) {
-  console.log({values, _row})
   const payload: Record<string, unknown> = {};
-  if (values.username) payload.username = values.username;
-  if (values.password) payload.password = values.password;
-  if (values.roles) {
+  if ('username' in values) {payload.username = values.username;}
+  if ('password' in values) {payload.password = values.password;}
+  if ('roles' in values) {
     payload.roleCodes = Array.isArray(values.roles)
       ? values.roles.map((item: any) => (typeof item === 'string' ? item : item.value ?? item.code ?? ''))
       : [];
   }
-  payload.posConfig = {
-    storeId: values.storeId || undefined,
-    stockLocationId: values.stockLocationId
-      ? (values.stockLocationId as Option).value
-      : undefined,
-    defaultCustomerId: values.defaultCustomerId
-      ? (values.defaultCustomerId as Option).value
-      : undefined,
-    defaultPriceListId: values.defaultPriceListId
-      ? (values.defaultPriceListId as Option).value
-      : undefined,
-    allowPos: values.allowPos ?? true,
-    allowA4Print: values.allowA4Print ?? false,
-    loginTimeoutMinutes: values.loginTimeoutMinutes ? Number(values.loginTimeoutMinutes) : undefined,
-    autoSelectLocation: values.autoSelectLocation ?? false,
-    autoSelectCustomer: values.autoSelectCustomer ?? false,
-    autoSelectPriceList: values.autoSelectPriceList ?? false,
-  };
-  console.log({payload})
+
+  const posKeys = ['storeId', 'stockLocationId', 'defaultCustomerId', 'defaultPriceListId',
+    'loginTimeoutMinutes', 'allowPos', 'allowA4Print', 'autoSelectLocation',
+    'autoSelectCustomer', 'autoSelectPriceList'] as const;
+  const hasPosChanges = posKeys.some((k) => k in values);
+  if (hasPosChanges) {
+    const posConfig: Record<string, unknown> = {};
+    if ('storeId' in values) {posConfig.storeId = values.storeId || null;}
+    if ('stockLocationId' in values) {posConfig.stockLocationId = values.stockLocationId ? (values.stockLocationId as Option).value : null;}
+    if ('defaultCustomerId' in values) {posConfig.defaultCustomerId = values.defaultCustomerId ? (values.defaultCustomerId as Option).value : null;}
+    if ('defaultPriceListId' in values) {posConfig.defaultPriceListId = values.defaultPriceListId ? (values.defaultPriceListId as Option).value : null;}
+    if ('loginTimeoutMinutes' in values) {posConfig.loginTimeoutMinutes = values.loginTimeoutMinutes ? Number(values.loginTimeoutMinutes) : null;}
+    if ('allowPos' in values) {posConfig.allowPos = values.allowPos;}
+    if ('allowA4Print' in values) {posConfig.allowA4Print = values.allowA4Print;}
+    if ('autoSelectLocation' in values) {posConfig.autoSelectLocation = values.autoSelectLocation;}
+    if ('autoSelectCustomer' in values) {posConfig.autoSelectCustomer = values.autoSelectCustomer;}
+    if ('autoSelectPriceList' in values) {posConfig.autoSelectPriceList = values.autoSelectPriceList;}
+    payload.posConfig = posConfig;
+  }
+
   return payload;
 }
 

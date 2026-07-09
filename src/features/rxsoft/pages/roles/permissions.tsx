@@ -21,8 +21,32 @@ type Action = { name: string; label: string };
 type Feature = { resource: string; label: string; actions: Action[] };
 type ModulePerm = { id: string; name: string; features: Feature[] };
 
+type RawPermission = { code: string; name: string; description: string; resource: string; action: string };
+type RawModule = { module: string; moduleDisplayName: string; permissions: RawPermission[] };
+
 function permCode(modId: string, _feature: Feature, action: Action): string {
-  return `${modId}:${_feature.resource}.${action.name}`;
+  return `${modId}.${_feature.resource}.${action.name}`;
+}
+
+function toModulePerms(raw: RawModule[]): ModulePerm[] {
+  return raw.map((mod) => ({
+    id: mod.module,
+    name: mod.moduleDisplayName,
+    features: groupFeatures(mod.permissions),
+  }));
+}
+
+function groupFeatures(permissions: RawPermission[]): Feature[] {
+  const map = new Map<string, Feature>();
+  for (const p of permissions) {
+    let feature = map.get(p.resource);
+    if (!feature) {
+      feature = { resource: p.resource, label: p.resource.charAt(0).toUpperCase() + p.resource.slice(1), actions: [] };
+      map.set(p.resource, feature);
+    }
+    feature.actions.push({ name: p.action, label: p.name });
+  }
+  return [...map.values()];
 }
 
 export function RolePermissionsPage() {
@@ -36,14 +60,14 @@ export function RolePermissionsPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!accessToken) return;
+    if (!accessToken) {return;}
     const fetch = async () => {
       try {
         const [permRes, roleRes] = await Promise.all([
-          rxsoftApi.get<ModulePerm[]>('/permissions/modules'),
+          rxsoftApi.get<RawModule[]>('/permissions/modules'),
           rxsoftApi.get<{ permissionCodes: string[] }>(`/roles/${id}`),
         ]);
-        setModules(permRes.data);
+        setModules(toModulePerms(permRes.data));
         setSelected(new Set(roleRes.data.permissionCodes ?? []));
       } catch {
         notifications.show({ color: 'red', message: 'Failed to load permissions' });
@@ -57,8 +81,8 @@ export function RolePermissionsPage() {
   const togglePermission = (code: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(code)) next.delete(code);
-      else next.add(code);
+      if (next.has(code)) {next.delete(code);}
+      else {next.add(code);}
       return next;
     });
   };
@@ -68,8 +92,8 @@ export function RolePermissionsPage() {
       const next = new Set(prev);
       for (const action of feature.actions) {
         const code = permCode(modId, feature, action);
-        if (checked) next.add(code);
-        else next.delete(code);
+        if (checked) {next.add(code);}
+        else {next.delete(code);}
       }
       return next;
     });
@@ -81,8 +105,8 @@ export function RolePermissionsPage() {
       for (const feature of mod.features) {
         for (const action of feature.actions) {
           const code = permCode(mod.id, feature, action);
-          if (checked) next.add(code);
-          else next.delete(code);
+          if (checked) {next.add(code);}
+          else {next.delete(code);}
         }
       }
       return next;

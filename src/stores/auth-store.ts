@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import {
   clearTokens,
   decodeUserFromAccessToken,
@@ -7,7 +8,7 @@ import {
   persistTokens,
   type AuthUser,
 } from '@/lib/auth-tokens';
-import { rxsoftApi } from '@/lib/rxsoft-api';
+import { identityApi } from '@/lib/identity-api';
 
 export type ModuleInfo = {
   id: string;
@@ -29,102 +30,107 @@ type AuthState = {
   fetchModules: () => Promise<void>;
 };
 
-export const useAuthStore = create<AuthState>((set, get) => ({
-  accessToken: null,
-  refreshToken: null,
-  user: null,
-  modules: [],
-  loading: false,
-  error: null,
-
-  login: async (username, password) => {
-    set({ loading: true, error: null });
-    try {
-      const response = await rxsoftApi.post<{
-        accessToken: string;
-        refreshToken: string;
-      }>('/auth/login', { username, password });
-      persistTokens(response.data.accessToken, response.data.refreshToken);
-      const user = decodeUserFromAccessToken(response.data.accessToken);
-
-      if (!user) {
-        throw new Error('Invalid access token payload.');
-      }
-
-      set({
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
-        user,
-        loading: false,
-        error: null,
-      });
-
-      // Fetch user modules after login
-      try {
-        const meResponse = await rxsoftApi.get<{
-          id: string;
-          username: string;
-          roles: string[];
-          permissions: string[];
-          modules: ModuleInfo[];
-        }>('/auth/me');
-        set({ modules: meResponse.data.modules });
-      } catch {
-        set({
-          modules: [
-            { id: 'rxsoft', name: 'RxSoft', description: 'Pharmacy Admin', root: '/items' },
-            { id: 'admin', name: 'Admin Console', description: 'Administration', root: '/' },
-          ],
-        });
-      }
-    } catch {
-      set({ loading: false, error: 'Invalid credentials' });
-    }
-  },
-
-  logout: () => {
-    clearTokens();
-    set({
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
       accessToken: null,
       refreshToken: null,
       user: null,
       modules: [],
       loading: false,
       error: null,
-    });
-  },
 
-  bootstrap: () => {
-    const accessToken = getAccessToken();
-    const refreshToken = getRefreshToken();
+      login: async (username, password) => {
+        set({ loading: true, error: null });
+        try {
+          const response = await identityApi.post<{
+            accessToken: string;
+            refreshToken: string;
+          }>('/auth/login', { username, password });
+          persistTokens(response.data.accessToken, response.data.refreshToken);
+          const user = decodeUserFromAccessToken(response.data.accessToken);
 
-    if (!accessToken || !refreshToken) return;
+          if (!user) {
+            throw new Error('Invalid access token payload.');
+          }
 
-    const user = decodeUserFromAccessToken(accessToken);
-    if (!user) {
-      clearTokens();
-      set({ accessToken: null, refreshToken: null, user: null });
-      return;
-    }
+          set({
+            accessToken: response.data.accessToken,
+            refreshToken: response.data.refreshToken,
+            user,
+            loading: false,
+            error: null,
+          });
 
-    set({ accessToken, refreshToken, user, loading: false, error: null });
+          // Fetch user modules after login
+          try {
+            const meResponse = await identityApi.get<{
+              id: string;
+              username: string;
+              roles: string[];
+              permissions: string[];
+              modules: ModuleInfo[];
+            }>('/auth/me');
+            set({ modules: meResponse.data.modules });
+          } catch {
+            set({
+              modules: [
+                { id: 'rxsoft', name: 'RxSoft', description: 'Pharmacy Admin', root: '/items' },
+                { id: 'admin', name: 'Admin Console', description: 'Administration', root: '/' },
+              ],
+            });
+          }
+        } catch {
+          set({ loading: false, error: 'Invalid credentials' });
+        }
+      },
 
-    // Fetch modules in background
-    get().fetchModules();
-  },
+      logout: () => {
+        clearTokens();
+        set({
+          accessToken: null,
+          refreshToken: null,
+          user: null,
+          modules: [],
+          loading: false,
+          error: null,
+        });
+      },
 
-  fetchModules: async () => {
-    try {
-      const meResponse = await rxsoftApi.get<{
-        id: string;
-        username: string;
-        roles: string[];
-        permissions: string[];
-        modules: ModuleInfo[];
-      }>('/auth/me');
-      set({ modules: meResponse.data.modules });
-    } catch {
-      // Silently fail - modules will be empty until fetched
-    }
-  },
-}));
+      bootstrap: () => {
+        const accessToken = getAccessToken();
+        const refreshToken = getRefreshToken();
+
+        if (!accessToken || !refreshToken) return;
+
+        const user = decodeUserFromAccessToken(accessToken);
+        if (!user) {
+          clearTokens();
+          set({ accessToken: null, refreshToken: null, user: null });
+          return;
+        }
+
+        set({ accessToken, refreshToken, user, loading: false, error: null });
+
+        // Fetch modules in background
+        get().fetchModules();
+      },
+
+      fetchModules: async () => {
+        try {
+          const meResponse = await identityApi.get<{
+            id: string;
+            username: string;
+            roles: string[];
+            permissions: string[];
+            modules: ModuleInfo[];
+          }>('/auth/me');
+          set({ modules: meResponse.data.modules });
+        } catch {
+          // Silently fail - modules will be empty until fetched
+        }
+      },
+    }),
+    { name: 'rxsoft-admin-auth' },
+  ),
+);
