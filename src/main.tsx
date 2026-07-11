@@ -13,6 +13,7 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import * as Sentry from '@sentry/react';
 import { handleServerError } from '@/lib/handle-server-error';
+import { getDefaultRoute } from '@/lib/subdomain';
 import { useAuthStore } from '@/stores/auth-store';
 import { FontProvider } from './context/font-provider';
 import { ModuleProvider } from './context/module-provider';
@@ -101,6 +102,14 @@ const queryClient = new QueryClient({
     },
   }),
 });
+
+// Subdomain-aware redirect: if landing on /, go to subdomain default
+if (window.location.pathname === '/' || window.location.pathname === '') {
+  const defaultRoute = getDefaultRoute();
+  if (defaultRoute !== '/') {
+    window.history.replaceState({}, '', defaultRoute);
+  }
+}
 
 // Create a new router instance
 const router = createRouter({
